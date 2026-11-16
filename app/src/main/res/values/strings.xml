@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tonalix TV Launcher</string>
+    <string name="launcher_settings">Personalización del Launcher</string>
+    <string name="health_and_security">Diagnóstico y Seguridad</string>
+    <string name="app_installer">Instalador de Apps</string>
+    <string name="media_idle">Sin reproducción activa</string>
+    <string name="weather_default_city">Madrid</string>
+    <string name="weather_default_temp">22°C</string>
+    <string name="weather_default_condition">Soleado</string>
+    <string name="btn_wifi">Wi-Fi</string>
+    <string name="btn_bt">Bluetooth</string>
+    <string name="btn_health">Diagnóstico</string>
+    <string name="btn_security">Seguridad</string>
+    <string name="btn_projector">Trapecio / Input</string>
+    <string name="btn_apps">Todas las Apps</string>
+    <string name="btn_settings">Ajustes Sistema</string>
+    <string name="accessibility_service_label">Puntero Seguro Tonalix TV</string>
+    <string name="accessibility_service_description">Proporciona un puntero virtual D-Pad para navegar fácilmente en TV boxes AOSP sin pantalla táctil.</string>
+
+    <string name="media_default_artist">Tonalix Media Center</string>
+    <string name="btn_prev">Anterior</string>
+    <string name="btn_play_pause">Reproducir o Pausar</string>
+    <string name="btn_next">Siguiente</string>
+    <string name="btn_close">Cerrar</string>
+
+    <string name="qr_wallpaper_title">Enviar Fondo por QR</string>
+    <string name="qr_wallpaper_desc">Escanea este código con la cámara de tu móvil para transferir fotos o fondos de alta resolución.</string>
+    <string name="qr_wallpaper_waiting">⏳ Esperando conexión desde tu móvil…</string>
+    <string name="qr_wallpaper_success">🎉 ¡Fondo recibido y aplicado correctamente!</string>
+    <string name="btn_qr_wallpaper">📱 Enviar Fondo desde el Móvil (QR)</string>
+    <string name="settings_music_bg">Carátula de música como fondo dinámico</string>
+    <string name="settings_mini_player">Mini Reproductor interactivo en Inicio</string>
+    <string name="settings_visual_effects">Efectos visuales fluidos (Glow y Visualizador)</string>
+
+    <string name="btn_game_mode">Modo Juego</string>
+    <string name="btn_comfort_distance">Distancia y Vista</string>
+    <string name="game_mode_activated">🎮 ¡Modo Juego Activo! Rendimiento y baja latencia activados</string>
+    <string name="game_mode_deactivated">🎮 Modo Estándar restaurado</string>
+
+    <string name="btn_turbo_boost">Limpiar RAM &amp; Acelerar TV</string>
+    <string name="turbo_boost_running">🚀 Limpiando procesos en segundo plano…</string>
+    <string name="turbo_boost_done">⚡ ¡TV optimizada! Memoria liberada con éxito.</string>
+    <string name="btn_cyber_search">Búsqueda Rápida de Apps</string>
+    <string name="hint_cyber_search">Escribe para buscar apps instaladas…</string>
+    <string name="empty_cyber_search">Sin aplicaciones encontradas</string>
+    <string name="cyber_hud_fps">FPS: 60 • GPU: ÓPTIMA • LATENCIA: &lt;16ms</string>
+
+    <string name="users_section_title">Usuarios · Sesiones blindadas</string>
+    <string name="btn_switch_user">Cambiar / Bloquear usuario</string>
+    <string name="btn_edit_user">Editar perfil actual</string>
+    <string name="btn_create_user">Añadir sesión independiente</string>
+    <string name="btn_sync_export_qr">Enviar perfil por QR</string>
+    <string name="btn_sync_import">Importar perfil (JSON / código)</string>
+    <string name="user_lock_title">¿Quién está viendo Tonalix TV?</string>
+    <string name="xiaomi_home_help_title">Launcher en Xiaomi TV Stick</string>
+    <string name="xiaomi_home_help_body">En muchos Xiaomi/Google TV el botón «Seleccionar» no lista launchers.\n\nPrueba en este orden:\n1) Ajustes del sistema → Apps → Apps predeterminadas → Pantalla de inicio → Tonalix TV\n2) O con ADB:\nadb shell cmd package set-home-activity com.tonalix.tvlauncher/.MainActivity\n\nSi PatchWall sigue capturando Home, usa Launcher Manager (LM) temporalmente.</string>
+</resources>

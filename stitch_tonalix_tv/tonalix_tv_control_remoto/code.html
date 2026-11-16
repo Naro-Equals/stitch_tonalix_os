@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#070b10] text-gray-200" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Tonalix TV Mobile</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Custom Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#080d14',
+            surfaceDark: '#0e1622',
+            surfaceCard: '#131e2c',
+            surfaceCardHover: '#182739',
+            brandCyan: '#00e5ff',
+            brandCyanHover: '#33ebff',
+            accentRed: '#ff2b2b',
+            accentOrange: '#ff6200',
+            accentPurple: '#6e2cf4'
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for TV Glows and Mobile Scrollbars -->
+<style data-purpose="custom-scroll-and-effects">
+    /* Hide scrollbars for clean TV-launcher horizontal rails */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Active focus glow effects matching Tonalix TV interface */
+    .glow-cyan-border {
+      border: 2px solid #00e5ff;
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.35);
+    }
+
+    .hero-card-shadow {
+      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.85);
+    }
+  </style>
+<meta content="web_standard" name="shell-type"/><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-full flex flex-col font-sans select-none overflow-x-hidden antialiased bg-[#070d14] text-slate-100">
+<!-- BEGIN: TopNavigationBar -->
+<header class="sticky top-0 z-50 bg-[#070d14]/95 backdrop-blur-md border-b border-slate-800/60 pt-safe">
+<!-- Primary TV Header -->
+<div class="px-4 py-2.5 flex items-center justify-between gap-2 max-w-7xl mx-auto">
+<!-- Logo and Main Navigation Tabs -->
+<div class="flex items-center space-x-4 md:space-x-8">
+<h1 class="text-lg md:text-xl font-black tracking-tight text-white flex items-center gap-1.5">
+<span class="text-cyan-400"><i class="fa-solid fa-shapes text-sm"></i></span>
+<span>Tonalix<span class="text-cyan-400 font-medium">TV</span></span>
+</h1>
+<!-- Desktop & Mobile navigation items -->
+<nav class="flex items-center space-x-1 sm:space-x-3 text-xs md:text-sm font-medium">
+<button class="relative px-2.5 py-1 text-white font-semibold after:content-[''] after:absolute after:bottom-[-8px] after:left-2 after:right-2 after:h-[2px] after:bg-cyan-400">
+            Inicio
+          </button>
+<button class="px-2.5 py-1 text-slate-400 hover:text-white transition">
+            Aplicaciones
+          </button>
+<button class="px-2.5 py-1 text-slate-400 hover:text-white transition hidden sm:inline-block">
+            Entradas
+          </button>
+</nav>
+</div>
+<!-- Quick Status System Bar and Controls -->
+<div class="flex items-center space-x-2 md:space-x-3 text-slate-300">
+<!-- Search icon -->
+<button class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 text-xs text-slate-300 transition" title="Buscar">
+<i class="fa-solid fa-magnifying-glass"></i>
+</button>
+<!-- Fast Turbo icon -->
+<button class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 text-xs text-emerald-400 transition" title="Optimización">
+<i class="fa-solid fa-bolt"></i>
+</button>
+<!-- Memory / System Mini Pill (Desktop/Tablet) -->
+<div class="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded bg-slate-900 border border-cyan-500/30 text-[11px] font-mono text-cyan-300">
+<i class="fa-solid fa-microchip"></i>
+<span>386 MB</span>
+</div>
+<!-- Connectivity icons -->
+<div class="hidden sm:flex items-center space-x-2 text-xs text-slate-400">
+<i class="fa-solid fa-wifi text-slate-300"></i>
+<i class="fa-brands fa-bluetooth-b text-slate-400"></i>
+<i class="fa-solid fa-qrcode text-slate-400"></i>
+</div>
+<!-- User Profile Pill -->
+<div class="flex items-center space-x-1.5 bg-slate-900/90 border border-slate-700/60 rounded-full py-0.5 px-2.5 text-xs text-slate-200">
+<span class="w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] text-slate-950 font-bold">1</span>
+<span class="font-medium text-[11px] max-w-[85px] truncate">Inicio Principal</span>
+<i class="fa-solid fa-lock text-[9px] text-slate-400 ml-0.5"></i>
+</div>
+<!-- Settings & Power -->
+<button class="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-white" title="Ajustes">
+<i class="fa-solid fa-gear text-xs"></i>
+</button>
+<button class="w-7 h-7 rounded-full flex items-center justify-center text-rose-500 hover:text-rose-400" title="Apagar">
+<i class="fa-solid fa-power-off text-xs"></i>
+</button>
+<!-- Live Clock -->
+<span class="text-xs md:text-sm font-semibold tracking-wider text-slate-100 pl-1 font-mono">16:35</span>
+</div>
+</div>
+<!-- Secondary Preset Mode Switcher Rail -->
+<div class="px-4 py-1.5 bg-[#0b121c] border-t border-slate-800/40 overflow-x-auto no-scrollbar flex items-center justify-between text-[11px]">
+<div class="flex items-center space-x-2 shrink-0">
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap">Tonalix Dock</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap">Fire TV Stick</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap hidden sm:inline-block">Android TV Clásico</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap">Solo Apps Ligero</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap hidden md:inline-block">Dock Zen Minimal</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap hidden lg:inline-block">Barra Lateral Pro</button>
+<!-- Active Style Tag -->
+<button class="px-3 py-0.5 rounded-full bg-cyan-400 text-slate-950 font-bold shadow-sm whitespace-nowrap">Cine Compacto</button>
+</div>
+<!-- Live Performance Diagnostics Metrics -->
+<div class="hidden xl:flex items-center space-x-3 text-[10px] text-slate-400 shrink-0 font-mono pl-4">
+<span><i class="fa-solid fa-wave-square text-emerald-400 mr-1"></i>CPU 5.9ms</span>
+<span>•</span>
+<span>Red 83ms</span>
+<span>•</span>
+<span>TV Box</span>
+<span>•</span>
+<span>1.5-2 GB RAM</span>
+<span>•</span>
+<span>55"</span>
+<span>•</span>
+<span><i class="fa-solid fa-mobile-screen-button mr-1"></i>QR APK/TV</span>
+</div>
+</div>
+</header>
+<!-- END: TopNavigationBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 px-4 py-4 md:py-6 max-w-7xl mx-auto w-full space-y-6"><div class="flex flex-col w-full space-y-4 select-none pb-8">
+<!-- Device Status & Power Strip -->
+<div class="bg-surface-container-low rounded-xl p-3 shadow-md flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="relative flex items-center justify-center w-9 h-9 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-primary-container">tv_gen</span>
+<span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-secondary shadow-sm"></span>
+</div>
+<div>
+<div class="flex items-center space-x-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface">Tonalix Living Room</span>
+<span class="material-symbols-outlined text-outline text-sm">expand_more</span>
+</div>
+<div class="flex items-center space-x-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block mr-1"></span> Conectado
+          </span>
+<span>•</span>
+<span class="flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-xs mr-0.5">battery_5_bar</span> 84%
+          </span>
+</div>
+</div>
+</div>
+<!-- Quick Utilities -->
+<div class="flex items-center space-x-1.5">
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary-container transition active:scale-95 flex items-center" id="haptic-toggle" title="Vibración Háptica">
+<span class="material-symbols-outlined text-lg">vibration</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition active:scale-95 flex items-center" id="mute-toggle" title="Silenciar">
+<span class="material-symbols-outlined text-lg">volume_up</span>
+</button>
+<button class="p-2 rounded-lg bg-error-container/20 hover:bg-error-container/40 text-error transition active:scale-95 flex items-center shadow-sm" title="Apagar TV">
+<span class="material-symbols-outlined text-lg">power_settings_new</span>
+</button>
+</div>
+</div>
+<!-- Mode Switcher Pills -->
+<div class="grid grid-cols-3 gap-1.5 p-1 bg-surface-container-lowest rounded-xl">
+<button class="py-2 rounded-lg text-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition active:scale-95">
+      D-Pad
+    </button>
+<button class="py-2 rounded-lg text-center font-label-lg text-label-lg bg-primary-container text-on-primary-fixed font-bold shadow-md shadow-primary-container/20 transition active:scale-95 flex items-center justify-center space-x-1">
+<span class="material-symbols-outlined text-sm">touch_app</span>
+<span>Gestos</span>
+</button>
+<button class="py-2 rounded-lg text-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition active:scale-95">
+      Teclado
+    </button>
+</div>
+<!-- Central Gesture Touchpad -->
+<div class="relative w-full h-72 rounded-2xl bg-surface-container-low shadow-xl overflow-hidden flex flex-col justify-between p-4 cursor-grab active:cursor-grabbing" id="gesture-pad">
+<!-- Subtle Grid / Dot Texture Overlay -->
+<div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(circle, #00e5ff 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Directional Neon Ambient Glow Behind Elements -->
+<div class="absolute inset-0 bg-gradient-to-b from-primary-container/5 via-transparent to-primary-container/5 pointer-events-none"></div>
+<!-- Top Gesture Hint -->
+<div class="relative z-10 flex items-center justify-center space-x-1 text-on-surface-variant font-label-sm text-label-sm tracking-wider uppercase">
+<span class="material-symbols-outlined text-sm text-primary-container animate-pulse">keyboard_arrow_up</span>
+<span>Deslizar hacia arriba</span>
+</div>
+<!-- Center Swipe Target & Action -->
+<div class="relative z-10 flex items-center justify-between px-2">
+<span class="material-symbols-outlined text-lg text-primary-container/60">keyboard_arrow_left</span>
+<!-- Central OK Target Button -->
+<button class="w-28 h-28 rounded-full bg-surface-container hover:bg-surface-container-high text-primary-container flex flex-col items-center justify-center shadow-lg shadow-black/60 active:scale-95 transition group" id="ok-target">
+<span class="material-symbols-outlined text-3xl group-hover:scale-110 transition duration-150">adjust</span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface mt-0.5 tracking-wide">OK</span>
+</button>
+<span class="material-symbols-outlined text-lg text-primary-container/60">keyboard_arrow_right</span>
+</div>
+<!-- Bottom Gesture Hint & Double Tap Guide -->
+<div class="relative z-10 flex flex-col items-center space-y-1">
+<div class="flex items-center space-x-1 text-on-surface-variant font-label-sm text-label-sm tracking-wider uppercase">
+<span class="material-symbols-outlined text-sm text-primary-container animate-pulse">keyboard_arrow_down</span>
+<span>Deslizar hacia abajo</span>
+</div>
+<div class="text-[10px] text-outline font-body-sm flex items-center space-x-1">
+<span class="material-symbols-outlined text-xs">gesture</span>
+<span>Doble toque: Pausa / Play • Mantener: Menú contextual</span>
+</div>
+</div>
+</div>
+<!-- TV Core Nav Row (Atrás, Inicio, Guía / Menú, Opciones) -->
+<div class="grid grid-cols-4 gap-2">
+<button class="h-12 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface active:scale-95 flex flex-col items-center justify-center transition shadow-sm">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+<span class="font-label-sm text-[9px] uppercase tracking-wider text-on-surface-variant">Atrás</span>
+</button>
+<button class="h-12 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary-container active:scale-95 flex flex-col items-center justify-center transition shadow-sm">
+<span class="material-symbols-outlined text-xl">home</span>
+<span class="font-label-sm text-[9px] uppercase tracking-wider text-on-surface-variant">Inicio</span>
+</button>
+<button class="h-12 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface active:scale-95 flex flex-col items-center justify-center transition shadow-sm">
+<span class="material-symbols-outlined text-xl">menu</span>
+<span class="font-label-sm text-[9px] uppercase tracking-wider text-on-surface-variant">Menú</span>
+</button>
+<button class="h-12 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface active:scale-95 flex flex-col items-center justify-center transition shadow-sm">
+<span class="material-symbols-outlined text-xl">grid_view</span>
+<span class="font-label-sm text-[9px] uppercase tracking-wider text-on-surface-variant">Entradas</span>
+</button>
+</div>
+<!-- Primary Playback Cluster & Level Controls -->
+<div class="grid grid-cols-12 gap-2">
+<!-- Volume Rocker Column -->
+<div class="col-span-4 bg-surface-container-low rounded-2xl p-2 flex flex-col items-center justify-between shadow-md">
+<button class="w-full h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center active:scale-95 transition" id="vol-up">
+<span class="material-symbols-outlined text-xl">add</span>
+</button>
+<div class="py-2 flex flex-col items-center">
+<span class="material-symbols-outlined text-primary-container text-sm">volume_up</span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold font-mono" id="vol-readout">38%</span>
+<span class="font-label-sm text-[10px] text-outline uppercase tracking-wider">Volumen</span>
+</div>
+<button class="w-full h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center active:scale-95 transition" id="vol-down">
+<span class="material-symbols-outlined text-xl">remove</span>
+</button>
+</div>
+<!-- Media Playback Pad -->
+<div class="col-span-4 bg-surface-container-low rounded-2xl p-2 flex flex-col items-center justify-between shadow-md">
+<div class="flex items-center justify-between w-full px-1">
+<button class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center active:scale-95 transition" title="-10s">
+<span class="material-symbols-outlined text-base">replay_10</span>
+</button>
+<button class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center active:scale-95 transition" title="+10s">
+<span class="material-symbols-outlined text-base">forward_10</span>
+</button>
+</div>
+<!-- Hero Play/Pause Button -->
+<button class="w-16 h-16 rounded-full bg-primary-container text-on-primary-fixed shadow-lg shadow-primary-container/30 flex items-center justify-center active:scale-90 transition" id="play-pause-btn">
+<span class="material-symbols-outlined text-3xl">play_arrow</span>
+</button>
+<!-- Subtitle & Audio Track Quick Pick -->
+<div class="flex items-center justify-between w-full px-1">
+<button class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center active:scale-95 transition" title="Subtítulos">
+<span class="material-symbols-outlined text-base">subtitles</span>
+</button>
+<button class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center active:scale-95 transition" title="Información">
+<span class="material-symbols-outlined text-base">info</span>
+</button>
+</div>
+</div>
+<!-- Channel Rocker Column -->
+<div class="col-span-4 bg-surface-container-low rounded-2xl p-2 flex flex-col items-center justify-between shadow-md">
+<button class="w-full h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center active:scale-95 transition" id="ch-up">
+<span class="material-symbols-outlined text-xl">keyboard_arrow_up</span>
+</button>
+<div class="py-2 flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary text-sm">live_tv</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold font-mono" id="ch-readout">CH 104</span>
+<span class="font-label-sm text-[10px] text-outline uppercase tracking-wider">Canal</span>
+</div>
+<button class="w-full h-11 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center active:scale-95 transition" id="ch-down">
+<span class="material-symbols-outlined text-xl">keyboard_arrow_down</span>
+</button>
+</div>
+</div>
+<!-- Voice Assistant & Text Input Utility Bar -->
+<div class="flex items-center space-x-2">
+<button class="flex-1 h-12 rounded-xl bg-gradient-to-r from-surface-container to-surface-container-high text-on-surface px-4 flex items-center justify-center space-x-2 shadow-sm active:scale-98 transition">
+<span class="material-symbols-outlined text-primary-container text-xl animate-pulse">mic</span>
+<span class="font-label-lg text-label-lg font-medium">Búsqueda por Voz</span>
+</button>
+<button class="w-12 h-12 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center shadow-sm active:scale-95 transition" title="Abrir Teclado">
+<span class="material-symbols-outlined text-xl">keyboard</span>
+</button>
+</div>
+<!-- Quick App Launch Drawer -->
+<div class="space-y-2">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Acceso Rápido • Apps</span>
+<button class="font-label-sm text-[11px] text-primary-container hover:underline">Personalizar</button>
+</div>
+<!-- App Dock Grid -->
+<div class="grid grid-cols-5 gap-2">
+<!-- YouTube -->
+<button class="group flex flex-col items-center p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition active:scale-95 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-error-container/30 flex items-center justify-center group-hover:scale-105 transition">
+<span class="material-symbols-outlined text-error text-xl">smart_display</span>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface mt-1 truncate max-w-full">YouTube</span>
+</button>
+<!-- Netflix -->
+<button class="group flex flex-col items-center p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition active:scale-95 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-error/20 flex items-center justify-center group-hover:scale-105 transition">
+<span class="font-headline-sm text-headline-sm font-black text-error">N</span>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface mt-1 truncate max-w-full">Netflix</span>
+</button>
+<!-- Plex -->
+<button class="group flex flex-col items-center p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition active:scale-95 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/20 flex items-center justify-center group-hover:scale-105 transition">
+<span class="material-symbols-outlined text-secondary-fixed text-xl">movie</span>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface mt-1 truncate max-w-full">Plex</span>
+</button>
+<!-- SmartTube -->
+<button class="group flex flex-col items-center p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition active:scale-95 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center group-hover:scale-105 transition">
+<span class="material-symbols-outlined text-primary-container text-xl">play_circle</span>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface mt-1 truncate max-w-full">SmartTube</span>
+</button>
+<!-- Prime Video -->
+<button class="group flex flex-col items-center p-2 rounded-xl bg-surface-container-low hover:bg-surface-container transition active:scale-95 shadow-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/30 flex items-center justify-center group-hover:scale-105 transition">
+<span class="material-symbols-outlined text-tertiary text-xl">live_tv</span>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface mt-1 truncate max-w-full">Prime</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    let volume = 38;
+    let channel = 104;
+    let isPlaying = false;
+    let isMuted = false;
+    let hapticEnabled = true;
+
+    const volReadout = document.getElementById('vol-readout');
+    const chReadout = document.getElementById('ch-readout');
+    const volUp = document.getElementById('vol-up');
+    const volDown = document.getElementById('vol-down');
+    const chUp = document.getElementById('ch-up');
+    const chDown = document.getElementById('ch-down');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const muteToggle = document.getElementById('mute-toggle');
+    const hapticToggle = document.getElementById('haptic-toggle');
+    const gesturePad = document.getElementById('gesture-pad');
+    const okTarget = document.getElementById('ok-target');
+
+    function triggerHaptic() {
+      if (hapticEnabled && navigator.vibrate) {
+        navigator.vibrate(25);
+      }
+    }
+
+    if (volUp && volDown && volReadout) {
+      volUp.addEventListener('click', () => {
+        if (volume < 100) volume += 2;
+        volReadout.textContent = volume + '%';
+        triggerHaptic();
+      });
+      volDown.addEventListener('click', () => {
+        if (volume > 0) volume -= 2;
+        volReadout.textContent = volume + '%';
+        triggerHaptic();
+      });
+    }
+
+    if (chUp && chDown && chReadout) {
+      chUp.addEventListener('click', () => {
+        channel += 1;
+        chReadout.textContent = 'CH ' + channel;
+        triggerHaptic();
+      });
+      chDown.addEventListener('click', () => {
+        if (channel > 1) channel -= 1;
+        chReadout.textContent = 'CH ' + channel;
+        triggerHaptic();
+      });
+    }
+
+    if (playPauseBtn) {
+      playPauseBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        const icon = playPauseBtn.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.textContent = isPlaying ? 'pause' : 'play_arrow';
+        }
+        triggerHaptic();
+      });
+    }
+
+    if (muteToggle) {
+      muteToggle.addEventListener('click', () => {
+        isMuted = !isMuted;
+        const icon = muteToggle.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.textContent = isMuted ? 'volume_off' : 'volume_up';
+        }
+        muteToggle.classList.toggle('text-error', isMuted);
+        triggerHaptic();
+      });
+    }
+
+    if (hapticToggle) {
+      hapticToggle.addEventListener('click', () => {
+        hapticEnabled = !hapticEnabled;
+        hapticToggle.classList.toggle('text-primary-container', hapticEnabled);
+        hapticToggle.classList.toggle('text-outline', !hapticEnabled);
+        if (hapticEnabled && navigator.vibrate) {
+          navigator.vibrate(60);
+        }
+      });
+    }
+
+    if (gesturePad && okTarget) {
+      let startX = 0;
+      let startY = 0;
+
+      gesturePad.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      gesturePad.addEventListener('touchend', (e) => {
+        if (e.changedTouches && e.changedTouches[0]) {
+          const diffX = e.changedTouches[0].clientX - startX;
+          const diffY = e.changedTouches[0].clientY - startY;
+          if (Math.abs(diffX) > 40 || Math.abs(diffY) > 40) {
+            triggerHaptic();
+          }
+        }
+      }, { passive: true });
+
+      okTarget.addEventListener('click', () => {
+        triggerHaptic();
+      });
+    }
+  })();
+</script></main>
+<!-- END: MainContent -->
+<!-- BEGIN: RemoteFooterStatusBar -->
+<footer class="mt-auto bg-[#05090f] border-t border-slate-800/80 px-4 py-2.5 text-[11px] text-slate-400 pb-safe">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+<!-- Remote Controller Hints -->
+<div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 font-mono text-[10px] text-slate-400">
+<span><i class="fa-solid fa-arrow-up-right-dots mr-1 text-slate-500"></i>Flechas Navegar</span>
+<span>•</span>
+<span>Enter Abrir</span>
+<span>•</span>
+<span>M Opciones de app</span>
+<span>•</span>
+<span>/ Buscar</span>
+<span>•</span>
+<span class="text-cyan-400">Sesión blindada: Inicio Principal</span>
+</div>
+<!-- Android Version Indicator -->
+<div class="flex items-center space-x-1.5 text-[11px] font-mono text-slate-400 shrink-0">
+<i class="fa-brands fa-android text-emerald-400"></i>
+<span>Android TV 11/12</span>
+</div>
+</div>
+</footer>
+<!-- END: RemoteFooterStatusBar -->
+<!-- Interactive Demo Script -->
+<script data-purpose="mobile-interaction-simulator">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Allow keyboard or touch navigation feel across app tiles
+      const cards = document.querySelectorAll('[data-purpose="apps-drawer-section"] .shrink-0 > div');
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          cards.forEach(c => c.classList.remove('glow-cyan-border'));
+          card.classList.add('glow-cyan-border');
+        });
+      });
+    });
+  </script>
+</body></html>

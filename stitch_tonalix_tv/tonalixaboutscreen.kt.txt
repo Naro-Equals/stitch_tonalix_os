@@ -1,0 +1,1425 @@
+package com.tonalix.tvlauncher.ui.settings.about
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// ============================================================================
+// TONALIX TV - PALETA DE COLORES (Obsidian & Cyan Neon)
+// ============================================================================
+object TonalixColors {
+    val Background = Color(0xFF090F15)
+    val Surface = Color(0xFF0E141A)
+    val SurfaceCard = Color(0xFF131A22)
+    val SurfaceCardHover = Color(0xFF1B2430)
+    val SurfaceBorder = Color(0xFF222D39)
+    val PrimaryCyan = Color(0xFF00E5FF)
+    val PrimaryCyanGlow = Color(0x3300E5FF)
+    val AccentEmerald = Color(0xFF00F2C3)
+    val AccentEmeraldBg = Color(0x1F00F2C3)
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFF8E9BAE)
+    val TextMuted = Color(0xFF556577)
+    val WarningAmber = Color(0xFFFFB300)
+    val DangerRed = Color(0xFFFF5252)
+}
+
+enum class UpdateChannel {
+    STABLE, BETA, NIGHTLY
+}
+
+enum class SettingsCategory(val title: String, val subtitle: String, val icon: ImageVector) {
+    NETWORK("Red e Internet", "Wi-Fi 6 Conectado (5GHz)", Icons.Default.Wifi),
+    DISPLAY("Pantalla y Video", "4K HDR10+ • 120Hz", Icons.Default.Tv),
+    AUDIO("Audio y Salida", "Dolby Atmos • HDMI eARC", Icons.Default.VolumeUp),
+    PRIVACY("Privacidad y Seguridad", "Bloqueo telemetría activo [ON]", Icons.Default.Security),
+    PERFORMANCE("Modo Rendimiento", "Optimización Ultra-Lite", Icons.Default.FlashOn),
+    ABOUT("Acerca de", "Android TV 12 Custom ROM", Icons.Default.Info)
+}
+
+/**
+ * Pantalla principal de Acerca de y Actualizaciones del Sistema
+ * Optimizada para control remoto D-Pad / Smart TV y navegación fluida.
+ */
+@Composable
+fun TonalixAboutScreen(
+    onNavigateBack: () -> Unit = {},
+    onCheckForUpdates: () -> Unit = {},
+    onRestartSystem: () -> Unit = {},
+    onOpenDeveloperOptions: () -> Unit = {},
+    onOpenChangelog: () -> Unit = {},
+    onSendDiagnosticReport: () -> Unit = {},
+    onFactoryReset: () -> Unit = {},
+    onRunHardwareDiagnostics: () -> Unit = {}
+) {
+    var selectedCategory by remember { mutableStateOf(SettingsCategory.ABOUT) }
+    var selectedChannel by remember { mutableStateOf(UpdateChannel.STABLE) }
+    var isCheckingUpdates by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TonalixColors.Background)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Barra superior fija con estado del sistema y perfil blindado
+            TonalixTopBar()
+
+            // Cuerpo principal: Menú lateral + Contenido central + Panel de telemetría e integridad
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                // Sidebar de categorías
+                TonalixSettingsSidebar(
+                    selectedCategory = selectedCategory,
+                    onSelectCategory = { selectedCategory = it }
+                )
+
+                // Separador vertical sutil
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // Contenido principal de Acerca de
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 28.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        item {
+                            AboutHeaderSection(
+                                isCheckingUpdates = isCheckingUpdates,
+                                onCheckForUpdates = {
+                                    isCheckingUpdates = true
+                                    onCheckForUpdates()
+                                },
+                                onRestartSystem = onRestartSystem
+                            )
+                        }
+
+                        item {
+                            CompilationAndChannelSection(
+                                selectedChannel = selectedChannel,
+                                onSelectChannel = { selectedChannel = it }
+                            )
+                        }
+
+                        item {
+                            InstalledHighlightsSection(onOpenChangelog = onOpenChangelog)
+                        }
+
+                        item {
+                            HardwareAndCertificationsRow()
+                        }
+
+                        item {
+                            MaintenanceAndDebuggingSection(
+                                onOpenDeveloperOptions = onOpenDeveloperOptions,
+                                onOpenChangelog = onOpenChangelog,
+                                onSendDiagnosticReport = onSendDiagnosticReport,
+                                onFactoryReset = onFactoryReset
+                            )
+                        }
+                    }
+                }
+
+                // Separador vertical
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // Panel lateral de Integridad del Sistema y Telemetría
+                TonalixIntegritySidebar(
+                    onRunHardwareDiagnostics = onRunHardwareDiagnostics
+                )
+            }
+
+            // Barra inferior con guía de navegación D-PAD y estado del sistema
+            TonalixBottomBar()
+        }
+    }
+}
+
+// ============================================================================
+// BARRA SUPERIOR (HEADER)
+// ============================================================================
+@Composable
+private fun TonalixTopBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Logo de la marca
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(TonalixColors.PrimaryCyan),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tv,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "Tonalix",
+                color = TonalixColors.TextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+            Text(
+                text = "TV",
+                color = TonalixColors.PrimaryCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp
+            )
+
+            Spacer(modifier = Modifier.width(36.dp))
+
+            // Enlaces rápidos
+            listOf("Inicio", "Aplicaciones", "Entradas", "Ajustes").forEach { tab ->
+                val isSelected = tab == "Ajustes"
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent,
+                            RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = tab,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        // Telemetría rápida y Sesión Blindada
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SystemTelemetryBadge(label = "CPU", value = "6.2%", color = TonalixColors.AccentEmerald)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "Red", value = "12ms", color = TonalixColors.TextSecondary)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "RAM", value = "1.8 / 3 GB", color = TonalixColors.PrimaryCyan)
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Chip Sesión Blindada
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF003842))
+                    .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(13.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Sesión Blindada",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "17:42",
+                color = TonalixColors.TextPrimary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+@Composable
+private fun SystemTelemetryBadge(label: String, value: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 11.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// SIDEBAR DE CATEGORÍAS (NAVEGABLE D-PAD)
+// ============================================================================
+@Composable
+private fun TonalixSettingsSidebar(
+    selectedCategory: SettingsCategory,
+    onSelectCategory: (SettingsCategory) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(260.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.padding(bottom = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONFIGURACIÓN DEL SISTEMA",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "v4.8 PRO",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            SettingsCategory.values().forEach { category ->
+                val isSelected = category == selectedCategory
+                SidebarCategoryItem(
+                    category = category,
+                    isSelected = isSelected,
+                    onClick = { onSelectCategory(category) }
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
+        }
+
+        // Modo Mando TV Card en la esquina inferior
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(TonalixColors.PrimaryCyan)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Modo Mando TV",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row {
+                    Text(text = "Perfil Activo: ", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                    Text(
+                        text = "Tonalix Master",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SidebarCategoryItem(
+    category: SettingsCategory,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val bgColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyanGlow
+            isFocused -> TonalixColors.SurfaceCardHover
+            else -> Color.Transparent
+        }, label = "bg"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyan
+            isFocused -> TonalixColors.TextSecondary
+            else -> Color.Transparent
+        }, label = "border"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = category.icon,
+            contentDescription = null,
+            tint = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = category.title,
+                color = if (isSelected) TonalixColors.TextPrimary else TonalixColors.TextSecondary,
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+            Text(
+                text = category.subtitle,
+                color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.PrimaryCyan)
+            )
+        }
+    }
+}
+
+// ============================================================================
+// ENCABEZADO DE ACERCA DE & ACCIONES DE ACTUALIZACIÓN
+// ============================================================================
+@Composable
+private fun AboutHeaderSection(
+    isCheckingUpdates: Boolean,
+    onCheckForUpdates: () -> Unit,
+    onRestartSystem: () -> Unit
+) {
+    Column {
+        // Breadcrumb
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "AJUSTES", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "ACERCA DEL DISPOSITIVO", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "OTA ENGINE", color = TonalixColors.PrimaryCyan, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(9.dp)
+                            .clip(CircleShape)
+                            .background(TonalixColors.AccentEmerald)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "SISTEMA ACTUALIZADO",
+                        color = TonalixColors.AccentEmerald,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Información de kernel bare-metal, llaves criptográficas DRM, registros de versión y gestión de paquetes over-the-air cifrados para decodificadores Tonalix.",
+                    color = TonalixColors.TextSecondary,
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            // Botones de acción rápida
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                // Buscar Actualizaciones
+                Button(
+                    onClick = onCheckForUpdates,
+                    colors = ButtonDefaults.buttonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = TonalixColors.PrimaryCyan,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (isCheckingUpdates) "Buscando..." else "Buscar Actualizaciones",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                // Reiniciar Sistema
+                Button(
+                    onClick = onRestartSystem,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003844)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.PrimaryCyan),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PowerSettingsNew,
+                        contentDescription = null,
+                        tint = TonalixColors.PrimaryCyan,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Reiniciar Sistema",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// COMPILACIÓN Y SELECTOR DE CANALES OTA
+// ============================================================================
+@Composable
+private fun CompilationAndChannelSection(
+    selectedChannel: UpdateChannel,
+    onSelectChannel: (UpdateChannel) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(18.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                // Info de compilación
+                Row(modifier = Modifier.weight(1f)) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFF0E141A))
+                            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.GetApp,
+                            contentDescription = null,
+                            tint = TonalixColors.PrimaryCyan,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "COMPILACIÓN OFICIAL",
+                                color = TonalixColors.TextMuted,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 0.5.sp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Kernel 5.4 Bare-Metal",
+                                color = TonalixColors.AccentEmerald,
+                                fontSize = 9.sp,
+                                fontFamily = FontFamily.Monospace,
+                                modifier = Modifier
+                                    .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(3.dp))
+                                    .padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "TonalixOS 12.4.1 Ultra-Lean Stable",
+                            color = TonalixColors.TextPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "ID Compilación: TNX-20250226-EXT4-RELEASE-AMLOGIC",
+                            color = TonalixColors.TextMuted,
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+                }
+
+                // Selector de Canales OTA
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                        .padding(4.dp)
+                ) {
+                    UpdateChannelItem(
+                        label = "Estable Oficial",
+                        isSelected = selectedChannel == UpdateChannel.STABLE,
+                        onClick = { onSelectChannel(UpdateChannel.STABLE) }
+                    )
+                    UpdateChannelItem(
+                        label = "Beta Developer",
+                        isSelected = selectedChannel == UpdateChannel.BETA,
+                        onClick = { onSelectChannel(UpdateChannel.BETA) }
+                    )
+                    UpdateChannelItem(
+                        label = "Nightly",
+                        isSelected = selectedChannel == UpdateChannel.NIGHTLY,
+                        onClick = { onSelectChannel(UpdateChannel.NIGHTLY) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Metadatos de servidor OTA
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Última comprobación: ",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                    Text(
+                        text = "Hoy, hace 18 minutos",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Servidor OTA: ",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                    Text(
+                        text = "ota.tonalix.tv",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "TLS 1.3 / SHA-256",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 9.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UpdateChannelItem(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = label,
+            color = if (isSelected) Color.Black else TonalixColors.TextSecondary,
+            fontSize = 11.sp,
+            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+        )
+    }
+}
+
+// ============================================================================
+// CAMBIOS CLAVE DE LA VERSIÓN INSTALADA (CARDS 2x2)
+// ============================================================================
+@Composable
+private fun InstalledHighlightsSection(onOpenChangelog: () -> Unit) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "CAMBIOS CLAVE DE LA VERSIÓN INSTALADA",
+                color = TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
+            Row(
+                modifier = Modifier.clickable(onClick = onOpenChangelog),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Ver changelog exhaustivo",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(12.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            HighlightCard(
+                icon = Icons.Default.Memory,
+                title = "Kernel 5.4.180 Zero-Latency",
+                description = "Parches predictivos para microcontroladores Amlogic/Rockchip sin hipos de búfer.",
+                modifier = Modifier.weight(1f)
+            )
+            HighlightCard(
+                icon = Icons.Default.SurroundSound,
+                title = "Decodificación AV1 + Dolby Atmos 7.1.4",
+                description = "Passthrough digital DirectPlay TrueHD activo vía HDMI eARC sin recompresión.",
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            HighlightCard(
+                icon = Icons.Default.Security,
+                title = "Anti-Telemetría DoH / DoT Nativo",
+                description = "Filtro de rastreadores OEM y analítica no consentida bloqueado en capa de loopback.",
+                modifier = Modifier.weight(1f)
+            )
+            HighlightCard(
+                icon = Icons.Default.Speed,
+                title = "ZRAM 1024 MB LZ4 Algoritmo",
+                description = "Compresión ultra-rápida de RAM para mantener hasta 12 apps en suspensión activa.",
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun HighlightCard(
+    icon: ImageVector,
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+            .padding(14.dp)
+    ) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = description,
+                color = TonalixColors.TextSecondary,
+                fontSize = 11.sp,
+                lineHeight = 14.sp
+            )
+        }
+    }
+}
+
+// ============================================================================
+// HARDWARE & CERTIFICACIONES DRM
+// ============================================================================
+@Composable
+private fun HardwareAndCertificationsRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Bloque Identidad & Certificación
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(16.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(imageVector = Icons.Default.VerifiedUser, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Identidad & Certificación", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Text(text = "Seguridad y credenciales DRM", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                }
+
+                Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+
+                InfoRowItem(label = "Nombre de Red:", value = "Living Room TV Box", isEditable = true)
+                InfoRowItem(label = "Modelo de Chasis:", value = "Tonalix Pro 4K Ultra (TNX-9842)")
+                InfoRowItem(label = "Nivel Widevine DRM:", value = "WIDEVINE L1 · HDCP 2.3", badge = "4K UHD Nativo")
+                InfoRowItem(label = "Android Base OS:", value = "Android 12 (API 31)", badge = "NO BLOAT")
+                InfoRowItem(label = "Parche de Seguridad:", value = "1 de Febrero de 2025")
+                InfoRowItem(label = "Estado SELinux / Root:", value = "Enforcing (Blindado)", highlightColor = TonalixColors.AccentEmerald)
+            }
+        }
+
+        // Bloque Especificaciones de Hardware
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(16.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(imageVector = Icons.Default.DeveloperBoard, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Especificaciones de Hardware", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Text(text = "Arquitectura SoC y memoria física", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                }
+
+                Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+
+                InfoRowItem(label = "Procesador SoC:", value = "Amlogic S905X4 Quad-Core Cortex-A55 @ 2.00 GHz")
+                InfoRowItem(label = "GPU / Gráficos:", value = "ARM Mali-G31 MP2 (Vulkan 1.2)")
+                InfoRowItem(label = "Memoria RAM Total:", value = "2 GB LPDDR4 + 1 GB ZRAM")
+                InfoRowItem(label = "Almacenamiento eMMC:", value = "32 GB (18.4 GB Disponibles)")
+                InfoRowItem(label = "MAC Ethernet:", value = "e4:5f:01:8b:2c:10", isMono = true)
+                InfoRowItem(label = "MAC Wi-Fi 6:", value = "e4:5f:01:8b:2c:11", isMono = true)
+                InfoRowItem(label = "Número de Serie:", value = "TNX-2025-X4-99814-A", isMono = true)
+            }
+        }
+    }
+}
+
+@Composable
+private fun InfoRowItem(
+    label: String,
+    value: String,
+    badge: String? = null,
+    isEditable: Boolean = false,
+    isMono: Boolean = false,
+    highlightColor: Color? = null
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 11.sp)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = value,
+                color = highlightColor ?: TonalixColors.TextPrimary,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = if (isMono) FontFamily.Monospace else FontFamily.Default
+            )
+            if (badge != null) {
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = badge,
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                )
+            }
+            if (isEditable) {
+                Spacer(modifier = Modifier.width(6.dp))
+                Icon(imageVector = Icons.Default.Edit, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(12.dp))
+            }
+        }
+    }
+}
+
+// ============================================================================
+// MANTENIMIENTO Y DEPURACIÓN (HERRAMIENTAS D-PAD COMPATIBLE)
+// ============================================================================
+@Composable
+private fun MaintenanceAndDebuggingSection(
+    onOpenDeveloperOptions: () -> Unit,
+    onOpenChangelog: () -> Unit,
+    onSendDiagnosticReport: () -> Unit,
+    onFactoryReset: () -> Unit
+) {
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(imageVector = Icons.Default.Build, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(14.dp))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "HERRAMIENTAS DE MANTENIMIENTO Y DEPURACIÓN (D-PAD COMPATIBLE)",
+                color = TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            MaintenanceToolCard(
+                title = "Opciones de Desarrollador",
+                subtitle = "Depuración por red ADB y superposición GPU",
+                actionLabel = "Alternar",
+                icon = Icons.Default.Code,
+                onClick = onOpenDeveloperOptions,
+                modifier = Modifier.weight(1f)
+            )
+            MaintenanceToolCard(
+                title = "Registro Completo (Changelog)",
+                subtitle = "Historial de parches desde v1.0 a v4.8 PRO",
+                actionLabel = "Abrir",
+                icon = Icons.Default.ListAlt,
+                onClick = onOpenChangelog,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            MaintenanceToolCard(
+                title = "Enviar Reporte Diagnóstico",
+                subtitle = "Dumps de kernel cifrados sin datos personales",
+                actionLabel = "Generar",
+                icon = Icons.Default.Send,
+                onClick = onSendDiagnosticReport,
+                modifier = Modifier.weight(1f)
+            )
+            MaintenanceToolCard(
+                title = "Restablecimiento de Fábrica",
+                subtitle = "Clean Flash y borrado total de partición /data",
+                actionLabel = "Formatear",
+                icon = Icons.Default.Warning,
+                isDanger = true,
+                onClick = onFactoryReset,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun MaintenanceToolCard(
+    title: String,
+    subtitle: String,
+    actionLabel: String,
+    icon: ImageVector,
+    isDanger: Boolean = false,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val borderColor = when {
+        isFocused -> if (isDanger) TonalixColors.DangerRed else TonalixColors.PrimaryCyan
+        else -> TonalixColors.SurfaceBorder
+    }
+
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(if (isDanger) Color(0x33FF5252) else Color(0xFF0E141A)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isDanger) TonalixColors.DangerRed else TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Column {
+                Text(
+                    text = title,
+                    color = if (isDanger) TonalixColors.DangerRed else TonalixColors.TextPrimary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = subtitle,
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .background(if (isDanger) Color(0x22FF5252) else TonalixColors.PrimaryCyanGlow)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Text(
+                text = actionLabel,
+                color = if (isDanger) TonalixColors.DangerRed else TonalixColors.PrimaryCyan,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+// ============================================================================
+// SIDEBAR DERECHO (ESTADO DE INTEGRIDAD Y TELEMETRÍA EN VIVO)
+// ============================================================================
+@Composable
+private fun TonalixIntegritySidebar(
+    onRunHardwareDiagnostics: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(280.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(18.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Encabezado Integridad
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Shield,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Estado de Integridad",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                text = "ÓPTIMO",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+
+        // Uptime
+        Column {
+            Text(text = "Tiempo Activo (Uptime):", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "14d  06h  22m",
+                color = TonalixColors.TextPrimary,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = TonalixColors.AccentEmerald, modifier = Modifier.size(12.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Sin cuelgues ni reinicios forzados", color = TonalixColors.AccentEmerald, fontSize = 10.sp)
+            }
+        }
+
+        // Firma del Kernel
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Firma del Kernel:", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                Text(
+                    text = "PASS",
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "Compilación firmada criptográficamente por la clave maestra de Tonalix OS Engineering.",
+                color = TonalixColors.TextSecondary,
+                fontSize = 10.sp,
+                lineHeight = 13.sp
+            )
+        }
+
+        // Almacenamiento eMMC
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Almacenamiento eMMC", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                Text(text = "13.6 / 32 GB", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            LinearProgressIndicator(
+                progress = 13.6f / 32f,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp)),
+                color = TonalixColors.PrimaryCyan,
+                trackColor = Color(0xFF1B2430)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Usado: 42.5%", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                Text(text = "Libre: 18.4 GB (57.5%)", color = TonalixColors.PrimaryCyan, fontSize = 9.sp)
+            }
+        }
+
+        // Temperatura SoC y eMMC
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Column {
+                Text(text = "TEMP. eMMC", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                Text(text = "38 °C", color = TonalixColors.TextPrimary, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                Text(text = "SALUDABLE", color = TonalixColors.AccentEmerald, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+            }
+            Column {
+                Text(text = "SOC THERMAL", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                Text(text = "44 °C", color = TonalixColors.TextPrimary, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                Text(text = "ENFRIADO ACTIVO", color = TonalixColors.PrimaryCyan, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+
+        // Widevine L1 Provisioning
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(6.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                .padding(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(text = "Widevine L1 Provisioning", color = TonalixColors.TextPrimary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "HDCP 2.3 Ready", color = TonalixColors.AccentEmerald, fontSize = 9.sp)
+                }
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(TonalixColors.AccentEmerald)
+                )
+            }
+        }
+
+        // Botón Ejecutar Autodiagnóstico de Hardware
+        Button(
+            onClick = onRunHardwareDiagnostics,
+            colors = ButtonDefaults.buttonColors(containerColor = TonalixColors.SurfaceCard),
+            border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.PrimaryCyan),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.Assessment,
+                contentDescription = null,
+                tint = TonalixColors.PrimaryCyan,
+                modifier = Modifier.size(14.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "Ejecutar Autodiagnóstico",
+                color = TonalixColors.PrimaryCyan,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Consejo de Soporte Tonalix
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color(0xFF0A0F14))
+                .padding(10.dp)
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(12.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Consejo de Soporte Tonalix", color = TonalixColors.TextPrimary, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Para acceder rápidamente a la consola de recuperación o reiniciar en modo Fastboot OTA, mantén presionado el botón central OK en el control remoto durante el inicio del sistema.",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 9.sp,
+                    lineHeight = 12.sp
+                )
+            }
+        }
+    }
+}
+
+// ============================================================================
+// BARRA INFERIOR (FOOTER CON GUÍA D-PAD 10-FOOT UI)
+// ============================================================================
+@Composable
+private fun TonalixBottomBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(38.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Guía D-Pad
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            RemoteKeyHint(keyLabel = "▲▼ Navegar")
+            Spacer(modifier = Modifier.width(16.dp))
+            RemoteKeyHint(keyLabel = "OK Seleccionar / Alternar")
+            Spacer(modifier = Modifier.width(16.dp))
+            RemoteKeyHint(keyLabel = "Atrás Regresar")
+            Spacer(modifier = Modifier.width(16.dp))
+            RemoteKeyHint(keyLabel = "Menú Opciones avanzadas")
+        }
+
+        // Estado del sistema inferior
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Android TV 11/12",
+                color = TonalixColors.TextMuted,
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(text = "•", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Spacer(modifier = Modifier.width(10.dp))
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.AccentEmerald)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "DNS Anti-Ad: Conectado",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+private fun RemoteKeyHint(keyLabel: String) {
+    Text(
+        text = keyLabel,
+        color = TonalixColors.TextSecondary,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Medium
+    )
+}

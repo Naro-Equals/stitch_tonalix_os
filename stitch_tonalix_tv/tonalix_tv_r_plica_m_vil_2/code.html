@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#070b10] text-gray-200" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Tonalix TV Mobile</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Font Awesome Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<!-- Tailwind Custom Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandDark: '#080d14',
+            surfaceDark: '#0e1622',
+            surfaceCard: '#131e2c',
+            surfaceCardHover: '#182739',
+            brandCyan: '#00e5ff',
+            brandCyanHover: '#33ebff',
+            accentRed: '#ff2b2b',
+            accentOrange: '#ff6200',
+            accentPurple: '#6e2cf4'
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for TV Glows and Mobile Scrollbars -->
+<style data-purpose="custom-scroll-and-effects">
+    /* Hide scrollbars for clean TV-launcher horizontal rails */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Active focus glow effects matching Tonalix TV interface */
+    .glow-cyan-border {
+      border: 2px solid #00e5ff;
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.35);
+    }
+
+    .hero-card-shadow {
+      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.85);
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col font-sans select-none overflow-x-hidden antialiased bg-[#070d14] text-slate-100">
+<!-- BEGIN: TopNavigationBar -->
+<header class="sticky top-0 z-50 bg-[#070d14]/95 backdrop-blur-md border-b border-slate-800/60 pt-safe">
+<!-- Primary TV Header -->
+<div class="px-4 py-2.5 flex items-center justify-between gap-2 max-w-7xl mx-auto">
+<!-- Logo and Main Navigation Tabs -->
+<div class="flex items-center space-x-4 md:space-x-8">
+<h1 class="text-lg md:text-xl font-black tracking-tight text-white flex items-center gap-1.5">
+<span class="text-cyan-400"><i class="fa-solid fa-shapes text-sm"></i></span>
+<span>Tonalix<span class="text-cyan-400 font-medium">TV</span></span>
+</h1>
+<!-- Desktop & Mobile navigation items -->
+<nav class="flex items-center space-x-1 sm:space-x-3 text-xs md:text-sm font-medium">
+<button class="relative px-2.5 py-1 text-white font-semibold after:content-[''] after:absolute after:bottom-[-8px] after:left-2 after:right-2 after:h-[2px] after:bg-cyan-400">
+            Inicio
+          </button>
+<button class="px-2.5 py-1 text-slate-400 hover:text-white transition">
+            Aplicaciones
+          </button>
+<button class="px-2.5 py-1 text-slate-400 hover:text-white transition hidden sm:inline-block">
+            Entradas
+          </button>
+</nav>
+</div>
+<!-- Quick Status System Bar and Controls -->
+<div class="flex items-center space-x-2 md:space-x-3 text-slate-300">
+<!-- Search icon -->
+<button class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 text-xs text-slate-300 transition" title="Buscar">
+<i class="fa-solid fa-magnifying-glass"></i>
+</button>
+<!-- Fast Turbo icon -->
+<button class="w-8 h-8 rounded-full flex items-center justify-center bg-slate-800/80 hover:bg-slate-700 text-xs text-emerald-400 transition" title="Optimización">
+<i class="fa-solid fa-bolt"></i>
+</button>
+<!-- Memory / System Mini Pill (Desktop/Tablet) -->
+<div class="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded bg-slate-900 border border-cyan-500/30 text-[11px] font-mono text-cyan-300">
+<i class="fa-solid fa-microchip"></i>
+<span>386 MB</span>
+</div>
+<!-- Connectivity icons -->
+<div class="hidden sm:flex items-center space-x-2 text-xs text-slate-400">
+<i class="fa-solid fa-wifi text-slate-300"></i>
+<i class="fa-brands fa-bluetooth-b text-slate-400"></i>
+<i class="fa-solid fa-qrcode text-slate-400"></i>
+</div>
+<!-- User Profile Pill -->
+<div class="flex items-center space-x-1.5 bg-slate-900/90 border border-slate-700/60 rounded-full py-0.5 px-2.5 text-xs text-slate-200">
+<span class="w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] text-slate-950 font-bold">1</span>
+<span class="font-medium text-[11px] max-w-[85px] truncate">Inicio Principal</span>
+<i class="fa-solid fa-lock text-[9px] text-slate-400 ml-0.5"></i>
+</div>
+<!-- Settings & Power -->
+<button class="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-white" title="Ajustes">
+<i class="fa-solid fa-gear text-xs"></i>
+</button>
+<button class="w-7 h-7 rounded-full flex items-center justify-center text-rose-500 hover:text-rose-400" title="Apagar">
+<i class="fa-solid fa-power-off text-xs"></i>
+</button>
+<!-- Live Clock -->
+<span class="text-xs md:text-sm font-semibold tracking-wider text-slate-100 pl-1 font-mono">16:35</span>
+</div>
+</div>
+<!-- Secondary Preset Mode Switcher Rail -->
+<div class="px-4 py-1.5 bg-[#0b121c] border-t border-slate-800/40 overflow-x-auto no-scrollbar flex items-center justify-between text-[11px]">
+<div class="flex items-center space-x-2 shrink-0">
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap">Tonalix Dock</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap">Fire TV Stick</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap hidden sm:inline-block">Android TV Clásico</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap">Solo Apps Ligero</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap hidden md:inline-block">Dock Zen Minimal</button>
+<button class="px-2.5 py-0.5 rounded-full text-slate-400 hover:text-white transition whitespace-nowrap hidden lg:inline-block">Barra Lateral Pro</button>
+<!-- Active Style Tag -->
+<button class="px-3 py-0.5 rounded-full bg-cyan-400 text-slate-950 font-bold shadow-sm whitespace-nowrap">Cine Compacto</button>
+</div>
+<!-- Live Performance Diagnostics Metrics -->
+<div class="hidden xl:flex items-center space-x-3 text-[10px] text-slate-400 shrink-0 font-mono pl-4">
+<span><i class="fa-solid fa-wave-square text-emerald-400 mr-1"></i>CPU 5.9ms</span>
+<span>•</span>
+<span>Red 83ms</span>
+<span>•</span>
+<span>TV Box</span>
+<span>•</span>
+<span>1.5-2 GB RAM</span>
+<span>•</span>
+<span>55"</span>
+<span>•</span>
+<span><i class="fa-solid fa-mobile-screen-button mr-1"></i>QR APK/TV</span>
+</div>
+</div>
+</header>
+<!-- END: TopNavigationBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 px-4 py-4 md:py-6 max-w-7xl mx-auto w-full space-y-6">
+<!-- Top Featured Showcase Section -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- Hero Continuing Watch Card -->
+<section class="lg:col-span-7 xl:col-span-8 relative rounded-2xl overflow-hidden hero-card-shadow border border-slate-800 min-h-[300px] md:min-h-[360px] flex flex-col justify-end p-5 md:p-8 group" data-purpose="hero-featured-media">
+<!-- Hero Background Image with Overlay -->
+<img alt="Paisaje cinemático con cabaña de montaña" class="absolute inset-0 w-full h-full object-cover object-left-top transform group-hover:scale-105 transition-transform duration-700 ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDDSbd4ExDWNuJAsQX5NsdwAR7Z-dRwj-gePX4feRQAQNq57CJ8s-uK1xsUNvdli92_9KfOc1gk8rcovLQy_tXF7dFifh-L16o_G2qaFU6l6Ep9_qqa1D3R6wOzO_N6EdCWA94Uh-cR-WB36O9g26ZegyEFyO7j3RAzUa6HjhGQHCQ_mnS_Dbx0N7I8wRgnn1paoq3phpwc1gZeH-aOmb3zVDhOy_21pAbFobbFOe0y_BzT2BEXpHY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#060c14] via-[#060c14]/75 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-[#060c14]/90 via-[#060c14]/40 to-transparent"></div>
+<!-- Featured Media Details -->
+<div class="relative z-10 space-y-2.5 max-w-xl">
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold text-slate-300 bg-slate-900/80 border border-slate-700/60 uppercase tracking-wider backdrop-blur-sm">
+<i class="fa-solid fa-play text-[9px] text-amber-400"></i> Continuar en Plex
+          </div>
+<h2 class="text-2xl md:text-3xl lg:text-4xl font-black text-white tracking-tight drop-shadow-md">
+            Horizonte de Obsidiana
+          </h2>
+<p class="text-xs md:text-sm text-slate-300 font-medium">
+            Película <span class="mx-1.5 text-slate-500">•</span> 4K HDR <span class="mx-1.5 text-slate-500">•</span> 42 min restantes
+          </p>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3 pt-2">
+<button class="flex items-center space-x-2 bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs md:text-sm shadow-lg shadow-cyan-500/20 active:scale-95 transition-all">
+<i class="fa-solid fa-play text-xs"></i>
+<span>Reanudar</span>
+</button>
+<button class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700/90 text-slate-200 border border-slate-700/80 font-medium px-4 py-2 rounded-lg text-xs md:text-sm active:scale-95 transition-all">
+<i class="fa-solid fa-forward-step text-xs"></i>
+<span>Siguiente</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Right App Shortcuts 2x2 Grid -->
+<section class="lg:col-span-5 xl:col-span-4 grid grid-cols-2 gap-3" data-purpose="quick-launch-grid">
+<!-- App Tile: YouTube -->
+<div class="bg-gradient-to-br from-[#121c27] to-[#0c131c] hover:from-[#172535] hover:to-[#101b28] border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between aspect-[4/3] transition-all cursor-pointer group active:scale-95">
+<div class="flex items-center justify-center flex-1">
+<div class="w-14 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-red-600/30 group-hover:scale-110 transition">
+<i class="fa-brands fa-youtube text-2xl"></i>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs font-semibold text-slate-300 pt-2 border-t border-slate-800/60">
+<span>YouTube</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-slate-600 group-hover:text-cyan-400 transition"></i>
+</div>
+</div>
+<!-- App Tile: VLC Media -->
+<div class="bg-gradient-to-br from-[#121c27] to-[#0c131c] hover:from-[#172535] hover:to-[#101b28] border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between aspect-[4/3] transition-all cursor-pointer group active:scale-95">
+<div class="flex items-center justify-center flex-1">
+<div class="w-12 h-12 rounded-xl flex items-center justify-center border-2 border-orange-500/80 text-orange-400 group-hover:scale-110 transition">
+<i class="fa-solid fa-video text-xl"></i>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs font-semibold text-slate-300 pt-2 border-t border-slate-800/60">
+<span>VLC Media</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-slate-600 group-hover:text-cyan-400 transition"></i>
+</div>
+</div>
+<!-- App Tile: YouTube Music -->
+<div class="bg-gradient-to-br from-[#121c27] to-[#0c131c] hover:from-[#172535] hover:to-[#101b28] border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between aspect-[4/3] transition-all cursor-pointer group active:scale-95">
+<div class="flex items-center justify-center flex-1">
+<div class="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white shadow-md shadow-red-600/30 group-hover:scale-110 transition">
+<i class="fa-solid fa-play text-lg translate-x-0.5"></i>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs font-semibold text-slate-300 pt-2 border-t border-slate-800/60">
+<span>YouTube Music</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-slate-600 group-hover:text-cyan-400 transition"></i>
+</div>
+</div>
+<!-- App Tile: Netflix -->
+<div class="bg-gradient-to-br from-[#121c27] to-[#0c131c] hover:from-[#172535] hover:to-[#101b28] border border-slate-800/90 rounded-2xl p-4 flex flex-col justify-between aspect-[4/3] transition-all cursor-pointer group active:scale-95">
+<div class="flex items-center justify-center flex-1">
+<span class="text-3xl font-black tracking-tighter text-red-600 font-sans group-hover:scale-110 transition drop-shadow-sm">N</span>
+</div>
+<div class="flex items-center justify-between text-xs font-semibold text-slate-300 pt-2 border-t border-slate-800/60">
+<span>Netflix</span>
+<i class="fa-solid fa-chevron-right text-[10px] text-slate-600 group-hover:text-cyan-400 transition"></i>
+</div>
+</div>
+</section>
+</div>
+<!-- BEGIN: AppDrawerRow -->
+<section class="space-y-3 pt-2" data-purpose="apps-drawer-section">
+<div class="flex items-center justify-between">
+<h3 class="text-sm md:text-base font-bold text-white tracking-wide">
+          Explorar aplicaciones
+        </h3>
+<span class="text-xs text-cyan-400 font-medium cursor-pointer hover:underline">Ver todas</span>
+</div>
+<!-- Horizontal Scrolling Carousel with Focused SmartTube -->
+<div class="overflow-x-auto no-scrollbar py-2 -mx-4 px-4 flex items-center space-x-3.5">
+<!-- App 1: SmartTube (Focused / Active Item with cyan glowing outline) -->
+<div class="w-48 sm:w-56 shrink-0 group cursor-pointer">
+<div class="relative bg-gradient-to-r from-[#172333] to-[#121c2b] rounded-2xl p-4 h-24 flex items-center justify-between glow-cyan-border transition-all">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-500">
+<i class="fa-solid fa-play text-sm"></i>
+</div>
+<span class="text-sm font-bold text-white tracking-tight">SmartTube</span>
+</div>
+<!-- Three dots TV context menu -->
+<button class="text-slate-400 hover:text-white p-1" title="Opciones">
+<i class="fa-solid fa-ellipsis-vertical text-xs"></i>
+</button>
+</div>
+<p class="text-[11px] font-medium text-cyan-300 mt-1.5 pl-1">SmartTube</p>
+</div>
+<!-- App 2: Prime Video -->
+<div class="w-48 sm:w-56 shrink-0 group cursor-pointer">
+<div class="bg-gradient-to-r from-[#0d2134] to-[#0c1825] hover:border-slate-600 border border-slate-800 rounded-2xl p-4 h-24 flex items-center justify-center transition-all">
+<div class="text-center">
+<span class="text-cyan-400 font-black text-sm tracking-tighter">prime</span>
+<span class="text-white font-bold text-sm tracking-tight ml-1">video</span>
+<div class="w-10 h-1 border-b-2 border-cyan-400 rounded-full mx-auto -mt-0.5"></div>
+</div>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mt-1.5 pl-1 group-hover:text-white">Prime Video</p>
+</div>
+<!-- App 3: ViX -->
+<div class="w-48 sm:w-56 shrink-0 group cursor-pointer">
+<div class="bg-gradient-to-r from-[#1c1a16] to-[#12141a] hover:border-slate-600 border border-slate-800 rounded-2xl p-4 h-24 flex items-center justify-center transition-all">
+<div class="bg-orange-600 text-white font-black px-3.5 py-1 rounded-lg text-sm tracking-wider uppercase">
+              VIX
+            </div>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mt-1.5 pl-1 group-hover:text-white">ViX</p>
+</div>
+<!-- App 4: Claro Video -->
+<div class="w-48 sm:w-56 shrink-0 group cursor-pointer">
+<div class="bg-gradient-to-r from-[#1c1214] to-[#14121a] hover:border-slate-600 border border-slate-800 rounded-2xl p-4 h-24 flex items-center justify-center transition-all">
+<div class="flex items-center space-x-1 font-bold text-sm">
+<span class="text-red-500 font-black">Claro</span>
+<span class="text-slate-100">video</span>
+</div>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mt-1.5 pl-1 group-hover:text-white">Claro Video</p>
+</div>
+<!-- App 5: TV Azteca -->
+<div class="w-48 sm:w-56 shrink-0 group cursor-pointer">
+<div class="bg-gradient-to-r from-[#171424] to-[#10141f] hover:border-slate-600 border border-slate-800 rounded-2xl p-4 h-24 flex items-center justify-center transition-all">
+<div class="flex items-center space-x-2 text-indigo-300 font-bold text-xs tracking-wider">
+<i class="fa-solid fa-tv text-sm"></i>
+<span>TV Azteca</span>
+</div>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mt-1.5 pl-1 group-hover:text-white">TV Azteca</p>
+</div>
+<!-- App 6: Tubi -->
+<div class="w-48 sm:w-56 shrink-0 group cursor-pointer">
+<div class="bg-gradient-to-r from-[#1f1228] to-[#12141f] hover:border-slate-600 border border-slate-800 rounded-2xl p-4 h-24 flex items-center justify-center transition-all">
+<div class="bg-purple-600 text-white font-extrabold px-3 py-1 rounded-md text-xs tracking-wider lowercase">
+              tubi
+            </div>
+</div>
+<p class="text-[11px] font-medium text-slate-400 mt-1.5 pl-1 group-hover:text-white">Tubi</p>
+</div>
+</div>
+</section>
+<!-- END: AppDrawerRow -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: RemoteFooterStatusBar -->
+<footer class="mt-auto bg-[#05090f] border-t border-slate-800/80 px-4 py-2.5 text-[11px] text-slate-400 pb-safe">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+<!-- Remote Controller Hints -->
+<div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 font-mono text-[10px] text-slate-400">
+<span><i class="fa-solid fa-arrow-up-right-dots mr-1 text-slate-500"></i>Flechas Navegar</span>
+<span>•</span>
+<span>Enter Abrir</span>
+<span>•</span>
+<span>M Opciones de app</span>
+<span>•</span>
+<span>/ Buscar</span>
+<span>•</span>
+<span class="text-cyan-400">Sesión blindada: Inicio Principal</span>
+</div>
+<!-- Android Version Indicator -->
+<div class="flex items-center space-x-1.5 text-[11px] font-mono text-slate-400 shrink-0">
+<i class="fa-brands fa-android text-emerald-400"></i>
+<span>Android TV 11/12</span>
+</div>
+</div>
+</footer>
+<!-- END: RemoteFooterStatusBar -->
+<!-- Interactive Demo Script -->
+<script data-purpose="mobile-interaction-simulator">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Allow keyboard or touch navigation feel across app tiles
+      const cards = document.querySelectorAll('[data-purpose="apps-drawer-section"] .shrink-0 > div');
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          cards.forEach(c => c.classList.remove('glow-cyan-border'));
+          card.classList.add('glow-cyan-border');
+        });
+      });
+    });
+  </script>
+</body></html>

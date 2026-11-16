@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#080d12]" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV - Configuración</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter & Space Grotesk -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .font-mono-custom {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Hide scrollbars for TV 10-foot experience */
+    ::-webkit-scrollbar {
+      display: none;
+      width: 0px;
+      height: 0px;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .focused-card {
+      box-shadow: 0 0 0 2px #00e5ff, 0 10px 25px -5px rgba(0, 229, 255, 0.25);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.35);
+    }
+    .glow-subtle {
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-[#080d12] text-[#9da6b3] min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-[#00e5ff] selection:text-black">
+<!-- ================= TOP UNIFIED HEADER ================= -->
+<header class="w-full px-7 pt-4 pb-2.5 flex flex-col gap-3 bg-gradient-to-b from-[#090e13] via-[#090e13]/95 to-transparent shrink-0 z-30 border-b border-white/[0.04]">
+<!-- Top Bar Navigation & Status Indicators -->
+<div class="flex items-center justify-between">
+<!-- Brand & Primary Navigation -->
+<div class="flex items-center space-x-7">
+<div class="text-white font-bold text-xl tracking-tight flex items-center gap-0.5">
+<span class="tracking-tight text-white font-bold">Tonalix</span>
+<span class="text-white font-semibold ml-1.5">TV</span>
+</div>
+<nav class="flex items-center space-x-6 text-[13px] font-semibold tracking-wide ml-3">
+<a class="text-[#848f9e] hover:text-white transition py-1" href="#">Inicio</a>
+<a class="text-[#848f9e] hover:text-white transition py-1" href="#">Aplicaciones</a>
+<a class="text-[#848f9e] hover:text-white transition py-1" href="#">Entradas</a>
+<!-- Ajustes (Active Tab with Cyan Underline) -->
+<a class="text-white relative pb-1 flex flex-col items-center" href="#">
+            Ajustes
+            <span class="absolute bottom-0 w-full h-[2.5px] bg-[#00e5ff] rounded-full shadow-[0_0_8px_#00e5ff]"></span>
+</a>
+</nav>
+</div>
+<!-- Quick Action Icons & Telemetry/User Status (Faithful to Screen 3 / Image 5) -->
+<div class="flex items-center space-x-2 text-[#7f8c9b]">
+<!-- Search icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-gray-300 transition">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+<!-- Boost / Turbo icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-[#00e5ff] transition">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+</button>
+<!-- Gamepad icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-gray-400 transition">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="12" rx="6" stroke-width="2" width="20" x="2" y="6"></rect><path d="M6 12h4m-2-2v4m9-2h.01m2.99 0h.01" stroke-width="2"></path></svg>
+</button>
+<!-- Display / Inputs icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-gray-400 transition">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="12" rx="2" stroke-width="2" width="18" x="3" y="4"></rect><path d="M8 20h8m-4-4v4" stroke-linecap="round" stroke-width="2"></path></svg>
+</button>
+<!-- RAM Usage chip -->
+<div class="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#101b24] border border-[#1b2b3a] text-[11px] font-medium text-[#00e5ff] mx-0.5">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="16" rx="2" stroke-width="2" width="16" x="4" y="4"></rect><circle cx="12" cy="12" r="3" stroke-width="2"></circle><path d="M9 1v3m6-3v3m-6 16v3m6-3v3m4-13h3m-3 6h3M1 9h3m-3 6h3" stroke-linecap="round"></path></svg>
+<span class="tracking-tight font-mono-custom">386 MB</span>
+</div>
+<!-- Wi-Fi icon -->
+<button class="w-6 h-6 flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 18c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4.95-3.36l1.41 1.41C9.54 15.01 10.72 14.5 12 14.5s2.46.51 3.54 1.55l1.41-1.41C15.42 13.11 13.78 12.3 12 12.3s-3.42.81-4.95 2.34zm-3.54-3.54l1.41 1.41C6.73 10.7 9.24 9.5 12 9.5s5.27 1.2 7.08 2.98l1.41-1.41C18.42 8.98 15.37 7.5 12 7.5s-6.42 1.48-8.49 3.6z"></path></svg>
+</button>
+<!-- Bluetooth icon -->
+<button class="w-6 h-6 flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M7 7l10 10-5 5V2l5 5L7 17" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<!-- Channels / Category dots icon -->
+<button class="w-6 h-6 flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><circle cx="7" cy="7" r="2"></circle><circle cx="17" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
+</button>
+<!-- Current Profile pill with Lock icon -->
+<div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#121c27] border border-[#1b2b3b] text-gray-300 text-[11px] font-medium ml-1">
+<span class="w-3.5 h-3.5 rounded-full bg-[#00e5ff] text-[#080d12] flex items-center justify-center text-[9px] font-black">I</span>
+<span>Inicio Principal</span>
+<svg class="w-2.5 h-2.5 text-gray-400 ml-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="11" rx="2" stroke-width="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0110 0v4" stroke-linecap="round" stroke-width="2"></path></svg>
+</div>
+<!-- Settings Cog -->
+<button class="w-7 h-7 flex items-center justify-center text-[#00e5ff] hover:text-white transition">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><circle cx="12" cy="12" r="3" stroke-width="2"></circle></svg>
+</button>
+<!-- Power Off Button -->
+<button class="w-7 h-7 flex items-center justify-center text-red-500 hover:text-red-400 transition">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M18.364 5.636a9 9 0 11-12.728 0M12 2v10" stroke-linecap="round" stroke-width="2.5"></path></svg>
+</button>
+<!-- System Clock -->
+<span class="text-white text-xs font-semibold tracking-wider pl-1 font-mono-custom">10:39</span>
+</div>
+</div>
+<!-- Secondary Filter Bar & Hardware Telemetry (Exact replica from Screen 3 / Image 5) -->
+<div class="flex items-center justify-between text-xs pt-1 pb-1 border-t border-white/[0.03]">
+<!-- Layout Preset Pills -->
+<div class="flex items-center space-x-1.5 text-[11px] font-medium text-[#788596]">
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Tonalix Dock</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Fire TV Stick</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Android TV Clásico</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Solo Apps Ligero</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Dock Zen Minimal</button>
+<button class="px-3 py-1 rounded-md bg-[#00e5ff] text-[#080d12] font-bold shadow-sm shadow-cyan-500/20">Barra Lateral Pro</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Cine Compacto</button>
+</div>
+<!-- Realtime Hardware Telemetry Bar -->
+<div class="flex items-center space-x-1.5 text-[10.5px] font-medium text-[#657385] tracking-tight font-mono-custom">
+<span class="flex items-center gap-1 text-[#00e5ff]">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-[#7f8f9f]">CPU <span class="text-[#a4b4c4]">1.5ms</span></span>
+</span>
+<span class="text-[#414d5c]">·</span>
+<span>Red <span class="text-[#a4b4c4]">86ms</span></span>
+<span class="text-[#414d5c]">·</span>
+<span class="flex items-center gap-1">
+<svg class="w-2.5 h-2.5 text-[#6c7d91]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="14" rx="2" stroke-width="2" width="18" x="3" y="5"></rect></svg>
+          TV Box
+        </span>
+<span class="text-[#414d5c]">·</span>
+<span>1.5-2 GB RAM</span>
+<span class="text-[#414d5c]">·</span>
+<span>55"</span>
+<span class="text-[#414d5c]">·</span>
+<span class="flex items-center gap-0.5">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 24 24"><rect height="7" width="7" x="3" y="3"></rect><rect height="7" width="7" x="14" y="3"></rect><rect height="7" width="7" x="3" y="14"></rect><rect height="7" width="7" x="14" y="14"></rect></svg>
+          QR
+        </span>
+<span class="text-[#414d5c]">·</span>
+<span class="flex items-center gap-1">
+<svg class="w-2.5 h-2.5 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          APK / TV
+        </span>
+</div>
+</div>
+</header>
+<!-- ================= MAIN WORKSPACE: SIDEBAR + SETTINGS GRID ================= -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-[#090d12] border-r border-[#17222c] flex flex-col justify-between shrink-0 p-4">
+<div>
+<!-- Sidebar Title Header -->
+<div class="px-3 pb-3 mb-3 border-b border-[#16222c] flex items-center justify-between">
+<span class="text-[11px] font-semibold text-[#667789] tracking-wider uppercase font-display">Configuración del Sistema</span>
+<span class="text-[10px] font-mono-custom px-2 py-0.5 rounded bg-[#131d27] border border-[#1e2f3e] text-[#00e5ff] font-bold">v4.8 PRO</span>
+</div>
+<nav class="space-y-1.5">
+<!-- Item 1: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-[#121c27] transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#111a24] border border-white/5 flex items-center justify-center text-slate-400 group-hover:text-[#00e5ff] transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-[13px] font-medium text-slate-200">Red e Internet</p>
+<p class="text-[10.5px] text-[#69798b]">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]"></span>
+</button>
+<!-- Item 2: Pantalla y Video (ACTIVE Focused State) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#00e5ff]/15 to-[#00e5ff]/5 border border-[#00e5ff]/50 text-white font-medium shadow-[0_0_15px_rgba(0,229,255,0.15)] text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#00e5ff] text-[#080d12] flex items-center justify-center font-bold shadow-md shadow-cyan-500/30">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<div>
+<p class="text-[13px] font-semibold text-white">Pantalla y Video</p>
+<p class="text-[10.5px] text-[#00e5ff] font-medium">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#00e5ff] shadow-[0_0_8px_#00e5ff]"></span>
+</button>
+<!-- Item 3: Audio y Salida -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-[#121c27] transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#111a24] border border-white/5 flex items-center justify-center text-slate-400 group-hover:text-[#00e5ff] transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-[13px] font-medium text-slate-200">Audio y Salida</p>
+<p class="text-[10.5px] text-[#69798b]">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item 4: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-[#121c27] transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#111a24] border border-white/5 flex items-center justify-center text-slate-400 group-hover:text-[#00e5ff] transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-[13px] font-medium text-slate-200">Privacidad y Seguridad</p>
+<p class="text-[10.5px] text-[#69798b]">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[9.5px] font-mono-custom text-emerald-400 bg-emerald-950/60 border border-emerald-800/80 px-1.5 py-0.5 rounded font-bold">ON</span>
+</button>
+<!-- Item 5: Modo Rendimiento -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-[#121c27] transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#111a24] border border-white/5 flex items-center justify-center text-slate-400 group-hover:text-[#00e5ff] transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-[13px] font-medium text-slate-200">Modo Rendimiento</p>
+<p class="text-[10.5px] text-[#69798b]">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item 6: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-[#121c27] transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-[#111a24] border border-white/5 flex items-center justify-center text-slate-400 group-hover:text-[#00e5ff] transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-[13px] font-medium text-slate-200">Acerca de</p>
+<p class="text-[10.5px] text-[#69798b]">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3.5 rounded-xl bg-[#0e1620] border border-[#1b2b3a] text-xs space-y-2">
+<div class="flex items-center justify-between text-slate-200 font-medium">
+<span class="font-display text-[12px] tracking-wide">Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-[#00e5ff] shadow-[0_0_6px_#00e5ff]"></span>
+</div>
+<p class="text-[10.5px] leading-relaxed text-[#738396]">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1.5 border-t border-[#1a2837] text-[10px] font-mono-custom text-[#7f8f9f]">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 bg-gradient-to-b from-[#080d12] via-[#0c1219] to-[#0e151f]"><div class="flex flex-col w-full text-on-surface">
+<!-- Top Command & Status Deck -->
+<section class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">Ajustes</span>
+<span class="text-outline-variant font-label-sm">/</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary-container font-semibold">Privacidad y Seguridad</span>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-on-background tracking-tight">Escudo de Privacidad, DNS Seguro y AdBlock</h1>
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary-container shadow-[0_0_8px_#09e7a9]"></span>
+</span>
+<span class="font-label-sm text-label-sm text-secondary-container font-semibold tracking-wide">Filtro Antitrack Activo • Modo Blindado</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+        Intercepción de telemetría de fabricante a nivel de kernel, resolución cifrada DoH/DoT y bloqueo perimetral de anuncios en IPTV y reproductores OTT.
+      </p>
+</div>
+<!-- Actions for Remote & Pointer -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-transform hover:scale-105 active:scale-95 shadow-md">
+<span class="material-symbols-outlined text-base">sync</span>
+<span>Actualizar Listas</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-container text-on-primary font-label-lg text-label-lg font-bold shadow-[0_0_20px_rgba(0,229,255,0.4)] transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+<span>Aplicar Reglas</span>
+</button>
+</div>
+</section>
+<!-- Main Grid: Configuration Workspace + Realtime Telemetry Sentinel -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- LEFT: Settings Stack (8 cols) -->
+<div class="xl:col-span-8 space-y-6">
+<!-- Module A: Encrypted DNS Providers -->
+<section class="p-6 rounded-2xl bg-surface-container-low shadow-xl space-y-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-container shadow-inner">
+<span class="material-symbols-outlined text-2xl">dns</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-background">Servidor DNS Cifrado &amp; Prevención de Rastreo</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Protocolos DNS-over-HTTPS (DoH) y DNS-over-TLS (DoT) con enrutamiento Anycast</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider px-2.5 py-1 rounded bg-surface-container text-primary font-mono font-bold">RFC 8484 / 7858</span>
+</div>
+<!-- 4-Card Selector (10-Foot D-Pad Target) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+<!-- Option 1: AdGuard (ACTIVE / Focused) -->
+<div class="relative p-4 rounded-xl bg-surface-container-high shadow-lg scale-[1.02] cursor-pointer transition-all">
+<div class="absolute -inset-[1.5px] rounded-xl bg-gradient-to-r from-primary-container to-secondary-container opacity-90 blur-[1px] -z-10"></div>
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-background font-bold">AdGuard DNS</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary-container font-label-sm text-[10px] font-bold">RECOMENDADO</span>
+</div>
+<p class="font-body-sm text-body-sm text-primary font-medium">Bloqueo Total • Filtro Antitrack Activo</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">Neutraliza telemetría OEM, rastreadores smart y banners en aplicaciones.</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+</div>
+<div class="mt-3 pt-2.5 flex items-center justify-between text-on-surface-variant font-label-sm text-[11px]">
+<span class="font-mono">dns.adguard-dns.com</span>
+<span class="text-secondary-fixed-dim font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span> 4.2ms Anycast
+              </span>
+</div>
+</div>
+<!-- Option 2: NextDNS -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group shadow-sm">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-on-background">NextDNS Personalizado</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Perfil cloud de analítica granular</p>
+<p class="font-body-sm text-[11px] text-outline">Control padre, blacklist granular y logs de auditoría remota.</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-outline group-hover:text-primary">
+<span class="material-symbols-outlined text-sm">tune</span>
+</div>
+</div>
+<div class="mt-3 pt-2.5 flex items-center justify-between text-on-surface-variant font-label-sm text-[11px]">
+<span class="font-mono text-outline">ID: #tlx-sec-992</span>
+<span class="text-outline">6.8ms</span>
+</div>
+</div>
+<!-- Option 3: Pi-Hole Local -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group shadow-sm">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-on-background">Pi-Hole Local / LAN</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Servidor dedicado en red hogareña</p>
+<p class="font-body-sm text-[11px] text-outline">Sincronización directa vía protocolo FTLDNS local.</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-outline group-hover:text-primary">
+<span class="material-symbols-outlined text-sm">lan</span>
+</div>
+</div>
+<div class="mt-3 pt-2.5 flex items-center justify-between text-on-surface-variant font-label-sm text-[11px]">
+<span class="font-mono text-outline">192.168.1.100:5335</span>
+<span class="text-outline">0.9ms (LAN)</span>
+</div>
+</div>
+<!-- Option 4: Cloudflare Family -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group shadow-sm">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-on-background">Cloudflare Familia</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">1.1.1.3 • Anti-Malware &amp; Adult</p>
+<p class="font-body-sm text-[11px] text-outline">Filtrado perimetral contra sitios maliciosos y phishing.</p>
+</div>
+<div class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-outline group-hover:text-primary">
+<span class="material-symbols-outlined text-sm">security</span>
+</div>
+</div>
+<div class="mt-3 pt-2.5 flex items-center justify-between text-on-surface-variant font-label-sm text-[11px]">
+<span class="font-mono text-outline">security.cloudflare-dns.com</span>
+<span class="text-outline">5.1ms</span>
+</div>
+</div>
+</div>
+<!-- Strict Encryption & Port Redirection Toggles -->
+<div class="space-y-3 pt-2">
+<!-- Toggle 1 -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">DNS Cifrado DoH / DoT Estricto</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/10 text-primary font-mono text-[10px] font-bold">PORT 853 / 443</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Bloquea intercepción SNI por parte de operadores de internet e inspección profunda de paquetes (DPI).</p>
+</div>
+<!-- Switch (ON) -->
+<button class="w-14 h-7 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-inner shrink-0">
+<span class="w-6 h-6 rounded-full bg-on-background shadow-md"></span>
+</button>
+</div>
+<!-- Toggle 2 -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">Bloqueo Forzado de Puerto 53 UDP (DNS Hijack Trap)</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/10 text-secondary-container font-mono text-[10px] font-bold">NAT FORWARD</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Captura peticiones DNS hardcoded en apps de streaming (ej. 8.8.8.8) y las redirige obligatoriamente al resolver seguro.</p>
+</div>
+<!-- Switch (ON) -->
+<button class="w-14 h-7 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-inner shrink-0">
+<span class="w-6 h-6 rounded-full bg-on-background shadow-md"></span>
+</button>
+</div>
+</div>
+</section>
+<!-- Module B: OEM Isolation & Ad-Stripping -->
+<section class="p-6 rounded-2xl bg-surface-container-low shadow-xl space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-secondary-container shadow-inner">
+<span class="material-symbols-outlined text-2xl">sensors_off</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-background">Aislamiento de Telemetría OEM y Smart TV</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Protección del sistema operativo contra recolección de metadatos de visualización</p>
+</div>
+</div>
+<div class="space-y-2.5 pt-1">
+<!-- Row 1 -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5">
+<span class="font-headline-sm text-headline-sm text-on-surface">Bloqueo de Telemetría Android / Fabricante</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Impide el envío silencioso de patrones de uso, ACR (Reconocimiento Automático de Contenido) y reportes de hardware.</p>
+</div>
+<button class="w-14 h-7 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-inner shrink-0">
+<span class="w-6 h-6 rounded-full bg-on-background shadow-md"></span>
+</button>
+</div>
+<!-- Row 2 -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5">
+<span class="font-headline-sm text-headline-sm text-on-surface">Filtro de Anuncios en SmartTube y Reproductores Web</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Inyección en tiempo real de reglas SponsorBlock, omisión de segmentos promocionales y supresión de anuncios pre-roll.</p>
+</div>
+<button class="w-14 h-7 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-inner shrink-0">
+<span class="w-6 h-6 rounded-full bg-on-background shadow-md"></span>
+</button>
+</div>
+<!-- Row 3 -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5">
+<span class="font-headline-sm text-headline-sm text-on-surface">Aislamiento de Red para Apps Sideloaded / APKs</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ejecuta aplicaciones instaladas manualmente en un sandbox sin acceso a dispositivos de la red local ni almacenamiento compartido.</p>
+</div>
+<button class="w-14 h-7 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-inner shrink-0">
+<span class="w-6 h-6 rounded-full bg-on-background shadow-md"></span>
+</button>
+</div>
+</div>
+</section>
+<!-- Module C: Local Vault & Protection -->
+<section class="p-6 rounded-2xl bg-surface-container-low shadow-xl space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-2xl">lock</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-background">Protección de Cuentas y Cifrado Local</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Almacenamiento seguro en hardware con clave TPM/TEE</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">Bóveda AES-256 GCM</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/10 text-secondary-container font-mono text-[10px] font-bold">ACTIVA</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Cifra credenciales Plex, listas m3u privadas y tokens de streaming.</p>
+</div>
+<span class="material-symbols-outlined text-secondary-container text-2xl" style="font-variation-settings: 'FILL' 1;">enhanced_encryption</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">PIN de Configuración</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-outline font-mono text-[10px] font-bold">4 DÍGITOS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Protege contra modificaciones no autorizadas en el sistema.</p>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest font-label-sm text-label-sm text-on-surface transition-colors">
+              Configurar
+            </button>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT: Live Telemetry Sentinel (4 cols) -->
+<aside class="xl:col-span-4 space-y-6">
+<!-- Telemetry Card 1: Block Stats Donut / Counter -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-xl space-y-5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Métricas de Filtrado Hoy</span>
+<span class="flex items-center gap-1 font-mono text-[11px] text-secondary-container">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container animate-pulse"></span> EN VIVO
+          </span>
+</div>
+<!-- Big Highlight Stat -->
+<div class="flex items-baseline justify-between gap-2">
+<div>
+<div class="font-display-hero text-[44px] leading-tight font-extrabold text-primary-container tracking-tight">48,219</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Consultas Bloqueadas</p>
+</div>
+<div class="text-right">
+<span class="font-headline-md text-headline-md font-bold text-secondary-container">24.8%</span>
+<p class="font-body-sm text-[11px] text-outline">Del tráfico total</p>
+</div>
+</div>
+<!-- Inline Visual Chart: Traffic Analysis Mini-Bar -->
+<div class="space-y-1.5">
+<div class="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden flex">
+<div class="h-full bg-primary-container shadow-[0_0_12px_#00e5ff]" style="width: 24.8%;"></div>
+<div class="h-full bg-secondary-container" style="width: 4.2%;"></div>
+<div class="h-full bg-surface-variant opacity-60" style="width: 71%;"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] font-mono text-outline">
+<span class="flex items-center gap-1 text-primary-container">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span> Bloqueado
+            </span>
+<span class="flex items-center gap-1 text-secondary-container">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span> Telemetría OEM
+            </span>
+<span>Permitido (71%)</span>
+</div>
+</div>
+<!-- Top Blocked Trackers List -->
+<div class="space-y-2 pt-2">
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider block font-bold">Rastreadores Más Bloqueados</span>
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<p class="font-mono text-xs font-semibold text-on-surface">metrics.data.oem.tv</p>
+<p class="text-[10px] text-outline">Logs de pantalla &amp; Telemetría Smart TV</p>
+</div>
+<span class="font-mono text-xs font-bold text-primary-container px-2 py-0.5 rounded bg-primary-container/10">18,410</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<p class="font-mono text-xs font-semibold text-on-surface">telemetry.analytics.google</p>
+<p class="text-[10px] text-outline">Analítica de aplicaciones y servicios Play</p>
+</div>
+<span class="font-mono text-xs font-bold text-primary-container px-2 py-0.5 rounded bg-primary-container/10">12,980</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<p class="font-mono text-xs font-semibold text-on-surface">ads-delivery.streaming.edge</p>
+<p class="text-[10px] text-outline">Inyección publicitaria de stream dinámico</p>
+</div>
+<span class="font-mono text-xs font-bold text-primary-container px-2 py-0.5 rounded bg-primary-container/10">9,340</span>
+</div>
+</div>
+</div>
+<!-- Telemetry Card 2: Filter Subscriptions & Latency -->
+<div class="p-6 rounded-2xl bg-surface-container-low shadow-xl space-y-4">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Estado de Listas de Bloqueo</span>
+<span class="font-mono text-[10px] text-primary">v4.8 REG-ENGINE</span>
+</div>
+<div class="space-y-3 font-mono text-xs">
+<div class="flex items-center justify-between pb-2 border-b border-surface-variant/30">
+<div class="space-y-0.5">
+<span class="text-on-surface font-semibold">OISD Big + AdGuard Base</span>
+<p class="text-[10px] text-outline">Actualizado hace 2h • Automático</p>
+</div>
+<span class="font-bold text-secondary-container">412,850 Reglas</span>
+</div>
+<div class="flex items-center justify-between pb-2 border-b border-surface-variant/30">
+<div class="space-y-0.5">
+<span class="text-on-surface font-semibold">Reglas Locales IPTV / OTT</span>
+<p class="text-[10px] text-outline">Bypasses de canales &amp; EPG seguros</p>
+</div>
+<span class="font-bold text-primary-container">14,210 Reglas</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="text-on-surface font-semibold">Latencia Resolución DNS</span>
+<p class="text-[10px] text-outline">Anycast Madrid / Cloudflare Node</p>
+</div>
+<div class="flex items-center gap-1.5 text-secondary-container font-bold">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span>4.2 ms</span>
+</div>
+</div>
+</div>
+<!-- DNS Leak Test Remote Action -->
+<button class="w-full mt-2 py-3 px-4 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-2.5 transition-all shadow-md group" id="leakTestBtn" onclick="runDnsTest()">
+<span class="material-symbols-outlined text-primary-container group-hover:rotate-45 transition-transform">verified_user</span>
+<span id="leakTestLabel">Ejecutar Test de Fugas DNS</span>
+</button>
+</div>
+</aside>
+</div>
+</div>
+<script>
+  function runDnsTest() {
+    const label = document.getElementById('leakTestLabel');
+    if (!label) return;
+    label.innerText = 'Auditando puertos y fugas WebRTC...';
+    setTimeout(() => {
+      label.innerText = 'Test Completo: 0 Fugas Detectadas ✓';
+      setTimeout(() => {
+        label.innerText = 'Ejecutar Test de Fugas DNS';
+      }, 4000);
+    }, 1200);
+  }
+</script></main>
+</div>
+<!-- ================= TV FOOTER NAVIGATION CHEAT SHEET (10-foot UI) ================= -->
+<footer class="h-11 bg-[#090d12] border-t border-[#18232e] px-7 flex items-center justify-between text-xs text-[#8090a2] shrink-0 font-mono-custom">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-[#131d27] border border-[#223344] text-slate-200 text-[10px] font-bold">▲▼◀▶</span>
+<span class="text-[#96a6b8]">Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-[#131d27] border border-[#223344] text-[#00e5ff] text-[10px] font-bold">OK</span>
+<span class="text-[#96a6b8]">Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-[#131d27] border border-[#223344] text-slate-200 text-[10px] font-bold">Atrás</span>
+<span class="text-[#96a6b8]">Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-[#131d27] border border-[#223344] text-slate-200 text-[10px] font-bold">Menú</span>
+<span class="text-[#96a6b8]">Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-[#00e5ff] font-semibold">Android TV 11/12</span>
+<span class="text-[#3b4c5e]">•</span>
+<span class="text-emerald-400 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+        DNS Anti-Ad: Conectado
+      </span>
+</div>
+</footer>
+</body></html>

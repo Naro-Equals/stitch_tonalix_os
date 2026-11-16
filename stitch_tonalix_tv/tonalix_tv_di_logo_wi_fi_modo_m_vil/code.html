@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Tonalix TV - Diálogo Wi-Fi Móvil</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            tonalix: {
+              obsidian: '#090f15',
+              surface: '#0e1720',
+              card: '#121d27',
+              border: '#1f2d3d',
+              cyan: '#00e5ff',
+              cyanGlow: 'rgba(0, 229, 255, 0.25)',
+              danger: '#ff5252',
+              dangerGlow: 'rgba(255, 82, 82, 0.22)',
+              success: '#00e676',
+              muted: '#7e92a2',
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+            mono: ['"SF Mono"', 'Menlo', 'Consolas', 'Courier New', 'monospace'],
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 16px -2px rgba(0, 229, 255, 0.4)',
+            'glow-danger': '0 0 16px -1px rgba(255, 82, 82, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: CustomStyles -->
+<style data-purpose="glow-and-scrollbar">
+    /* Custom subtle scrollbar styling */
+    ::-webkit-scrollbar {
+      height: 4px;
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090f15;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2d3d;
+      border-radius: 4px;
+    }
+    
+    /* Radial lighting effect on top viewport */
+    .top-ambient-glow {
+      background: radial-gradient(circle at 50% -20%, rgba(0, 229, 255, 0.12) 0%, transparent 65%);
+    }
+
+    /* Pulse animation for active handshake spinner */
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin-slow {
+      animation: spinSlow 1.8s linear infinite;
+    }
+  </style>
+<!-- END: CustomStyles -->
+</head>
+<body class="bg-tonalix-obsidian text-slate-100 font-sans antialiased min-h-screen flex justify-center selection:bg-tonalix-cyan selection:text-black">
+<!-- Mobile Viewport Container (Typical ~390px iPhone/Mobile Frame) -->
+<div class="w-full max-w-[414px] min-h-screen bg-tonalix-obsidian flex flex-col justify-between border-x border-tonalix-border/40 relative shadow-2xl pb-6 top-ambient-glow">
+<!-- BEGIN: MobileStatusBar -->
+<!-- Native OS Status Bar with Tonalix System Telemetry -->
+<header class="w-full pt-3 px-5 pb-2 flex justify-between items-center text-[11px] font-mono tracking-tight text-tonalix-muted border-b border-tonalix-border/30 bg-tonalix-obsidian/80 backdrop-blur-md sticky top-0 z-50" data-purpose="status-bar">
+<!-- Left side: Time and Status -->
+<div class="flex items-center space-x-2">
+<span class="font-bold text-slate-200 text-xs tracking-normal">17:42</span>
+<span class="inline-block w-1 h-1 rounded-full bg-tonalix-muted/60"></span>
+<span class="text-[10px] text-tonalix-cyan font-medium">CPU 6.2%</span>
+</div>
+<!-- Right side: Session Security, Network & Battery -->
+<div class="flex items-center space-x-2.5">
+<div class="flex items-center space-x-1 px-1.5 py-0.5 rounded bg-tonalix-surface border border-tonalix-border/60 text-[10px] text-tonalix-cyan">
+<!-- Shield icon -->
+<svg class="w-3 h-3 text-tonalix-cyan" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zm0 2.056a9.957 9.957 0 006.12 2.302A10.01 10.01 0 0116 7c0 4.195-2.617 7.785-6 9.224C6.617 14.785 4 11.195 4 7c0-.236.012-.47.034-.7.014-.145.034-.288.06-.43A9.958 9.958 0 0010 4z" fill-rule="evenodd"></path>
+</svg>
+<span class="font-sans font-semibold tracking-wide">Blindada</span>
+</div>
+<!-- Wi-Fi 6 Icon -->
+<div class="flex items-center space-x-0.5">
+<svg class="w-3.5 h-3.5 text-tonalix-cyan" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A17.95 17.95 0 0012 4zm0 4c3.42 0 6.55 1.34 8.87 3.52L12 19.39 3.13 11.52C5.45 9.34 8.58 8 12 8z"></path>
+</svg>
+<span class="text-[9px] font-bold text-slate-300">6</span>
+</div>
+<!-- Battery Indicator -->
+<div class="w-5 h-2.5 border border-slate-400 rounded-sm p-[1px] flex items-center">
+<div class="h-full w-3/4 bg-slate-200 rounded-[1px]"></div>
+</div>
+</div>
+</header>
+<!-- END: MobileStatusBar -->
+<!-- Scrollable Main Content -->
+<main class="flex-1 px-4 py-3 space-y-4 overflow-y-auto">
+<!-- BEGIN: NavigationHeader -->
+<!-- App Header Bar -->
+<section class="flex items-center justify-between pt-1" data-purpose="app-header">
+<div class="flex items-center space-x-3">
+<button aria-label="Volver" class="w-9 h-9 rounded-lg bg-tonalix-surface border border-tonalix-border flex items-center justify-center text-slate-300 active:scale-95 transition-transform">
+<svg class="w-4 h-4 text-tonalix-cyan" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<div>
+<h1 class="text-base font-bold text-white tracking-tight flex items-center gap-1.5">
+              Conexión Wi-Fi
+            </h1>
+<p class="text-[11px] text-tonalix-muted font-mono">ID: SEC_AUTH_SAE_V3</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] font-mono font-semibold bg-tonalix-cyan/10 border border-tonalix-cyan/30 text-tonalix-cyan">
+          WPA3 SAE
+        </span>
+</section>
+<!-- END: NavigationHeader -->
+<!-- BEGIN: NetworkCard -->
+<!-- Selected Target Access Point Details -->
+<section class="p-3.5 rounded-xl bg-gradient-to-b from-tonalix-card to-tonalix-surface border border-tonalix-border relative overflow-hidden" data-purpose="network-info-card">
+<div class="flex items-start justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-lg bg-tonalix-obsidian border border-tonalix-cyan/30 flex items-center justify-center relative text-tonalix-cyan">
+<svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 4c3.42 0 6.55 1.34 8.87 3.52L12 19.39 3.13 11.52A13.93 13.93 0 0112 8z"></path>
+</svg>
+<!-- Lock Badge -->
+<span class="absolute -bottom-1 -right-1 w-4 h-4 bg-tonalix-card border border-tonalix-cyan rounded-full flex items-center justify-center">
+<svg class="w-2.5 h-2.5 text-tonalix-cyan" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" fill-rule="evenodd"></path>
+</svg>
+</span>
+</div>
+<div>
+<h2 class="text-sm font-semibold text-white tracking-tight flex items-center gap-1.5">
+                FibraOptica_Tonalix_Gaming
+              </h2>
+<p class="text-xs text-tonalix-muted">Red 6 GHz • Wi-Fi 6E</p>
+</div>
+</div>
+<!-- Signal Quality Badge -->
+<div class="text-right">
+<span class="text-[11px] font-mono font-medium text-tonalix-success flex items-center justify-end gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tonalix-success inline-block"></span>
+              -59 dBm
+            </span>
+<span class="text-[10px] text-tonalix-muted block">Excelente</span>
+</div>
+</div>
+</section>
+<!-- END: NetworkCard -->
+<!-- BEGIN: PasswordInputSection -->
+<!-- Password Field with Error Highlight & Action Buttons -->
+<section class="space-y-1.5" data-purpose="password-entry">
+<label class="text-xs font-medium text-slate-300 flex justify-between items-center" for="wifi-password-input">
+<span>Clave de seguridad de red</span>
+<span class="text-[11px] font-mono text-tonalix-danger">Verificación fallida</span>
+</label>
+<!-- Input Box with Neon Error Outer Glow -->
+<div class="relative rounded-xl border border-tonalix-danger bg-tonalix-surface/90 shadow-glow-danger transition-all duration-200">
+<input class="w-full bg-transparent text-sm font-mono text-white py-3 pl-3.5 pr-20 rounded-xl focus:outline-none focus:ring-1 focus:ring-tonalix-cyan border-none" id="wifi-password-input" spellcheck="false" type="text" value="Tonalix2025!#Pro"/>
+<!-- Inside Actions: Visible Toggle & Clear -->
+<div class="absolute inset-y-0 right-1.5 flex items-center space-x-1">
+<!-- Visibility Button -->
+<button class="p-1.5 text-tonalix-cyan hover:text-white transition-colors rounded-md active:bg-tonalix-card flex items-center gap-1 text-[11px] font-mono" title="Ocultar/Mostrar" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Clear Button -->
+<button class="p-1.5 text-slate-400 hover:text-white transition-colors rounded-md active:bg-tonalix-card" title="Borrar texto" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+</section>
+<!-- END: PasswordInputSection -->
+<!-- BEGIN: WPA3ErrorDiagnosticsBanner -->
+<!-- Diagnostic & Retry Handshake Card -->
+<section class="rounded-xl border border-tonalix-danger/40 bg-tonalix-surface p-3.5 space-y-3" data-purpose="diagnostic-error-banner">
+<div class="flex items-start space-x-2.5">
+<div class="p-1 rounded-md bg-tonalix-danger/10 text-tonalix-danger shrink-0 mt-0.5">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<p class="text-xs text-slate-200 font-medium leading-snug">
+              Contraseña incorrecta o fallo en handshake WPA3 (SAE)
+            </p>
+<p class="text-[11px] text-tonalix-muted font-mono mt-0.5">
+              Error code: SAE_AUTH_ERR_COMMIT_REJECT (0x2A)
+            </p>
+</div>
+</div>
+<!-- Handshake Action Retry Button with Attempt Pill -->
+<button class="w-full py-2.5 px-3 rounded-lg bg-tonalix-card hover:bg-tonalix-card/80 border border-tonalix-cyan/40 text-tonalix-cyan flex items-center justify-between text-xs font-medium transition-all active:scale-[0.99] shadow-sm" data-purpose="retry-handshake-button" type="button">
+<div class="flex items-center space-x-2">
+<!-- Spinner Icon -->
+<svg class="w-3.5 h-3.5 spin-slow text-tonalix-cyan" fill="none" viewbox="0 0 24 24">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" fill="currentColor"></path>
+</svg>
+<span class="font-semibold tracking-wide">Reintentar handshake WPA3...</span>
+</div>
+<span class="text-[10px] font-mono px-2 py-0.5 rounded bg-tonalix-obsidian border border-tonalix-cyan/30 text-slate-200 font-semibold">
+            Intento 1/3
+          </span>
+</button>
+</section>
+<!-- END: WPA3ErrorDiagnosticsBanner -->
+<!-- BEGIN: AdaptiveHandshakeTimeoutSection -->
+<!-- Handshake Timeout & RSSI Calibration Settings -->
+<section class="space-y-2.5 pt-1" data-purpose="timeout-configuration">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="text-xs font-semibold text-white tracking-wide">Tiempo de espera Handshake</h3>
+<p class="text-[11px] text-tonalix-muted font-mono">PARAM_AUTH_TIMEOUT</p>
+</div>
+<span class="text-[10px] font-mono text-tonalix-cyan bg-tonalix-cyan/10 border border-tonalix-cyan/30 px-2 py-0.5 rounded-full font-semibold">
+            Auto Adaptativo
+          </span>
+</div>
+<!-- Dynamic RSSI Status Banner -->
+<div class="p-2.5 rounded-lg bg-tonalix-surface border border-tonalix-border/70 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tonalix-cyan opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tonalix-cyan"></span>
+</span>
+<span class="text-[11px] font-mono text-slate-300">Modo Auto-Adaptativo RSSI</span>
+</div>
+<span class="text-xs font-mono font-bold text-tonalix-cyan">(-59 dBm → 8s)</span>
+</div>
+<!-- Timeout Horizontal Chips Carousel -->
+<div class="flex items-center space-x-2 overflow-x-auto pb-1" data-purpose="timeout-chips">
+<!-- Active Chip -->
+<button class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-tonalix-cyan text-tonalix-obsidian border border-tonalix-cyan shadow-glow-cyan active:scale-95 transition-all" type="button">
+            Auto (8s) ✓
+          </button>
+<!-- Secondary Option Chips -->
+<button class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 bg-tonalix-card border border-tonalix-border hover:border-tonalix-cyan/50 active:scale-95 transition-all" type="button">
+            5s
+          </button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 bg-tonalix-card border border-tonalix-border hover:border-tonalix-cyan/50 active:scale-95 transition-all" type="button">
+            10s
+          </button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 bg-tonalix-card border border-tonalix-border hover:border-tonalix-cyan/50 active:scale-95 transition-all" type="button">
+            15s Mesh
+          </button>
+<button class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 bg-tonalix-card border border-tonalix-border hover:border-tonalix-cyan/50 active:scale-95 transition-all" type="button">
+            30s
+          </button>
+</div>
+</section>
+<!-- END: AdaptiveHandshakeTimeoutSection -->
+<!-- BEGIN: ConnectionPreferences -->
+<!-- Mobile Toggles for Network Connection -->
+<section class="space-y-2 pt-2 border-t border-tonalix-border/40" data-purpose="toggle-options">
+<!-- Toggle 1: Remember Network -->
+<div class="flex items-center justify-between py-1">
+<div>
+<p class="text-xs font-medium text-slate-200">Recordar esta red</p>
+<p class="text-[11px] text-tonalix-muted">Guardar credenciales en el llavero seguro</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-tonalix-card peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border border-tonalix-border peer-checked:bg-tonalix-cyan"></div>
+</label>
+</div>
+<!-- Toggle 2: Auto Reconnect -->
+<div class="flex items-center justify-between py-1">
+<div>
+<p class="text-xs font-medium text-slate-200">Reconectar automáticamente</p>
+<p class="text-[11px] text-tonalix-muted">Priorizar frente a redes 5 GHz / 2.4 GHz</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-tonalix-card peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all border border-tonalix-border peer-checked:bg-tonalix-cyan"></div>
+</label>
+</div>
+</section>
+<!-- END: ConnectionPreferences -->
+</main>
+<!-- BEGIN: MobileActionFooter -->
+<!-- Sticky Mobile Touch Actions with Cyan CTA & Technical Info -->
+<footer class="px-4 pt-3 pb-2 bg-tonalix-obsidian/95 border-t border-tonalix-border/50 space-y-2 backdrop-blur-md" data-purpose="action-buttons-footer">
+<div class="flex items-center space-x-3">
+<!-- Cancel Action -->
+<button class="w-1/3 py-3 rounded-xl bg-tonalix-surface border border-tonalix-border text-slate-300 font-semibold text-xs active:bg-tonalix-card transition-all" data-purpose="cancel-btn" type="button">
+          Cancelar
+        </button>
+<!-- Connect Action (Primary Neon Cyan) -->
+<button class="w-2/3 py-3 rounded-xl bg-tonalix-cyan hover:bg-cyan-300 text-tonalix-obsidian font-bold text-xs shadow-glow-cyan flex items-center justify-center space-x-2 active:scale-[0.98] transition-all" data-purpose="connect-btn" type="button">
+<svg class="w-4 h-4 text-tonalix-obsidian" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="tracking-wide">Conectar a la red</span>
+</button>
+</div>
+<!-- Footer Telemetry Micro-Bar -->
+<div class="pt-1 flex items-center justify-between text-[10px] font-mono text-tonalix-muted">
+<span>Tonalix OS 12.4 Pro</span>
+<span class="flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-tonalix-success inline-block"></span>
+          DNS Anti-Ad: Conectado
+        </span>
+</div>
+<!-- iOS Home Indicator Bar Simulation -->
+<div class="pt-1 pb-0.5 flex justify-center">
+<div class="w-32 h-1 bg-slate-600/50 rounded-full"></div>
+</div>
+</footer>
+<!-- END: MobileActionFooter -->
+</div>
+<!-- BEGIN: InteractiveHandlers -->
+<script data-purpose="event-handlers">
+    // Simple tactile feedback simulation for timeout chips
+    document.addEventListener('DOMContentLoaded', () => {
+      const chips = document.querySelectorAll('[data-purpose="timeout-chips"] button');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => {
+            c.className = "shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 bg-tonalix-card border border-tonalix-border hover:border-tonalix-cyan/50 active:scale-95 transition-all";
+            if (c.textContent.includes('✓')) {
+              c.textContent = c.textContent.replace(' ✓', '');
+            }
+          });
+          chip.className = "shrink-0 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-tonalix-cyan text-tonalix-obsidian border border-tonalix-cyan shadow-glow-cyan active:scale-95 transition-all";
+          chip.textContent = chip.textContent + ' ✓';
+        });
+      });
+    });
+  </script>
+<!-- END: InteractiveHandlers -->
+</body></html>

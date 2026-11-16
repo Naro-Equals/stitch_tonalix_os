@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV - Configuración</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            tonal: {
+              base: '#060B0E',
+              sidebar: '#0A1116',
+              surface: '#0F1A21',
+              card: '#14222B',
+              cardHover: '#1B2C37',
+              border: '#1E323F',
+              cyan: '#00D1E6',
+              cyanHover: '#33E0F1',
+              cyanDim: 'rgba(0, 209, 230, 0.12)',
+              slateText: '#94A3B8',
+              muted: '#64748B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 17, 22, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e323f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00D1E6;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-tonal-base text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-tonal-cyan selection:text-black">
+<!-- TOP HEADER / STATUS BAR -->
+<header class="h-14 border-b border-tonal-border/60 bg-tonal-sidebar/95 backdrop-blur px-5 flex items-center justify-between z-20 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<!-- TonalixTV Logo Mark -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-600 to-tonal-cyan flex items-center justify-center shadow-lg shadow-cyan-950/40">
+<svg class="w-4 h-4 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div class="flex items-baseline font-bold tracking-tight text-lg">
+<span class="text-white">Tonalix</span><span class="text-tonal-cyan">TV</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Inicio</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Aplicaciones</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Entradas</a>
+<a class="px-3 py-1.5 rounded-lg text-tonal-cyan bg-tonal-cyanDim font-semibold border border-tonal-cyan/30" href="#">Ajustes</a>
+</nav>
+</div>
+<!-- Quick Telemetry & Status Badges -->
+<div class="flex items-center gap-3">
+<!-- Live Metrics Pill -->
+<div class="hidden lg:flex items-center gap-3 px-3 py-1 rounded-full bg-tonal-surface border border-tonal-border text-xs font-mono text-tonal-slateText">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          CPU <span class="text-white font-semibold">6.2%</span>
+</span>
+<span class="text-slate-600">|</span>
+<span>Red <span class="text-white font-semibold">12ms</span></span>
+<span class="text-slate-600">|</span>
+<span>RAM <span class="text-tonal-cyan font-semibold">1.8 / 3 GB</span></span>
+</div>
+<!-- Quick Session Badge -->
+<div class="flex items-center gap-2 pl-2">
+<span class="text-xs bg-cyan-950/70 border border-tonal-cyan/40 text-tonal-cyan font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Sesión Blindada</span>
+</span>
+<div class="text-xs font-mono text-slate-400 font-bold bg-tonal-card px-2.5 py-1 rounded-md border border-tonal-border">
+          17:42
+        </div>
+</div>
+</div>
+</header>
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-tonal-sidebar border-r border-tonal-border/70 flex flex-col justify-between shrink-0 p-4">
+<div>
+<div class="px-3 pb-3 mb-2 border-b border-tonal-border/50 flex items-center justify-between">
+<span class="text-xs font-semibold text-tonal-muted tracking-wider uppercase">Configuración del Sistema</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-tonal-border text-slate-300">v4.8 PRO</span>
+</div>
+<nav class="space-y-1">
+<!-- Item: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Red e Internet</p>
+<p class="text-[11px] text-tonal-muted">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+</button>
+<!-- Item: Pantalla y Video (Active) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-semibold text-tonal-cyan">Pantalla y Video</p>
+<p class="text-[11px] text-cyan-200/60">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="text-tonal-cyan font-bold text-xs">●</span>
+</button>
+<!-- Item: Audio y Sonido -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Audio y Salida</p>
+<p class="text-[11px] text-tonal-muted">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Privacidad y Seguridad</p>
+<p class="text-[11px] text-tonal-muted">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-1.5 py-0.5 rounded">ON</span>
+</button>
+<!-- Item: Rendimiento y Caché -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Modo Rendimiento</p>
+<p class="text-[11px] text-tonal-muted">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Acerca de</p>
+<p class="text-[11px] text-tonal-muted">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3 rounded-xl bg-tonal-surface border border-tonal-border text-xs text-slate-400 space-y-2">
+<div class="flex items-center justify-between text-slate-300 font-medium">
+<span>Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-tonal-cyan"></span>
+</div>
+<p class="text-[11px] leading-relaxed text-tonal-muted">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1 border-t border-tonal-border/50 text-[10px] font-mono text-slate-400">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-gradient-to-b from-tonal-base to-tonal-surface"><div class="flex flex-col w-full">
+<!-- TELEMETRY & 10-FOOT TOP STATUS / TAB BAR -->
+<section class="flex flex-col gap-4 mb-8">
+<div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-surface-container-lowest p-4 rounded-xl shadow-md">
+<!-- Launcher Mode Label & Fast Tabs -->
+<div class="flex items-center gap-6 overflow-x-auto">
+<div class="flex items-center gap-2 shrink-0 pr-4">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container shadow-sm animate-pulse"></span>
+<span class="font-headline-sm text-headline-sm uppercase tracking-wider text-primary">Tonalix OS 10-Foot</span>
+</div>
+<nav aria-label="Navegación 10-Foot" class="flex items-center gap-1.5 shrink-0">
+<button class="px-3 py-1.5 rounded text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface hover:bg-surface-container transition-colors">INICIO</button>
+<button class="px-3 py-1.5 rounded bg-primary-container text-on-primary font-label-lg text-label-lg shadow-lg shadow-primary-container/20 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-background"></span>
+            APLICACIONES
+          </button>
+<button class="px-3 py-1.5 rounded text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface hover:bg-surface-container transition-colors">JUEGOS &amp; EMULADORES</button>
+<button class="px-3 py-1.5 rounded text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface hover:bg-surface-container transition-colors">ALMACENAMIENTO &amp; RAM</button>
+<button class="px-3 py-1.5 rounded text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface hover:bg-surface-container transition-colors">ENTRADAS</button>
+<button class="px-3 py-1.5 rounded text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface hover:bg-surface-container transition-colors">AJUSTES</button>
+</nav>
+</div>
+<!-- Real-Time Hardware Telemetry Strip -->
+<div class="flex items-center gap-3 font-label-sm text-label-sm self-start xl:self-auto shrink-0">
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded text-on-surface">
+<span class="text-secondary font-medium">CPU</span>
+<span class="text-on-background">24%</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-background">43°C</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded text-on-surface">
+<span class="text-primary-container font-medium">RAM</span>
+<span class="text-on-background">3.4 / 8 GB</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded text-secondary">
+<span class="material-symbols-outlined text-[15px]">wifi</span>
+<span class="text-on-background">Wi-Fi 6E (6 GHz)</span>
+</div>
+<div class="flex items-center gap-1.5 bg-secondary-container/20 text-secondary px-2.5 py-1.5 rounded font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span>BLINDADA</span>
+</div>
+<div class="bg-surface-container px-2.5 py-1.5 rounded text-primary font-headline-sm text-headline-sm">
+          21:48
+        </div>
+</div>
+</div>
+<!-- Sub-header & Action Ribbon -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pt-2">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Cajón de Aplicaciones &amp; Sideload Studio</h1>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-label-sm">PRO ENGINE</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+          Gestión centralizada de APKs, actualizaciones silenciosas P2P/GitHub y perfiles de rendimiento por aplicación.
+        </p>
+</div>
+<!-- Quick Remote Colored Trigger Actions -->
+<div class="flex flex-wrap items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded bg-primary-container text-on-primary font-label-lg text-label-lg shadow-lg shadow-primary-container/25 hover:brightness-110 transition-all">
+<span class="w-3 h-3 rounded-full bg-primary-container shrink-0 shadow-sm ring-2 ring-primary-container"></span>
+<span class="font-bold">[AZUL]</span>
+<span>Instalar APK / Enlace Rápido</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded bg-surface-container-high text-on-surface font-label-lg text-label-lg hover:bg-error-container hover:text-on-error-container transition-all">
+<span class="w-3 h-3 rounded-full bg-error shrink-0"></span>
+<span class="font-bold">[ROJO]</span>
+<span>Purgar Datos</span>
+</button>
+</div>
+</div>
+<!-- Search Bar & Repo Telemetry Status Banner -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mt-1">
+<div class="lg:col-span-7 relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-primary text-xl pointer-events-none">search</span>
+<input class="w-full bg-surface-container-lowest text-on-surface placeholder:text-outline-variant pl-11 pr-24 py-3 rounded font-body-md text-body-md focus:outline-none focus:bg-surface-container-low transition-all" placeholder="Buscar entre 42 aplicaciones instaladas... [LUPA]" type="text"/>
+<span class="absolute right-3 font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-1 rounded">D-PAD BUSCAR</span>
+</div>
+<div class="lg:col-span-5 flex items-center justify-between px-4 py-3 rounded bg-surface-container-low text-on-surface font-body-sm text-body-sm">
+<div class="flex items-center gap-2.5 truncate">
+<span class="w-2 h-2 rounded-full bg-secondary shrink-0"></span>
+<span class="truncate text-on-surface-variant">Repo F-Droid &amp; GitHub Releases: <strong class="text-secondary">Activo</strong></span>
+</div>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary font-label-sm text-label-sm shrink-0">3 Actualizaciones</span>
+</div>
+</div>
+</section>
+<!-- 1. CATEGORY D-PAD FILTER CHIPS (HORIZONTAL SCROLL) -->
+<section aria-label="Filtros por Categoría" class="mb-8">
+<div class="flex items-center gap-2.5 overflow-x-auto pb-1">
+<button class="px-4 py-2 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-md shadow-primary-container/20 shrink-0 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">grid_view</span>
+<span>Todas (42)</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg shrink-0 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">live_tv</span>
+<span>Streaming &amp; Cine (14)</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg shrink-0 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">satellite_alt</span>
+<span>IPTV &amp; En Directo (6)</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg shrink-0 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">sports_esports</span>
+<span>Juegos &amp; Emulación (8)</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg shrink-0 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Herramientas &amp; Sistema (9)</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg shrink-0 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">folder_zip</span>
+<span>Sideloaded / Sin GPlay (12)</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high font-label-lg text-label-lg shrink-0 flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span>Ocultas / Blindadas (3)</span>
+</button>
+</div>
+</section>
+<!-- 2. SILENT UPDATES & 3RD-PARTY REPO SYNC CENTER -->
+<section aria-label="Centro de Actualizaciones" class="mb-10">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-lg flex flex-col gap-5">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-2xl">sync</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Centro de Actualizaciones Silenciosas (Sideload Pro)</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sin reinicio de interfaz ni interrupción de códecs de video activos</p>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded bg-surface-container text-primary font-label-lg text-label-lg hover:bg-surface-container-high transition-colors self-start md:self-auto">
+<span class="material-symbols-outlined text-[18px]">download_for_offline</span>
+<span>Actualizar Todas Silenciosamente</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Item 1: SmartTube Update Available -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">SmartTube 4K</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary font-label-sm text-label-sm">v22.42 Disp.</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+              Changelog: SponsorBlock v5.2 nativo, decodificación AV1 sin caídas de frames en streams de 120Hz.
+            </p>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-secondary">Verificado GitHub SHA-256</span>
+<button class="px-3 py-1.5 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold hover:brightness-110">
+              [OK] Actualizar 2º Plano
+            </button>
+</div>
+</div>
+<!-- Item 2: Kodi Stable Verified -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Kodi OS Matrix</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-label-sm text-label-sm">v21.2 Estable</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Compilación verificada. Passthrough multi-canal DTS-HD Master Audio y HDR10+ activo sin parches pendientes.
+            </p>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-secondary">check_circle</span>
+<span>Al día (Firmado)</span>
+</span>
+<button class="px-3 py-1.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface">
+              Examinar
+            </button>
+</div>
+</div>
+<!-- Item 3: Stremio Ready to Replace -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col justify-between gap-3">
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Stremio TV</span>
+<span class="px-2 py-0.5 rounded bg-primary-container/20 text-primary font-label-sm text-label-sm">v1.6.11 Descargado</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Paquete APK cacheado en SSD local (84 MB). Listo para hot-swap sin borrar configuraciones de addons P2P.
+            </p>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-label-sm text-primary">Listo para sustituir</span>
+<button class="px-3 py-1.5 rounded bg-primary text-on-primary font-label-sm text-label-sm font-semibold hover:brightness-110">
+              Aplicar Ahora
+            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. INSTALLED APPS GRID (10-FOOT UI, 5 COLUMNS, ACTIVE FOCUSED CARD) -->
+<section aria-label="Aplicaciones Instaladas" class="mb-12">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Aplicaciones del Sistema &amp; Sideload</h2>
+<span class="text-outline-variant font-body-sm text-body-sm">• D-Pad Grid 10-Foot</span>
+</div>
+<div class="hidden sm:flex items-center gap-3 font-label-sm text-label-sm text-on-surface-variant">
+<span>Ordenar por: <strong class="text-primary">Frecuencia de Uso</strong></span>
+<span>•</span>
+<span>Vista: <strong>Detallada</strong></span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+<!-- CARD 1: FOCUSED (D-PAD FOCUS STATE WITH INTENSE GLOW & BADGE) -->
+<article class="group relative rounded-xl bg-surface-container-high p-4 flex flex-col justify-between shadow-2xl scale-[1.03] transition-transform duration-200" style="box-shadow: 0 0 28px -2px rgba(0, 229, 255, 0.45);">
+<div class="absolute -top-3 left-3 bg-primary-container text-on-primary font-label-sm text-label-sm px-2.5 py-0.5 rounded shadow-md flex items-center gap-1.5 font-bold">
+<span class="w-2 h-2 rounded-full bg-background animate-ping"></span>
+<span>D-PAD EN FOCO</span>
+</div>
+<div>
+<!-- Thumbnail Scrim Preview -->
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Futuristic glowing red and dark holographic interface of an ultra modern open source video streaming application on an obsidian black surface with sharp neon cyan backlighting in 4K resolution." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALNKNWfsquxPJpLxVRTcWdnA-8IthzVBmEJ_60iY8Cv_2lmltex2b6Z_R0yIcFfrUONAk4l_YXSEyzi_KA8I6jqlRBZPiOGGnVmP3rS8d0YmMXtGCTMr-Khsgi67u-gBhmCIdBjrtdwdNSxmLbMJrZv_kQXlQzldGMmZibPkRPhgUh81xlkejjzgZOAw-OWW0QFPn-EV71DfdUFTyJKnfRHle1ns2H4ECtpNj23dM')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-high via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-primary">v22.41</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-label-sm text-label-sm">Sideload</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">SmartTube Beta 4K</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">RAM: 240 MB • Sin anuncios activos</p>
+<div class="flex flex-wrap gap-1.5 mb-3">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">4K 60FPS</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm">HDR10+</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">AV1</span>
+</div>
+</div>
+<!-- Focused Card Tooltip HUD -->
+<div class="pt-3 bg-surface-container-lowest/70 -mx-4 -mb-4 p-3 rounded-b-xl flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">touch_app</span>
+<span>[REPRODUCIR] Abrir directo</span>
+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span>[M] Opciones avanzadas</span>
+</span>
+</div>
+</article>
+<!-- CARD 2: Plex Media Server & Player -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="High quality media server dashboard preview showing colorful cinema posters on dark background with translucent plex amber overlays in home theater setting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-DTWWcVpWrDjIe3A5TNz_2UP5amcWWaXyPxzVFYmh8xk7xe79MhT10KEjHu6PcbrKJReMmVqUX-aTL-sJvFrKXY_cLVMT2KVLvBgVNf5QiP_ecNCf4-bOu2Jjkxnp8leAjWw5LAD5eULiUOxzZFOqErPll2HrJkADmu6yufCwiGEDIAAy2CBfWRiD6k8Q0XWDSYEyAlVmQ5IR2kvWxrX01ODzp3Rc4jCc10jUWCg')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v10.14</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Oficial</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Plex Media Server</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Transcodificación HW activa NVDEC</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">DirectPlay</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm">Dolby Vision</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>LAN 10 Gbps</span>
+<span class="text-secondary font-medium">En línea</span>
+</div>
+</article>
+<!-- CARD 3: VLC Media Player -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Minimalist orange and dark metallic cone emblem of VLC media player with audio soundwaves visualization rendered on glass slate." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuABTCJmG4hXfpXf7l5wsp33281hQ-QE7ftVzFZbnir4BwaIRagD842g7EC9fpSijvUNS3RDqFzk3FhT0OdpRVFR3KqfzQrEu1KlwNt4x_ObOMkTQdS3Kg92Cb1n-ND19CWon1VdGqAo8pTj5cDFZX-bgHiJzv5Zu2sSDNZZGDt6r4XoTv68PpRgpHcbs1z-hIw5gDXfJ5WgNbjtHdbqS8ruAixOGzC5cCVQlDpiaOk')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v3.5.4</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm">FOSS</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">VLC Media Player</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Passthrough DTS-HD / TrueHD eARC</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">MKV / ISO</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Subtítulos P2P</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Cero Telemetría</span>
+<span class="text-primary font-medium">Listo</span>
+</div>
+</article>
+<!-- CARD 4: RetroArch Plus -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Retro gaming console user interface screen showing vintage pixel art games running inside sleek CRT scanline shaders on dark modern panel." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAahik0vv5FXFfaW2gssxvEKuz_ps2y1aT65-aC-LThvnby0TcJLZyJ1z5rAmn6veN35vicn-1C5qfDsgNwCm27ZAUjUMqkB5VZrR9hT0sV-8Q8uX-wgtXxG2gNxUWnraC5W1iNkiBx013oZ8lmaHGLyoL2Oi1A9ZbtBxMYg8ADlDSQIv3hJFjPvEVN_8hCezYGpJZt20Qk_zvSwluLkOvtC7IA94t7SUsMlKk7cno')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">Core 1.19</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-primary-container/20 text-primary font-label-sm text-label-sm">Vulkan</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">RetroArch Plus</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Vulkan FastPath • Latencia &lt;4ms</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">PSX / N64</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm">RunAhead x2</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>2 Mandos Conectados</span>
+<span class="text-secondary font-medium">60 FPS</span>
+</div>
+</article>
+<!-- CARD 5: Tivimate IPTV Companion -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Sleek electronic programming guide EPG screen of an ultra high end modern IPTV application displaying live television channels with blue cyan glowing markers." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDorTQqNOaotdiBe76TNcmCY22tzcDJN0NjDID5JXWll8Ms8-XX3o_sDoBVDkNMgD97k0pH8xYcnZ0z5e7SLOc8KjcfhIj8W29tq0p-0-d6mCA_7NjDEPtwNWOB1j74B5YH8fpBTtbEa-EV0LBeam6Xd0suaiqU9BQqsB4O3gKOEfrtO3iv6X7MFEedlN8ndrBNYRqoeXtPg5v5diiRHXjTSS0UICg-NLYbqjmIjLY')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v4.7.0</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-secondary-container/20 text-secondary font-label-sm text-label-sm">Premium</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Tivimate Companion</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Lista M3U / Xtream 1 Gbps Sync</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">EPG 7 Días</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Catchup</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Buffer: 2000ms</span>
+<span class="text-secondary font-medium">Estable</span>
+</div>
+</article>
+<!-- CARD 6: Moonlight Game Streaming -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="High tech gaming PC streaming HUD display with moonlight beam aesthetics and low latency graph curves on dark glassy canvas." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC1qzCUTdzy6MdhIU4Vpebi4GyNPYhf8NbhDu6O0cwLORElDXWMWd9sfC-tdj4M2ajOKlA0Nz89LAONL53_LkoJzbpP4mO0lvzpl4rTd8c35hU1fmNo-cafZUqHFQPj8LK6Bpkc3zJX-KU9imEwp4SunNQnKNPHEiuzojlhVVI5GpGWl9TlH_B3XFMLk9XHOT-MXshgWng6SQ1xDIp7XVvW4mOuKiOZ7p8V4XAvJY4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v11.0</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-primary-container/20 text-primary font-label-sm text-label-sm">120 Hz</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Moonlight Stream</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">120 FPS Ultra Low-Lag Sunshine Host</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">HEVC HDR</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">80 Mbps</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>PC Rig: RTX 4090</span>
+<span class="text-primary font-medium">1.2ms</span>
+</div>
+</article>
+<!-- CARD 7: Firefox TV Privado -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Stylized web browser interface on a big screen TV with privacy shields, adblock telemetry meters, and dark glass panels in deep blues." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAaWT1VkAtn0SSfpLQbesMcC_7u2erJpZEJEp4L7Uob1BoSLZxcN8pQSueK-zlJBbgiT3oLtbfNP1rG_fGCPzAJdR8n_PyHs9hTey2y4IYDcNoR2CwjIHB6SmABQfEyqsWt-a8-7-6xPeHy2-HeNci-jCv2USN5W_oaYorbod7Ak4kFLoLRclN4dzZ7QXVeZCS_C_aDIBsaTKpbPLz-e25V9rtTM_dfeHDQ29cKLUE')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v124</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm">uBlock</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Firefox TV Privado</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">uBlock Origin + Canvas Blocker</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">No-Script</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm">DoH Cloudflare</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Trackers: 0</span>
+<span class="text-secondary font-medium">Seguro</span>
+</div>
+</article>
+<!-- CARD 8: X-plore File Manager -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Dual pane file manager on dark screen showing networked drives, NAS storage paths, and fast folder hierarchies in tech cyber cyan style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAGlnU-N5UZOxVDtu_jtHUs3rMqjsBwazFSiuvUBT-e3O4ZfjNWXvrjCwMo0Z88luAMB2ugmVPwAcMLHCE_l7kJQm99ARAL9d2O_yq_bVuAa2SGqVx1_uXhA8zj2vgzz4Jyq5hK2B2yzKG9_kc82X3y-GiDKkBjObsaD3QEN60AIYueGfT7vUZqcqIbUGogenAs38wwJVjdIcTpc56obhMrZD5oafnY8W_rY9r8cJA')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v4.38</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Dual-Pane</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">X-plore Manager</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Acceso a NAS LAN / Samba / SFTP</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">SMBv3</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">WebDAV</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Synology NAS</span>
+<span class="text-primary font-medium">Montado</span>
+</div>
+</article>
+<!-- CARD 9: Magisk TV Manager -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Abstract cybernetic green mask and root terminal icon glowing inside a secure fortress vault on deep black carbon fiber texture." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC6wMCNJXe6w8WQYmwdYSd4gxE3NTyldm1elJnD8w6W37hI3qxnQj8gyUdFimlIRyhqPhUZkP1tJFFR5R0o_T1a59U6CehBvpkd8hIkgJdSl4HTkgwydsAFw0mKMliksOP10AIPHyJIEUCzZcs-xCBQCLhMl3N_jx3vJvC9czRdUILa9YWM5-KI6RZzN7zAcrKiZWV65_itWNrzr2sbDduQ0nyLTuRJhvdUcNAyxgU')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v27.0</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-secondary-container/20 text-secondary font-label-sm text-label-sm">Root</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Magisk TV Manager</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Zygisk activo • Play Integrity Fix</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary font-label-sm text-label-sm">DenyList OK</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">KernelSU</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>SafetyNet Pass</span>
+<span class="text-secondary font-medium">Bypass</span>
+</div>
+</article>
+<!-- CARD 10: Downloader by AFTVnews -->
+<article class="rounded-xl bg-surface-container-low p-4 flex flex-col justify-between hover:bg-surface-container transition-all">
+<div>
+<div class="relative w-full h-28 rounded-lg overflow-hidden bg-surface-container-lowest mb-3">
+<div class="w-full h-full bg-cover bg-center" data-alt="Fast file download screen showing shortcode numeric dial pad and direct APK sideload download bars in orange and cyan on dark TV UI." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDO5Wjso2XCgxF8qZQS76aX_kxgFa9eiReKYa4mh_PkjpltDJvqLtAq6mOkkm_VKuCDc5BhKtKAI81_0nXxJdfalwC9en_W9Tszle4ek6AsybTyPyXjJTdwipajBMXL_XoWXMfREzZWmAbGkZa-slHyXGkJpj_41qnhkP9yo3RFfWsVvxE7eugCWVVaV093_GPdgDfcijr0Gn3RYoUKdw6KPedlCCXz9tQ95MxViy4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
+<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-label-sm text-label-sm text-on-surface">v1.4.4</span>
+<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">Herramienta</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1">Downloader (AFTV)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-2">Navegador &amp; Códigos rápidos de APK</p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Shortcodes</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">Auto-Install</span>
+</div>
+</div>
+<div class="mt-4 pt-2 flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Descargas: 1.2 GB</span>
+<span class="text-primary font-medium">Listo</span>
+</div>
+</article>
+</div>
+</section>
+<!-- 4. BOTTOM PANEL: ACCELERATION PROFILES & PER-APP PERMISSION STUDIO -->
+<section aria-label="Perfiles de Rendimiento y Permisos" class="mb-10">
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-lg space-y-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Perfiles de Aceleración y Control de Permisos por App</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ajustes directos a nivel de kernel Android sin modificar APKs originales</p>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-secondary-container/10 px-3 py-1 rounded self-start sm:self-auto">
+          MOTOR SANDBOX V3 ACTIVO
+        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Feature 1: Telemetry Blocker with Live SVG Metric Ring -->
+<div class="p-5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-4">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-headline-sm text-headline-sm text-on-surface">Bloqueador de Telemetría</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Amazon Fire OS &amp; Google Analytics Hook</p>
+</div>
+<span class="material-symbols-outlined text-secondary text-2xl">security</span>
+</div>
+<!-- Inline telemetry graph & metric -->
+<div class="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-lg">
+<svg class="w-14 h-14 shrink-0 -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-surface-container" cx="18" cy="18" fill="none" r="14" stroke-width="3"></circle>
+<circle class="stroke-secondary" cx="18" cy="18" fill="none" r="14" stroke-dasharray="88" stroke-dashoffset="14" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<div class="space-y-0.5">
+<div class="font-headline-sm text-headline-sm text-secondary">28 Peticiones</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Bloqueadas en las últimas 2 horas</div>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>DNS Resolver: AdGuard TV Core</span>
+<span class="text-secondary font-medium">100% Filtrado</span>
+</div>
+</div>
+<!-- Feature 2: Auto Frame Rate (AFR) Optimizer -->
+<div class="p-5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-4">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-headline-sm text-headline-sm text-on-surface">Frecuencia de Refresco (AFR)</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sincronización HDMI sin parpadeo negro</p>
+</div>
+<span class="material-symbols-outlined text-primary text-2xl">speed</span>
+</div>
+<!-- Mode selector pill chips -->
+<div class="space-y-2 bg-surface-container-lowest p-3 rounded-lg">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface">Cine / Series (Kodi, SmartTube)</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-container text-on-primary font-bold">24.000 Hz</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface">Interfaz &amp; Emulación (RetroArch)</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container text-primary font-bold">120 Hz Variable</span>
+</div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Jitter Corrección: Habilitado</span>
+<span class="text-primary font-medium">Automático</span>
+</div>
+</div>
+<!-- Feature 3: Fast MicroSD/USB Backup -->
+<div class="p-5 rounded-xl bg-surface-container-low flex flex-col justify-between gap-4">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="font-headline-sm text-headline-sm text-on-surface">Copia de Seguridad Rápida</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Exportación de cuentas y perfiles APK</p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-2xl">save</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-lg flex items-center justify-between">
+<div>
+<div class="font-label-lg text-label-lg text-on-surface font-semibold">Pendrive Kingston 64GB</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Archivo cifrado: backup_tonalix.tnx</div>
+</div>
+<button class="px-3 py-1.5 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-bold shadow-md hover:brightness-110">
+              Exportar
+            </button>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Algoritmo: AES-256 GCM</span>
+<span class="text-secondary font-medium">Verificado</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. 10-FOOT REMOTE NAVIGATION CHEAT SHEET & SYSTEM STATUS BAR -->
+<footer class="mt-4 p-4 rounded-xl bg-surface-container-lowest flex flex-col md:flex-row md:items-center justify-between gap-4">
+<!-- Remote Buttons Legend -->
+<div class="flex flex-wrap items-center gap-3 font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-bold">[OK]</span>
+<span class="text-on-surface">Abrir App</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-bold">[M]</span>
+<span>Opciones &amp; Permisos</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-bold">[AZUL]</span>
+<span>Instalar APK</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-bold">[ROJO]</span>
+<span>Desinstalar</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-bold">[AMARILLO]</span>
+<span>Buscar Updates</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-bold">[ATRÁS]</span>
+<span>Volver al Launcher</span>
+</div>
+</div>
+<!-- Operating System Signature Stamp -->
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant self-start md:self-auto shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-on-surface">Tonalix TV OS v4.8 PRO</span>
+<span class="text-outline-variant">•</span>
+<span>Package Installer V3 Sandboxed</span>
+<span class="text-outline-variant">•</span>
+<span class="text-secondary font-medium">Bypass OEM</span>
+</div>
+</footer>
+</div>
+<script>
+  // Simple interactive Remote D-Pad simulator for cards
+  document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('article');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        cards.forEach(c => {
+          c.classList.remove('scale-[1.03]');
+          c.style.boxShadow = '';
+          const badge = c.querySelector('.animate-ping');
+          if (badge && badge.parentElement) {
+            badge.parentElement.style.display = 'none';
+          }
+        });
+        card.classList.add('scale-[1.03]');
+        card.style.boxShadow = '0 0 28px -2px rgba(0, 229, 255, 0.45)';
+        const currentBadge = card.querySelector('.animate-ping');
+        if (currentBadge && currentBadge.parentElement) {
+          currentBadge.parentElement.style.display = 'flex';
+        }
+      });
+    });
+  });
+</script></main>
+</div>
+<!-- TV FOOTER NAVIGATION CHEAT SHEET (Standard Tonalix Remote Guide) -->
+<footer class="h-10 bg-tonal-base border-t border-tonal-border/60 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0 font-mono">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">▲▼◀▶</span>
+<span>Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">OK</span>
+<span>Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Atrás</span>
+<span>Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Menú</span>
+<span>Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-tonal-cyan">Android TV 11/12</span>
+<span class="text-slate-600">•</span>
+<span class="text-emerald-400">DNS Anti-Ad: Conectado</span>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV - Configuración</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            tonal: {
+              base: '#060B0E',
+              sidebar: '#0A1116',
+              surface: '#0F1A21',
+              card: '#14222B',
+              cardHover: '#1B2C37',
+              border: '#1E323F',
+              cyan: '#00D1E6',
+              cyanHover: '#33E0F1',
+              cyanDim: 'rgba(0, 209, 230, 0.12)',
+              slateText: '#94A3B8',
+              muted: '#64748B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 17, 22, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e323f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00D1E6;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-tonal-base text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-tonal-cyan selection:text-black">
+<!-- TOP HEADER / STATUS BAR -->
+<header class="h-14 border-b border-tonal-border/60 bg-tonal-sidebar/95 backdrop-blur px-5 flex items-center justify-between z-20 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<!-- TonalixTV Logo Mark -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-600 to-tonal-cyan flex items-center justify-center shadow-lg shadow-cyan-950/40">
+<svg class="w-4 h-4 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div class="flex items-baseline font-bold tracking-tight text-lg">
+<span class="text-white">Tonalix</span><span class="text-tonal-cyan">TV</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Inicio</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Aplicaciones</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Entradas</a>
+<a class="px-3 py-1.5 rounded-lg text-tonal-cyan bg-tonal-cyanDim font-semibold border border-tonal-cyan/30" href="#">Ajustes</a>
+</nav>
+</div>
+<!-- Quick Telemetry & Status Badges -->
+<div class="flex items-center gap-3">
+<!-- Live Metrics Pill -->
+<div class="hidden lg:flex items-center gap-3 px-3 py-1 rounded-full bg-tonal-surface border border-tonal-border text-xs font-mono text-tonal-slateText">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          CPU <span class="text-white font-semibold">6.2%</span>
+</span>
+<span class="text-slate-600">|</span>
+<span>Red <span class="text-white font-semibold">12ms</span></span>
+<span class="text-slate-600">|</span>
+<span>RAM <span class="text-tonal-cyan font-semibold">1.8 / 3 GB</span></span>
+</div>
+<!-- Quick Session Badge -->
+<div class="flex items-center gap-2 pl-2">
+<span class="text-xs bg-cyan-950/70 border border-tonal-cyan/40 text-tonal-cyan font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Sesión Blindada</span>
+</span>
+<div class="text-xs font-mono text-slate-400 font-bold bg-tonal-card px-2.5 py-1 rounded-md border border-tonal-border">
+          17:42
+        </div>
+</div>
+</div>
+</header>
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-tonal-sidebar border-r border-tonal-border/70 flex flex-col justify-between shrink-0 p-4">
+<div>
+<div class="px-3 pb-3 mb-2 border-b border-tonal-border/50 flex items-center justify-between">
+<span class="text-xs font-semibold text-tonal-muted tracking-wider uppercase">Configuración del Sistema</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-tonal-border text-slate-300">v4.8 PRO</span>
+</div>
+<nav class="space-y-1">
+<!-- Item: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Red e Internet</p>
+<p class="text-[11px] text-tonal-muted">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+</button>
+<!-- Item: Pantalla y Video (Active) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-semibold text-tonal-cyan">Pantalla y Video</p>
+<p class="text-[11px] text-cyan-200/60">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="text-tonal-cyan font-bold text-xs">●</span>
+</button>
+<!-- Item: Audio y Sonido -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Audio y Salida</p>
+<p class="text-[11px] text-tonal-muted">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Privacidad y Seguridad</p>
+<p class="text-[11px] text-tonal-muted">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-1.5 py-0.5 rounded">ON</span>
+</button>
+<!-- Item: Rendimiento y Caché -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Modo Rendimiento</p>
+<p class="text-[11px] text-tonal-muted">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Acerca de</p>
+<p class="text-[11px] text-tonal-muted">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3 rounded-xl bg-tonal-surface border border-tonal-border text-xs text-slate-400 space-y-2">
+<div class="flex items-center justify-between text-slate-300 font-medium">
+<span>Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-tonal-cyan"></span>
+</div>
+<p class="text-[11px] leading-relaxed text-tonal-muted">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1 border-t border-tonal-border/50 text-[10px] font-mono text-slate-400">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-gradient-to-b from-tonal-base to-tonal-surface"><div class="flex flex-col w-full">
+<!-- BREADCRUMB & HEADER ACTION STRIP -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-none">
+<div class="space-y-1.5">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-outline tracking-widest uppercase">Ajustes</span>
+<span class="text-outline-variant font-label-sm">/</span>
+<span class="font-label-sm text-primary-container tracking-wider uppercase">Audio y Salida</span>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<h1 class="font-headline-lg text-on-background tracking-tight">Configuración de Audio y Dolby Atmos®</h1>
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container-high text-secondary">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse shadow-sm shadow-secondary"></span>
+<span class="font-label-sm tracking-wide">HDMI eARC 7.1.4 Passthrough Sincronizado</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg transition-colors flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">restart_alt</span>
+        Restablecer Valores
+      </button>
+<button class="px-5 py-2 rounded-xl bg-primary-container hover:bg-primary-fixed text-on-primary font-label-lg shadow-md shadow-primary-container/20 transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+        Aplicar Ajustes
+      </button>
+</div>
+</section>
+<!-- MAIN 2-COLUMN SETTINGS WORKSPACE (Configuration + Live Telemetry) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- LEFT & CENTER (8 COLUMNS): CONFIGURATION MODULES -->
+<div class="xl:col-span-8 space-y-6">
+<!-- MODULE 1: FORMATO DE SALIDA Y PASSTHROUGH DIGITAL -->
+<section class="p-6 rounded-2xl bg-surface-container-low shadow-sm space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">cable</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-on-background">Formato de Salida y Passthrough Digital</h2>
+<p class="font-body-sm text-on-surface-variant">Gestión de flujo de bits directos sin compresión multicanal</p>
+</div>
+</div>
+<span class="font-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-highest text-primary-fixed">BITSTREAM</span>
+</div>
+<!-- Output Selector Grid -->
+<div class="space-y-2">
+<label class="font-label-sm text-outline tracking-wider uppercase block">Modo de Salida Primario</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+<!-- HDMI eARC (Active) -->
+<button class="p-3.5 rounded-xl bg-surface-container text-left transition-all hover:bg-surface-container-high focus:outline-none ring-1 ring-primary-container/60 shadow-sm relative group" type="button">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-lg text-primary-fixed">HDMI eARC</span>
+<span class="material-symbols-outlined text-primary-container text-[18px]">radio_button_checked</span>
+</div>
+<p class="font-body-sm text-on-surface-variant leading-snug">Recomendado / Bitstream Nativo</p>
+<span class="absolute -top-1.5 -right-1.5 px-1.5 py-0.2 rounded bg-primary-container text-on-primary font-label-sm text-[9px] font-bold">ACTIVO</span>
+</button>
+<!-- Optico SPDIF -->
+<button class="p-3.5 rounded-xl bg-surface-container text-left transition-all hover:bg-surface-container-high focus:outline-none" type="button">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-lg text-on-surface">Óptico SPDIF</span>
+<span class="material-symbols-outlined text-outline text-[18px]">radio_button_unchecked</span>
+</div>
+<p class="font-body-sm text-outline leading-snug">Limitado a DTS/Dolby Digital 5.1</p>
+</button>
+<!-- PCM Estereo -->
+<button class="p-3.5 rounded-xl bg-surface-container text-left transition-all hover:bg-surface-container-high focus:outline-none" type="button">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-lg text-on-surface">PCM Estéreo</span>
+<span class="material-symbols-outlined text-outline text-[18px]">radio_button_unchecked</span>
+</div>
+<p class="font-body-sm text-outline leading-snug">2.0 Canales L/R sin compresión</p>
+</button>
+<!-- Altavoces TV -->
+<button class="p-3.5 rounded-xl bg-surface-container text-left transition-all hover:bg-surface-container-high focus:outline-none" type="button">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-label-lg text-on-surface">Altavoces TV</span>
+<span class="material-symbols-outlined text-outline text-[18px]">radio_button_unchecked</span>
+</div>
+<p class="font-body-sm text-outline leading-snug">Bocinas integradas de pantalla</p>
+</button>
+</div>
+</div>
+<!-- Toggles Section -->
+<div class="space-y-3 pt-2">
+<!-- Toggle 1: Dolby Atmos & TrueHD -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="space-y-0.5 max-w-xl">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-on-background">Dolby Atmos® &amp; TrueHD Passthrough</span>
+<span class="px-2 py-0.5 rounded font-label-sm text-[10px] bg-primary-container/20 text-primary-fixed">LOSSLESS</span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Envía el flujo de bits de audio espacial sin pérdida directamente al receptor AV o barra de sonido conectada.</p>
+</div>
+<button aria-label="Toggle Dolby Atmos Passthrough" class="w-12 h-6 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-sm" type="button">
+<span class="w-5 h-5 rounded-full bg-surface-container-lowest shadow"></span>
+</button>
+</div>
+<!-- Toggle 2: DTS:X & DTS-HD -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="space-y-0.5 max-w-xl">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-on-background">DTS:X &amp; DTS-HD Master Audio</span>
+<span class="px-2 py-0.5 rounded font-label-sm text-[10px] bg-surface-container-highest text-on-surface-variant">DSP DIRECT</span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Habilita decodificación directa y entrega bitstream de bandas sonoras DTS multicanal de cine.</p>
+</div>
+<button aria-label="Toggle DTS:X Passthrough" class="w-12 h-6 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-sm" type="button">
+<span class="w-5 h-5 rounded-full bg-surface-container-lowest shadow"></span>
+</button>
+</div>
+<!-- Toggle 3: A/V Sync -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors">
+<div class="space-y-0.5 max-w-xl">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-on-background">Alineación de Retardo de Audio (A/V Sync)</span>
+<span class="px-2 py-0.5 rounded font-label-sm text-[10px] bg-secondary/15 text-secondary">0 ms OFFSET</span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Compensación automática de retardo de sincronización labial vía metadatos dinámicos eARC.</p>
+</div>
+<button aria-label="Toggle A/V Sync" class="w-12 h-6 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors shadow-sm" type="button">
+<span class="w-5 h-5 rounded-full bg-surface-container-lowest shadow"></span>
+</button>
+</div>
+</div>
+</section>
+<!-- MODULE 2: PROCESAMIENTO ACÚSTICO Y MEJORAS DE VOZ -->
+<section class="p-6 rounded-2xl bg-surface-container-low shadow-sm space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">graphic_eq</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-on-background">Procesamiento Acústico y Mejoras de Voz</h2>
+<p class="font-body-sm text-on-surface-variant">Ajustes de inteligibilidad dinámica y calibración de volumen inteligente</p>
+</div>
+</div>
+<span class="font-label-sm px-2.5 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant">DSP ENGINE</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- VocalBoost Card -->
+<div class="p-4 rounded-xl bg-surface-container flex flex-col justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-on-background">Claridad VocalBoost™</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Aísla y resalta frecuencias medias vocales para mayor inteligibilidad sin alterar bandas orquestales o explosiones.</p>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-secondary">Nivel: Dinámico +3.5 dB</span>
+<button aria-label="Toggle VocalBoost" class="w-10 h-5 rounded-full bg-primary-container p-0.5 flex items-center justify-end transition-colors" type="button">
+<span class="w-4 h-4 rounded-full bg-surface-container-lowest shadow"></span>
+</button>
+</div>
+</div>
+<!-- Night Mode Card -->
+<div class="p-4 rounded-xl bg-surface-container flex flex-col justify-between gap-4">
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-on-background">Modo Nocturno (Night Mode)</span>
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+</div>
+<p class="font-body-sm text-on-surface-variant">Comprime picos agresivos de sonido conservando susurros audibles para sesiones a bajo volumen nocturno.</p>
+</div>
+<div class="flex items-center justify-between pt-2">
+<span class="font-label-sm text-outline">Desactivado (Rango Completo)</span>
+<button aria-label="Toggle Night Mode" class="w-10 h-5 rounded-full bg-surface-container-highest p-0.5 flex items-center justify-start transition-colors" type="button">
+<span class="w-4 h-4 rounded-full bg-on-surface shadow"></span>
+</button>
+</div>
+</div>
+</div>
+<!-- Volume Normalization Slider -->
+<div class="p-4 rounded-xl bg-surface-container space-y-3">
+<div class="flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="font-label-lg text-on-background">Volumen Inteligente / Nivelación Automática (Auto-Gain)</span>
+<p class="font-body-sm text-on-surface-variant">Estandarización de volumen entre transmisiones IPTV, películas y cambios de entrada</p>
+</div>
+<span class="font-mono text-label-sm text-primary-fixed bg-surface-container-high px-2 py-1 rounded">-14 LUFS (EBU R128)</span>
+</div>
+<!-- Scrubber Track Component -->
+<div class="space-y-1">
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden relative">
+<div class="bg-primary-container h-full rounded-full w-2/3"></div>
+</div>
+<div class="flex justify-between font-label-sm text-outline text-[10px]">
+<span>-24 LUFS (Cinematográfico)</span>
+<span class="text-primary-container font-semibold">-14 LUFS (Estándar Broadcast)</span>
+<span>-9 LUFS (Compresión Alta)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- MODULE 3: CALIBRACIÓN ACÚSTICA DE SALA -->
+<section class="p-6 rounded-2xl bg-surface-container-low shadow-sm space-y-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-on-background">Calibración Acústica de Sala (Room Tuning AI)</h2>
+<p class="font-body-sm text-on-surface-variant">Curvas de ecualización adaptativa para entornos 10-Foot UI</p>
+</div>
+</div>
+<button class="px-3.5 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary-fixed font-label-sm transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[16px]">spatial_audio_off</span>
+            Reproducir Tono de Prueba 7.1.4 Atmos
+          </button>
+</div>
+<!-- Sound Profile Selection Cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+<!-- Cine Dolby Atmos (Selected) -->
+<div class="p-3.5 rounded-xl bg-surface-container relative group cursor-pointer ring-1 ring-primary-container shadow-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary-fixed flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[18px]">movie</span>
+</div>
+<p class="font-label-lg text-primary-fixed">Cine / Atmos</p>
+<p class="font-body-sm text-on-surface-variant text-[11px] leading-tight mt-0.5">Escena 3D inmersiva</p>
+<span class="absolute top-2 right-2 text-primary-container material-symbols-outlined text-[16px]">check_circle</span>
+</div>
+<!-- Musica Hi-Fi -->
+<div class="p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest text-on-surface flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[18px]">headphones</span>
+</div>
+<p class="font-label-lg text-on-surface">Música Hi-Fi</p>
+<p class="font-body-sm text-outline text-[11px] leading-tight mt-0.5">Respuesta plana analítica</p>
+</div>
+<!-- Deportes Inmersivo -->
+<div class="p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest text-on-surface flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[18px]">stadium</span>
+</div>
+<p class="font-label-lg text-on-surface">Deportes</p>
+<p class="font-body-sm text-outline text-[11px] leading-tight mt-0.5">Gradería surround y relatos</p>
+</div>
+<!-- Juegos Baja Latencia -->
+<div class="p-3.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest text-on-surface flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-[18px]">sports_esports</span>
+</div>
+<p class="font-label-lg text-on-surface">Juegos Pro</p>
+<p class="font-body-sm text-outline text-[11px] leading-tight mt-0.5">Latencia 1.2ms ultra-baja</p>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT (4 COLUMNS): TELEMETRÍA Y DIAGNÓSTICO DE AUDIO EN VIVO -->
+<div class="xl:col-span-4 space-y-6">
+<!-- Telemetry Box -->
+<section class="p-5 rounded-2xl bg-surface-container-low shadow-sm space-y-5">
+<div class="flex items-center justify-between pb-3 border-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">monitor_heart</span>
+<h3 class="font-headline-sm text-on-background">Telemetría en Vivo</h3>
+</div>
+<span class="font-mono text-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded">REALTIME</span>
+</div>
+<!-- Visual Signal Analyzer SVG -->
+<div class="p-4 rounded-xl bg-surface-container space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-outline tracking-wider uppercase">Espectro de Frecuencia DSP</span>
+<span class="font-mono text-label-sm text-secondary font-semibold">192 kHz Lossless</span>
+</div>
+<svg class="w-full h-16 text-primary-container overflow-visible" fill="none" preserveaspectratio="none" viewbox="0 0 320 60">
+<defs>
+<lineargradient id="eqGlow" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="currentColor" stop-opacity="0.35"></stop>
+<stop offset="100%" stop-color="currentColor" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Spectrum Area -->
+<path d="M0,50 Q20,10 40,35 T80,15 T120,40 T160,5 T200,30 T240,12 T280,38 T320,20 L320,60 L0,60 Z" fill="url(#eqGlow)"></path>
+<!-- Wave Line -->
+<path d="M0,50 Q20,10 40,35 T80,15 T120,40 T160,5 T200,30 T240,12 T280,38 T320,20" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Telemetry Items List -->
+<div class="space-y-3 font-mono">
+<!-- Codec -->
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="font-label-sm text-outline font-sans block">Códec Detectado</span>
+<span class="text-on-background font-semibold text-[13px]">Dolby Atmos / TrueHD</span>
+</div>
+<span class="px-2 py-1 rounded bg-secondary-container/20 text-secondary font-label-sm text-[11px] font-bold">BITSTREAM</span>
+</div>
+<!-- Active Channels -->
+<div class="p-3 rounded-xl bg-surface-container space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-outline font-sans">Canales Activos</span>
+<span class="text-primary-fixed font-bold text-[12px]">7.1.4 Canales</span>
+</div>
+<div class="grid grid-cols-6 gap-1.5 text-center font-sans text-[10px]">
+<span class="py-1 rounded bg-surface-container-high text-on-surface">FL</span>
+<span class="py-1 rounded bg-surface-container-high text-on-surface">C</span>
+<span class="py-1 rounded bg-surface-container-high text-on-surface">FR</span>
+<span class="py-1 rounded bg-surface-container-high text-on-surface">SL</span>
+<span class="py-1 rounded bg-surface-container-high text-on-surface">SR</span>
+<span class="py-1 rounded bg-primary-container text-on-primary font-bold">LFE</span>
+<span class="py-1 rounded bg-surface-container-high text-on-surface">SBL</span>
+<span class="py-1 rounded bg-surface-container-high text-on-surface">SBR</span>
+<span class="py-1 rounded bg-primary-container/30 text-primary-fixed">TFL</span>
+<span class="py-1 rounded bg-primary-container/30 text-primary-fixed">TFR</span>
+<span class="py-1 rounded bg-primary-container/30 text-primary-fixed">TRL</span>
+<span class="py-1 rounded bg-primary-container/30 text-primary-fixed">TRR</span>
+</div>
+<p class="font-body-sm text-outline text-[11px] font-sans pt-1">Frontales, Surround, Traseros, 4 de Techo (Atmos Heights), Subwoofer Activo.</p>
+</div>
+<!-- Bitrate & Depth -->
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="font-label-sm text-outline font-sans block">Muestreo / Profundidad</span>
+<span class="text-on-background font-semibold text-[13px]">192 kHz / 24-bit Hi-Res</span>
+</div>
+<span class="text-outline font-label-sm">LOSSLESS</span>
+</div>
+<!-- DSP Latency -->
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="font-label-sm text-outline font-sans block">Latencia Decodificación DSP</span>
+<span class="text-secondary font-semibold text-[13px]">1.2 ms (Ultra-Baja)</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<!-- AV Receiver Handshake -->
+<div class="p-3 rounded-xl bg-surface-container flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="font-label-sm text-outline font-sans block">Receptor AV Conectado</span>
+<span class="text-on-background font-semibold text-[13px]">Denon AVR-X3800H</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[18px]">verified</span>
+</div>
+</div>
+<!-- Atmos Diagnostic Action -->
+<button class="w-full py-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary-fixed font-label-lg transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">volume_up</span>
+          Ejecutar Test de Canales Atmos
+        </button>
+</section>
+<!-- Hardware Audio Architecture Note -->
+<div class="p-4 rounded-xl bg-surface-container-lowest text-outline space-y-2">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">info</span>
+<span>Arquitectura eARC v2.1</span>
+</div>
+<p class="font-body-sm text-[12px] leading-relaxed">
+          El canal de retorno de audio mejorado (eARC) opera a 37 Mbps de ancho de banda máximo, permitiendo paso de Dolby Atmos sin pérdidas en contenedores TrueHD y DTS:X.
+        </p>
+</div>
+</div>
+</div>
+</div></main>
+</div>
+<!-- TV FOOTER NAVIGATION CHEAT SHEET (Standard Tonalix Remote Guide) -->
+<footer class="h-10 bg-tonal-base border-t border-tonal-border/60 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0 font-mono">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">▲▼◀▶</span>
+<span>Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">OK</span>
+<span>Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Atrás</span>
+<span>Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Menú</span>
+<span>Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-tonal-cyan">Android TV 11/12</span>
+<span class="text-slate-600">•</span>
+<span class="text-emerald-400">DNS Anti-Ad: Conectado</span>
+</div>
+</footer>
+</body></html>

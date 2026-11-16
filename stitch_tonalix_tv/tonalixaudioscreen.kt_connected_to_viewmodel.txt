@@ -1,0 +1,1568 @@
+package com.tonalix.tvlauncher.ui.settings.audio
+
+import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.collectLatest
+
+// ============================================================================
+// TONALIX TV - PALETA DE COLORES (Obsidian & Cyan Neon)
+// ============================================================================
+object TonalixColors {
+    val Background = Color(0xFF090F15)
+    val Surface = Color(0xFF0E141A)
+    val SurfaceCard = Color(0xFF131A22)
+    val SurfaceCardHover = Color(0xFF1B2430)
+    val SurfaceBorder = Color(0xFF222D39)
+    val PrimaryCyan = Color(0xFF00E5FF)
+    val PrimaryCyanGlow = Color(0x3300E5FF)
+    val AccentEmerald = Color(0xFF00F2C3)
+    val AccentEmeraldBg = Color(0x1F00F2C3)
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFF8E9BAE)
+    val TextMuted = Color(0xFF556577)
+    val WarningAmber = Color(0xFFFFB300)
+    val DangerRed = Color(0xFFFF5252)
+}
+
+enum class SettingsCategory(val title: String, val subtitle: String, val icon: ImageVector) {
+    NETWORK("Red e Internet", "Wi-Fi 6 Conectado (5GHz)", Icons.Default.Wifi),
+    DISPLAY("Pantalla y Video", "4K HDR10+ • 120Hz", Icons.Default.Tv),
+    AUDIO("Audio y Salida", "Dolby Atmos • HDMI eARC", Icons.Default.VolumeUp),
+    PRIVACY("Privacidad y Seguridad", "Bloqueo telemetría activo [ON]", Icons.Default.Security),
+    PERFORMANCE("Modo Rendimiento", "Optimización Ultra-Lite", Icons.Default.FlashOn),
+    ABOUT("Acerca de", "Android TV 12 Custom ROM", Icons.Default.Info)
+}
+
+// ============================================================================
+// TONALIX AUDIO SCREEN (STATEFUL ROUTE CONECTADA AL VIEWMODEL)
+// ============================================================================
+/**
+ * Punto de entrada oficial de Ajustes de Audio con inyección de ViewModel y
+ * recolección con ciclo de vida consciente para Android TV / Compose TV.
+ */
+@Composable
+fun TonalixAudioRoute(
+    viewModel: TonalixAudioViewModel = viewModel(),
+    onNavigateBack: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // Consumo de eventos puntuales (Side Effects / Haptic Feedback / Toasts)
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffect.collectLatest { effect ->
+            when (effect) {
+                is AudioUiEffect.ShowToast -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+                is AudioUiEffect.PlayHapticTone -> {
+                    // Integración con SoundPool / View.playSoundEffect del control remoto
+                }
+                is AudioUiEffect.NavigateBack -> {
+                    onNavigateBack()
+                }
+            }
+        }
+    }
+
+    TonalixAudioScreen(
+        uiState = uiState,
+        onAction = viewModel::onAction,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+// ============================================================================
+// TONALIX AUDIO SCREEN (STATELESS UI)
+// ============================================================================
+/**
+ * Vista pura y desacoplada (Stateless) para pruebas unitarias y previews en Android Studio.
+ */
+@Composable
+fun TonalixAudioScreen(
+    uiState: AudioUiState,
+    onAction: (AudioUserAction) -> Unit,
+    onNavigateBack: () -> Unit = {}
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TonalixColors.Background)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Barra superior fija con estado del sistema y telemetría de audio
+            TonalixTopBar(telemetry = uiState.telemetry)
+
+            // Cuerpo principal: Sidebar Izquierdo + Contenido Central + Sidebar Derecho (Telemetría DSP)
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                // 1. Sidebar de navegación lateral
+                TonalixSettingsSidebar(
+                    selectedCategory = SettingsCategory.AUDIO,
+                    onSelectCategory = { /* Navegación entre categorías */ }
+                )
+
+                // Separador vertical sutil
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 2. Contenido Central (Ajustes de Audio, eARC y Calibración Acústica)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 26.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        // Encabezado y acciones principales (Restablecer EDID y Aplicar)
+                        item {
+                            AudioHeaderSection(
+                                isApplying = uiState.isApplyingChanges,
+                                onResetEdid = { onAction(AudioUserAction.ResetAudioEdid) },
+                                onApplySettings = { onAction(AudioUserAction.ApplyAudioSettings) }
+                            )
+                        }
+
+                        // Banner de Decodificación y Handshake HDMI 2.1 eARC
+                        item {
+                            AudioDetectionBanner(telemetry = uiState.telemetry)
+                        }
+
+                        // Tarjeta 1: Modos de Salida de Audio Primaria (HDMI eARC, Óptico, BT, TV)
+                        item {
+                            AudioOutputModesSection(
+                                selectedMode = uiState.selectedOutputMode,
+                                onSelectMode = { onAction(AudioUserAction.SelectOutputMode(it)) }
+                            )
+                        }
+
+                        // Tarjeta 2: Formatos Surround, Spatial Audio Dolby Atmos & DTS:X
+                        item {
+                            SpatialAudioFormatsCard(
+                                dolbyAtmos = uiState.dolbyAtmosSpatialAudio,
+                                onToggleDolbyAtmos = { onAction(AudioUserAction.ToggleDolbyAtmos(it)) },
+                                dtsX = uiState.dtsXBitstreamPassthrough,
+                                onToggleDtsX = { onAction(AudioUserAction.ToggleDtsX(it)) },
+                                losslessTrueHd = uiState.losslessAudioTrueHd,
+                                onToggleLossless = { onAction(AudioUserAction.ToggleLosslessTrueHd(it)) },
+                                selectedHandling = uiState.selectedFormatHandling,
+                                onSelectHandling = { onAction(AudioUserAction.SelectFormatHandling(it)) }
+                            )
+                        }
+
+                        // Tarjeta 3: Calibración Acústica de Sala & Micrófono Remoto
+                        item {
+                            RoomAcousticsCalibrationCard(
+                                selectedProfile = uiState.selectedAcousticProfile,
+                                onSelectProfile = { onAction(AudioUserAction.SelectAcousticProfile(it)) },
+                                isCalibrating = uiState.isCalibratingRoom,
+                                calibrationProgress = uiState.calibrationProgress,
+                                confidence = uiState.roomCalibrationConfidence,
+                                lastTimestamp = uiState.lastCalibrationTimestamp,
+                                onStartCalibration = { onAction(AudioUserAction.StartRoomCalibration) },
+                                onCancelCalibration = { onAction(AudioUserAction.CancelRoomCalibration) }
+                            )
+                        }
+
+                        // Tarjeta 4: Mejoras Vocales, Sincronización A/V Lip-Sync y Rango Dinámico
+                        item {
+                            DialogueAndSyncCard(
+                                vocalBoost = uiState.vocalBoostEnhancer,
+                                onToggleVocalBoost = { onAction(AudioUserAction.ToggleVocalBoost(it)) },
+                                clarityLevel = uiState.dialogueClarityLevel,
+                                onSetClarity = { onAction(AudioUserAction.SetDialogueClarity(it)) },
+                                avSyncMs = uiState.avSyncDelayMs,
+                                onAdjustAvSync = { onAction(AudioUserAction.AdjustAvSyncDelay(it)) },
+                                selectedDrc = uiState.selectedDrc,
+                                onSelectDrc = { onAction(AudioUserAction.SelectDrc(it)) },
+                                subBassDb = uiState.subBassBoostDb,
+                                onSetBass = { onAction(AudioUserAction.SetBassBoost(it)) }
+                            )
+                        }
+                    }
+                }
+
+                // Separador vertical
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 3. Panel Lateral Derecho (Diagnóstico DSP en Vivo, VU Meters y Prueba Rosa)
+                TonalixAudioDiagnosticsSidebar(
+                    telemetry = uiState.telemetry,
+                    isTestingTone = uiState.isTestingPinkNoise,
+                    onPlayTone = { onAction(AudioUserAction.PlayTestTone) },
+                    onStopTone = { onAction(AudioUserAction.StopTestTone) }
+                )
+            }
+
+            // Barra inferior con guía de botones de control remoto D-PAD
+            TonalixBottomBar()
+        }
+    }
+}
+
+// ============================================================================
+// BARRA SUPERIOR (HEADER GLOBAL)
+// ============================================================================
+@Composable
+private fun TonalixTopBar(telemetry: AudioTelemetry) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(TonalixColors.PrimaryCyan),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tv,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "Tonalix",
+                color = TonalixColors.TextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+            Text(
+                text = "TV",
+                color = TonalixColors.PrimaryCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp
+            )
+
+            Spacer(modifier = Modifier.width(36.dp))
+
+            listOf("Inicio", "Aplicaciones", "Entradas", "Ajustes").forEach { tab ->
+                val isSelected = tab == "Ajustes"
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent,
+                            RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = tab,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SystemTelemetryBadge(label = "DSP", value = "Atmos 7.1.4", color = TonalixColors.AccentEmerald)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "Bitrate", value = "${telemetry.bitrateKbps} kbps", color = TonalixColors.PrimaryCyan)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "eARC Lat", value = "${telemetry.eArcLatencyMs}ms", color = TonalixColors.TextSecondary)
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF003842))
+                    .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(13.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Sesión Blindada",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "17:42",
+                color = TonalixColors.TextPrimary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+@Composable
+private fun SystemTelemetryBadge(label: String, value: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 11.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// SIDEBAR IZQUIERDO DE CONFIGURACIÓN
+// ============================================================================
+@Composable
+private fun TonalixSettingsSidebar(
+    selectedCategory: SettingsCategory,
+    onSelectCategory: (SettingsCategory) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(260.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.padding(bottom = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONFIGURACIÓN DEL SISTEMA",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "v4.8 PRO",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            SettingsCategory.values().forEach { category ->
+                val isSelected = category == selectedCategory
+                SidebarCategoryItem(
+                    category = category,
+                    isSelected = isSelected,
+                    onClick = { onSelectCategory(category) }
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
+        }
+
+        // Tarjeta Modo Mando TV
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(TonalixColors.PrimaryCyan)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Modo Mando TV",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row {
+                    Text(text = "Perfil Activo: ", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                    Text(
+                        text = "Tonalix Master",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SidebarCategoryItem(
+    category: SettingsCategory,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val bgColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyanGlow
+            isFocused -> TonalixColors.SurfaceCardHover
+            else -> Color.Transparent
+        }, label = "bg"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyan
+            isFocused -> TonalixColors.TextSecondary
+            else -> Color.Transparent
+        }, label = "border"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = category.icon,
+            contentDescription = null,
+            tint = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = category.title,
+                color = if (isSelected) TonalixColors.TextPrimary else TonalixColors.TextSecondary,
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+            Text(
+                text = category.subtitle,
+                color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.PrimaryCyan)
+            )
+        }
+    }
+}
+
+// ============================================================================
+// ENCABEZADO DE PANTALLA Y ACCIONES RÁPIDAS
+// ============================================================================
+@Composable
+private fun AudioHeaderSection(
+    isApplying: Boolean,
+    onResetEdid: () -> Unit,
+    onApplySettings: () -> Unit
+) {
+    Column {
+        // Breadcrumb
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "AJUSTES", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "AUDIO Y SALIDA", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "DOLBY ATMOS® ACTIVO",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier
+                    .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Configuración de Audio y Salida Dolby Atmos",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.VolumeUp,
+                        contentDescription = null,
+                        tint = TonalixColors.PrimaryCyan,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Enlace Físico: ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                    Text(
+                        text = "HDMI eARC Bitstream Passthrough (37 Mbps)",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                    Text(text = "7.1.4 Canales", color = TonalixColors.AccentEmerald, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                // Restablecer EDID
+                OutlinedButton(
+                    onClick = onResetEdid,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = TonalixColors.TextSecondary, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Restablecer EDID", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+
+                // Aplicar Ajustes
+                Button(
+                    onClick = onApplySettings,
+                    enabled = !isApplying,
+                    colors = ButtonDefaults.buttonColors(containerColor = TonalixColors.PrimaryCyan),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    if (isApplying) {
+                        CircularProgressIndicator(modifier = Modifier.size(14.dp), color = Color.Black, strokeWidth = 2.dp)
+                    } else {
+                        Icon(imageVector = Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(15.dp))
+                    }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (isApplying) "Aplicando..." else "Aplicar Ajustes",
+                        color = Color.Black,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// BANNER DETECCIÓN AUTOMÁTICA DE HARDWARE DE AUDIO
+// ============================================================================
+@Composable
+private fun AudioDetectionBanner(telemetry: AudioTelemetry) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(14.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "DECODIFICACIÓN DSP & MOTOR DE AUDIO HARDWARE",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
+                    )
+                }
+                Text(
+                    text = telemetry.hdmiHandshakeStatus,
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                AudioMetricPill(title = "CÓDEC DETECTADO", value = telemetry.currentCodec, detail = "Bitstream Nativo", modifier = Modifier.weight(1f))
+                AudioMetricPill(title = "TOPOLOGÍA CANALES", value = telemetry.channelsLayout, detail = "Cama 7.1 + 4 Altura", modifier = Modifier.weight(1f))
+                AudioMetricPill(title = "MUESTREO / PROFUNDIDAD", value = "${telemetry.sampleRateKhz} kHz / ${telemetry.bitDepth}-Bit", detail = "High-Res Lossless", modifier = Modifier.weight(1f))
+                AudioMetricPill(title = "ANCHO DE BANDA", value = "${telemetry.bitrateKbps} kbps", detail = "Sin Compresión", modifier = Modifier.weight(1f))
+                AudioMetricPill(title = "LATENCIA EARC", value = "${telemetry.eArcLatencyMs} ms", detail = "Lip-Sync Perfecto", modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun AudioMetricPill(title: String, value: String, detail: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(0xFF0A0F14))
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+            .padding(8.dp)
+    ) {
+        Column {
+            Text(text = title, color = TonalixColors.TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(text = value, color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Spacer(modifier = Modifier.height(1.dp))
+            Text(text = detail, color = TonalixColors.PrimaryCyan, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 1: MODOS DE SALIDA DE AUDIO PRIMARIA
+// ============================================================================
+@Composable
+private fun AudioOutputModesSection(
+    selectedMode: AudioOutputMode,
+    onSelectMode: (AudioOutputMode) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Dispositivo y Salida de Audio Principal",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Enrutamiento ALSA / PulseAudio para Home Cinema y Soundbars",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "D-PAD NAVEGABLE",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Selector 2x2 de Salidas
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                AudioOutputModeCard(
+                    mode = AudioOutputMode.HDMI_EARC,
+                    isSelected = selectedMode == AudioOutputMode.HDMI_EARC,
+                    onClick = { onSelectMode(AudioOutputMode.HDMI_EARC) },
+                    modifier = Modifier.weight(1f)
+                )
+                AudioOutputModeCard(
+                    mode = AudioOutputMode.OPTICAL_SPDIF,
+                    isSelected = selectedMode == AudioOutputMode.OPTICAL_SPDIF,
+                    onClick = { onSelectMode(AudioOutputMode.OPTICAL_SPDIF) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                AudioOutputModeCard(
+                    mode = AudioOutputMode.BLUETOOTH_LE,
+                    isSelected = selectedMode == AudioOutputMode.BLUETOOTH_LE,
+                    onClick = { onSelectMode(AudioOutputMode.BLUETOOTH_LE) },
+                    modifier = Modifier.weight(1f)
+                )
+                AudioOutputModeCard(
+                    mode = AudioOutputMode.INTERNAL_SPEAKERS,
+                    isSelected = selectedMode == AudioOutputMode.INTERNAL_SPEAKERS,
+                    onClick = { onSelectMode(AudioOutputMode.INTERNAL_SPEAKERS) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AudioOutputModeCard(
+    mode: AudioOutputMode,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val borderColor = when {
+        isSelected -> TonalixColors.PrimaryCyan
+        isFocused -> TonalixColors.TextSecondary
+        else -> TonalixColors.SurfaceBorder
+    }
+
+    val bgColor = when {
+        isSelected -> Color(0xFF00222B)
+        isFocused -> TonalixColors.SurfaceCardHover
+        else -> Color(0xFF0A0F14)
+    }
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = mode.title,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextPrimary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (isSelected) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = TonalixColors.PrimaryCyan,
+                            modifier = Modifier.size(13.dp)
+                        )
+                    }
+                }
+                Text(
+                    text = mode.tag,
+                    color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color(0xFF0E141A), RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = mode.subtitle,
+                color = TonalixColors.TextSecondary,
+                fontSize = 10.sp,
+                lineHeight = 13.sp
+            )
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 2: FORMATOS SURROUND & SPATIAL AUDIO (DOLBY ATMOS & DTS:X)
+// ============================================================================
+@Composable
+private fun SpatialAudioFormatsCard(
+    dolbyAtmos: Boolean,
+    onToggleDolbyAtmos: (Boolean) -> Unit,
+    dtsX: Boolean,
+    onToggleDtsX: (Boolean) -> Unit,
+    losslessTrueHd: Boolean,
+    onToggleLossless: (Boolean) -> Unit,
+    selectedHandling: AudioFormatHandling,
+    onSelectHandling: (AudioFormatHandling) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Formatos Envolventes y Audio Espacial",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Transmisión bitstream pura sin remuestreo",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "PASSTHROUGH DIRECTO",
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Toggle 1: Dolby Atmos
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Dolby Atmos® Spatial Audio Passthrough", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Objetos 3D",
+                            color = TonalixColors.PrimaryCyan,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(3.dp)).padding(horizontal = 4.dp, vertical = 1.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Habilita metadatos de altura y posicionamiento cinemático en barras de sonido y AVR eARC.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = dolbyAtmos,
+                    onCheckedChange = onToggleDolbyAtmos,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Toggle 2: DTS:X y DTS-HD Master Audio
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "DTS:X® & DTS-HD Master Audio Passthrough", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Bitstream L2",
+                            color = TonalixColors.TextMuted,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.background(Color(0xFF0A0F14), RoundedCornerShape(3.dp)).padding(horizontal = 4.dp, vertical = 1.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Envía pistas DTS sin comprimir directamente para decodificación externa sin pérdida acústica.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = dtsX,
+                    onCheckedChange = onToggleDtsX,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Selector de Manejo de Formatos
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Procesamiento de Flujo de Audio", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Modo de interacción entre el reproductor y el hardware de sonido.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                        .padding(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    AudioFormatHandling.values().forEach { handling ->
+                        val isSelected = handling == selectedHandling
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent)
+                                .clickable { onSelectHandling(handling) }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = handling.label,
+                                color = if (isSelected) Color.Black else TonalixColors.TextSecondary,
+                                fontSize = 10.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 3: CALIBRACIÓN ACÚSTICA DE SALA & MICRÓFONO REMOTO
+// ============================================================================
+@Composable
+private fun RoomAcousticsCalibrationCard(
+    selectedProfile: RoomAcousticProfile,
+    onSelectProfile: (RoomAcousticProfile) -> Unit,
+    isCalibrating: Boolean,
+    calibrationProgress: Float,
+    confidence: Int,
+    lastTimestamp: String,
+    onStartCalibration: () -> Unit,
+    onCancelCalibration: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Calibración Acústica de Sala (Room Tuning AI)",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Compensación de ondas estacionarias y reflexiones",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "PRECISIÓN $confidence%",
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Selector de Perfiles Acústicos
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                RoomAcousticProfile.values().forEach { profile ->
+                    val isSelected = profile == selectedProfile
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(if (isSelected) Color(0xFF00222B) else Color(0xFF0A0F14))
+                            .border(1.dp, if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                            .clickable { onSelectProfile(profile) }
+                            .padding(10.dp)
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = profile.title,
+                                    color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextPrimary,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = TonalixColors.PrimaryCyan,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(text = profile.eqDetails, color = TonalixColors.TextSecondary, fontSize = 9.sp, lineHeight = 12.sp)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Barra de progreso y botón de calibración con micrófono remoto
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(imageVector = Icons.Default.Mic, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(15.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(text = "Medición acústica por micrófono del control remoto", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Última calibración: $lastTimestamp", color = TonalixColors.TextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                    }
+                    if (isCalibrating) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LinearProgressIndicator(
+                            progress = calibrationProgress,
+                            modifier = Modifier.fillMaxWidth(0.9f).height(4.dp).clip(RoundedCornerShape(2.dp)),
+                            color = TonalixColors.PrimaryCyan,
+                            trackColor = Color(0xFF090F15)
+                        )
+                    }
+                }
+
+                if (isCalibrating) {
+                    OutlinedButton(
+                        onClick = onCancelCalibration,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.DangerRed),
+                        shape = RoundedCornerShape(6.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(text = "Cancelar", color = TonalixColors.DangerRed, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                } else {
+                    Button(
+                        onClick = onStartCalibration,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003844)),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.PrimaryCyan),
+                        shape = RoundedCornerShape(6.dp),
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
+                    ) {
+                        Text(text = "Iniciar Calibración de Sala", color = TonalixColors.PrimaryCyan, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 4: DIÁLOGOS VOCALES, LIP-SYNC & RANGO DINÁMICO
+// ============================================================================
+@Composable
+private fun DialogueAndSyncCard(
+    vocalBoost: Boolean,
+    onToggleVocalBoost: (Boolean) -> Unit,
+    clarityLevel: Int,
+    onSetClarity: (Int) -> Unit,
+    avSyncMs: Int,
+    onAdjustAvSync: (Int) -> Unit,
+    selectedDrc: DynamicRangeCompression,
+    onSelectDrc: (DynamicRangeCompression) -> Unit,
+    subBassDb: Int,
+    onSetBass: (Int) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Claridad Vocal, Lip-Sync y Rango Dinámico (DRC)",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Text(text = "FILTRO DSP 24-BIT", color = TonalixColors.PrimaryCyan, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Fila de 3 bloques interactivos
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                // Bloque 1: Realce de Voces
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "VocalBoost™ Claridad", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            Switch(
+                                checked = vocalBoost,
+                                onCheckedChange = onToggleVocalBoost,
+                                colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Aísla el canal central (1-3 kHz) para voces nítidas sin elevar volumen.", color = TonalixColors.TextMuted, fontSize = 9.sp, lineHeight = 12.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            (1..5).forEach { lvl ->
+                                val isSelected = lvl == clarityLevel
+                                Box(
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(if (isSelected) TonalixColors.PrimaryCyan else Color(0xFF131A22))
+                                        .clickable { onSetClarity(lvl) },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$lvl",
+                                        color = if (isSelected) Color.Black else TonalixColors.TextSecondary,
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Bloque 2: Sincronización A/V Lip-Sync
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Sincronización Lip-Sync", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = "${avSyncMs}ms",
+                                color = TonalixColors.PrimaryCyan,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Alinea audio con paneles OLED con procesamiento intenso.", color = TonalixColors.TextMuted, fontSize = 9.sp, lineHeight = 12.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = { onAdjustAvSync(-10) },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF131A22)),
+                                shape = RoundedCornerShape(4.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(text = "-10ms", color = TonalixColors.TextPrimary, fontSize = 10.sp)
+                            }
+                            Button(
+                                onClick = { onAdjustAvSync(10) },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF131A22)),
+                                shape = RoundedCornerShape(4.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(text = "+10ms", color = TonalixColors.TextPrimary, fontSize = 10.sp)
+                            }
+                        }
+                    }
+                }
+
+                // Bloque 3: Compresión Dinámica Nocturna
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                ) {
+                    Column {
+                        Text(text = "Rango Dinámico (DRC)", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Atenúa estruendos para escuchar a bajo volumen nocturno.", color = TonalixColors.TextMuted, fontSize = 9.sp, lineHeight = 12.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        DynamicRangeCompression.values().forEach { drc ->
+                            val isSelected = drc == selectedDrc
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onSelectDrc(drc) }
+                                    .padding(vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(if (isSelected) TonalixColors.PrimaryCyan else Color(0xFF222D39))
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = drc.label,
+                                    color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+                                    fontSize = 10.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PANEL LATERAL DERECHO: DIAGNÓSTICO EN TIEMPO REAL & VU METERS
+// ============================================================================
+@Composable
+private fun TonalixAudioDiagnosticsSidebar(
+    telemetry: AudioTelemetry,
+    isTestingTone: Boolean,
+    onPlayTone: () -> Unit,
+    onStopTone: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(280.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(18.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Título del Panel
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.GraphicEq, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = "Diagnóstico DSP en Vivo", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+            Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.AccentEmerald))
+        }
+
+        // VU Meters Izquierdo / Derecho
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column {
+                Text(text = "NIVELES DE SALIDA (PEAK VU)", color = TonalixColors.TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Canal Izquierdo
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "L", color = TonalixColors.TextSecondary, fontSize = 9.sp, fontFamily = FontFamily.Monospace, modifier = Modifier.width(14.dp))
+                    Box(modifier = Modifier.weight(1f).height(6.dp).clip(RoundedCornerShape(3.dp)).background(Color(0xFF090F15))) {
+                        Box(modifier = Modifier.fillMaxWidth(0.72f).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(TonalixColors.PrimaryCyan))
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "${telemetry.peakDecibelsLeft} dB", color = TonalixColors.PrimaryCyan, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                // Canal Derecho
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "R", color = TonalixColors.TextSecondary, fontSize = 9.sp, fontFamily = FontFamily.Monospace, modifier = Modifier.width(14.dp))
+                    Box(modifier = Modifier.weight(1f).height(6.dp).clip(RoundedCornerShape(3.dp)).background(Color(0xFF090F15))) {
+                        Box(modifier = Modifier.fillMaxWidth(0.74f).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(TonalixColors.PrimaryCyan))
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "${telemetry.peakDecibelsRight} dB", color = TonalixColors.PrimaryCyan, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                }
+            }
+        }
+
+        // Ficha Técnica DSP
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(text = "DETALLES DE CORTE HARDWARE", color = TonalixColors.TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                SidebarDetailRow(label = "Protocolo eARC:", value = "IEC 61937 Bitstream")
+                SidebarDetailRow(label = "DSP Core:", value = "HiFi 4 Audio DSP @ 800MHz")
+                SidebarDetailRow(label = "Buffer Underruns:", value = "${telemetry.bufferUnderruns} (0% Pérdida)")
+                SidebarDetailRow(label = "Controlador:", value = "ALSA SoC HDMI Direct")
+            }
+        }
+
+        // Botón de Test de Tono Rosa / Altavoces 7.1.4
+        Button(
+            onClick = { if (isTestingTone) onStopTone() else onPlayTone() },
+            colors = ButtonDefaults.buttonColors(containerColor = if (isTestingTone) TonalixColors.WarningAmber else Color(0xFF003844)),
+            border = androidx.compose.foundation.BorderStroke(1.dp, if (isTestingTone) TonalixColors.WarningAmber else TonalixColors.PrimaryCyan),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 10.dp)
+        ) {
+            Icon(
+                imageVector = if (isTestingTone) Icons.Default.Stop else Icons.Default.Hearing,
+                contentDescription = null,
+                tint = if (isTestingTone) Color.Black else TonalixColors.PrimaryCyan,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = if (isTestingTone) "Detener Prueba Rosa" else "Probar Canales 7.1.4",
+                color = if (isTestingTone) Color.Black else TonalixColors.PrimaryCyan,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+private fun SidebarDetailRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 9.sp)
+        Text(text = value, color = TonalixColors.TextPrimary, fontSize = 9.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// BARRA INFERIOR (FOOTER GUÍA D-PAD)
+// ============================================================================
+@Composable
+private fun TonalixBottomBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(38.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            DpadKeyHelp(icon = Icons.Default.KeyboardArrowUp, label = "Navegar")
+            Spacer(modifier = Modifier.width(16.dp))
+            DpadBadgeHelp(key = "OK", label = "Seleccionar / Alternar")
+            Spacer(modifier = Modifier.width(16.dp))
+            DpadBadgeHelp(key = "Atrás", label = "Regresar")
+            Spacer(modifier = Modifier.width(16.dp))
+            DpadBadgeHelp(key = "Menú", label = "Opciones avanzadas")
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Android TV 11/12", color = TonalixColors.TextMuted, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+            Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 10.sp)
+            Text(text = "Dolby Atmos Bitstream: Conectado", color = TonalixColors.AccentEmerald, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+private fun DpadKeyHelp(icon: ImageVector, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(imageVector = icon, contentDescription = null, tint = TonalixColors.TextSecondary, modifier = Modifier.size(14.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextSecondary, fontSize = 10.sp)
+    }
+}
+
+@Composable
+private fun DpadBadgeHelp(key: String, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(3.dp))
+                .background(Color(0xFF090F15))
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(3.dp))
+                .padding(horizontal = 5.dp, vertical = 1.dp)
+        ) {
+            Text(text = key, color = TonalixColors.TextPrimary, fontSize = 8.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextSecondary, fontSize = 10.sp)
+    }
+}

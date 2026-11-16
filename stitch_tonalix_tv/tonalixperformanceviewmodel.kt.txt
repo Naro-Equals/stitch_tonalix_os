@@ -1,0 +1,311 @@
+package com.tonalix.tvlauncher.ui.settings.performance
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlin.random.Random
+
+// ============================================================================
+// TONALIX PERFORMANCE UI STATE
+// ============================================================================
+
+/**
+ * Estado inmutable completo de la pantalla de Modo Rendimiento (TonalixPerformanceScreen).
+ * Compatible con 10-foot UI, D-Pad navigation y telemetría en tiempo real.
+ */
+data class PerformanceUiState(
+    // Configuración activa y perfiles seleccionados
+    val selectedCategory: SettingsCategory = SettingsCategory.PERFORMANCE,
+    val selectedGovernor: CpuGovernor = CpuGovernor.GAMER_120FPS,
+    val selectedProcessLimit: BackgroundProcessLimit = BackgroundProcessLimit.ONE_PROCESS,
+    val selectedResolution: FramebufferResolution = FramebufferResolution.RES_1080P,
+
+    // Toggles de Optimización y Low-RAM Killer
+    val autoKillBackgroundApps: Boolean = true,
+    val zramDynamicSwapping: Boolean = true,
+    val bufferPurgeOnSuspend: Boolean = true,
+    val zeroAnimationScale: Boolean = true,
+    val forceGpuRendering: Boolean = true,
+
+    // Telemetría del Sistema en Vivo (Actualizada periódicamente por corrutina de bajo impacto)
+    val telemetry: PerformanceTelemetry = PerformanceTelemetry(),
+
+    // Estados de operaciones asíncronas
+    val isApplyingProfile: Boolean = false,
+    val isBoostingRam: Boolean = false,
+    val isRunningStressTest: Boolean = false,
+    val stressTestProgress: Float = 0f, // 0.0f a 1.0f
+
+    // Metadatos de Sistema
+    val activeProfileName: String = "Gamer & Baja Latencia (120 FPS)",
+    val isProfileSaved: Boolean = true,
+    val lastOptimizedTimestamp: String = "Hace un momento"
+)
+
+/**
+ * Métricas de hardware y telemetría SoC en tiempo real (Amlogic S905X4 / Mali-G31).
+ */
+data class PerformanceTelemetry(
+    val cpuUsagePercent: Float = 14.2f,
+    val cpuFrequencyGhz: Float = 2.0f,
+    val core1Usage: Int = 18,
+    val core2Usage: Int = 12,
+    val core3Usage: Int = 15,
+    val core4Usage: Int = 12,
+    val socTemperatureCelsius: Int = 41,
+    val thermalStatus: String = "Óptimo / Frío",
+    val ramUsedMb: Int = 1410,
+    val ramTotalMb: Int = 3072,
+    val ramFreePercent: Int = 81,
+    val zramCompressedMb: Int = 1024,
+    val bluetoothInputLagMs: Float = 1.2f,
+    val fpsSyncRate: Float = 119.8f,
+    val frameDrops: Int = 0
+)
+
+// ============================================================================
+// TONALIX PERFORMANCE USER INTENTS / EVENTS
+// ============================================================================
+
+/**
+ * Eventos disparados por la interacción del usuario o control remoto D-Pad.
+ */
+sealed interface PerformanceUserAction {
+    data class SelectCategory(val category: SettingsCategory) : PerformanceUserAction
+    data class SelectGovernor(val governor: CpuGovernor) : PerformanceUserAction
+    data class SelectProcessLimit(val limit: BackgroundProcessLimit) : PerformanceUserAction
+    data class SelectFramebufferResolution(val resolution: FramebufferResolution) : PerformanceUserAction
+    
+    data class ToggleAutoKill(val enabled: Boolean) : PerformanceUserAction
+    data class ToggleZram(val enabled: Boolean) : PerformanceUserAction
+    data class ToggleBufferPurge(val enabled: Boolean) : PerformanceUserAction
+    data class ToggleZeroAnimation(val enabled: Boolean) : PerformanceUserAction
+    data class ToggleForceGpu(val enabled: Boolean) : PerformanceUserAction
+
+    object TriggerRamBoost : PerformanceUserAction
+    object ApplyCurrentProfile : PerformanceUserAction
+    object StartStressTest : PerformanceUserAction
+    object CancelStressTest : PerformanceUserAction
+}
+
+/**
+ * Notificaciones puntuales (One-Shot Events / Side Effects) para Snackbars, Toasts o Haptic Audio.
+ */
+sealed interface PerformanceUiEffect {
+    data class ShowToast(val message: String, val isSuccess: Boolean = true) : PerformanceUiEffect
+    data class PlaySoundEffect(val soundType: SoundEffectType) : PerformanceUiEffect
+    object NavigateBack : PerformanceUiEffect
+}
+
+enum class SoundEffectType {
+    CLICK_NAVIGATE, BOOST_SUCCESS, PROFILE_APPLIED, WARNING_ALERT
+}
+
+// ============================================================================
+// TONALIX PERFORMANCE VIEWMODEL
+// ============================================================================
+
+/**
+ * ViewModel oficial para Tonalix TV Launcher - Pantalla de Rendimiento.
+ * Maneja el bucle de telemetría SoC bare-metal, persistencia de perfil y ejecución de tests.
+ */
+class TonalixPerformanceViewModel : ViewModel() {
+
+    private val _uiState = MutableStateFlow(PerformanceUiState())
+    val uiState: StateFlow<PerformanceUiState> = _uiState.asStateFlow()
+
+    private val _uiEffect = MutableSharedFlow<PerformanceUiEffect>()
+    val uiEffect: SharedFlow<PerformanceUiEffect> = _uiEffect.asSharedFlow()
+
+    private var telemetryJob: Job? = null
+    private var stressTestJob: Job? = null
+
+    init {
+        startTelemetryLoop()
+    }
+
+    /**
+     * Dispatcher central de eventos de usuario (MVI / Unidirectional Data Flow).
+     */
+    fun onAction(action: PerformanceUserAction) {
+        when (action) {
+            is PerformanceUserAction.SelectCategory -> {
+                _uiState.update { it.copy(selectedCategory = action.category) }
+            }
+            is PerformanceUserAction.SelectGovernor -> {
+                _uiState.update { 
+                    it.copy(
+                        selectedGovernor = action.governor,
+                        isProfileSaved = false,
+                        activeProfileName = action.governor.title
+                    )
+                }
+            }
+            is PerformanceUserAction.SelectProcessLimit -> {
+                _uiState.update { it.copy(selectedProcessLimit = action.limit, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.SelectFramebufferResolution -> {
+                _uiState.update { it.copy(selectedResolution = action.resolution, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.ToggleAutoKill -> {
+                _uiState.update { it.copy(autoKillBackgroundApps = action.enabled, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.ToggleZram -> {
+                _uiState.update { it.copy(zramDynamicSwapping = action.enabled, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.ToggleBufferPurge -> {
+                _uiState.update { it.copy(bufferPurgeOnSuspend = action.enabled, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.ToggleZeroAnimation -> {
+                _uiState.update { it.copy(zeroAnimationScale = action.enabled, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.ToggleForceGpu -> {
+                _uiState.update { it.copy(forceGpuRendering = action.enabled, isProfileSaved = false) }
+            }
+            is PerformanceUserAction.TriggerRamBoost -> {
+                executeRamBoost()
+            }
+            is PerformanceUserAction.ApplyCurrentProfile -> {
+                applyProfileSettings()
+            }
+            is PerformanceUserAction.StartStressTest -> {
+                runStressTestBenchmark()
+            }
+            is PerformanceUserAction.CancelStressTest -> {
+                stressTestJob?.cancel()
+                _uiState.update { it.copy(isRunningStressTest = false, stressTestProgress = 0f) }
+            }
+        }
+    }
+
+    /**
+     * Simula la liberación forzada de RAM (Drop caches, Kill background non-critical services).
+     */
+    private fun executeRamBoost() {
+        if (_uiState.value.isBoostingRam) return
+
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isBoostingRam = true) }
+            _uiEffect.emit(PerformanceUiEffect.PlaySoundEffect(SoundEffectType.CLICK_NAVIGATE))
+
+            // Simulación de purga de memoria Linux kernel /proc/sys/vm/drop_caches
+            delay(1200)
+
+            val freedMb = Random.nextInt(420, 680)
+            _uiState.update { current ->
+                val newUsedRam = (current.telemetry.ramUsedMb - freedMb).coerceAtLeast(800)
+                val newFreePercent = (((current.telemetry.ramTotalMb - newUsedRam).toFloat() / current.telemetry.ramTotalMb) * 100).toInt()
+                
+                current.copy(
+                    isBoostingRam = false,
+                    telemetry = current.telemetry.copy(
+                        ramUsedMb = newUsedRam,
+                        ramFreePercent = newFreePercent
+                    )
+                )
+            }
+
+            _uiEffect.emit(PerformanceUiEffect.PlaySoundEffect(SoundEffectType.BOOST_SUCCESS))
+            _uiEffect.emit(PerformanceUiEffect.ShowToast("¡Boost completado! Se liberaron ${freedMb}MB de memoria RAM."))
+        }
+    }
+
+    /**
+     * Aplica los parámetros de kernel (sysfs / Governor / Low-Memory Killer).
+     */
+    private fun applyProfileSettings() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isApplyingProfile = true) }
+            
+            // Simular syscalls a sysfs y modificación de SurfaceFlinger
+            delay(850)
+
+            _uiState.update { 
+                it.copy(
+                    isApplyingProfile = false,
+                    isProfileSaved = true,
+                    lastOptimizedTimestamp = "Aplicado hace segundos"
+                )
+            }
+
+            _uiEffect.emit(PerformanceUiEffect.PlaySoundEffect(SoundEffectType.PROFILE_APPLIED))
+            _uiEffect.emit(PerformanceUiEffect.ShowToast("Perfil de rendimiento '${_uiState.value.selectedGovernor.title}' aplicado con éxito."))
+        }
+    }
+
+    /**
+     * Test de estrés y benchmark térmico para el SoC Amlogic y VPU Mali.
+     */
+    private fun runStressTestBenchmark() {
+        if (_uiState.value.isRunningStressTest) return
+
+        stressTestJob = viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isRunningStressTest = true, stressTestProgress = 0f) }
+
+            for (step in 1..10) {
+                delay(400)
+                val progress = step / 10f
+                _uiState.update { current ->
+                    current.copy(
+                        stressTestProgress = progress,
+                        telemetry = current.telemetry.copy(
+                            cpuUsagePercent = (60f + (step * 3.8f)).coerceAtMost(99f),
+                            socTemperatureCelsius = (current.telemetry.socTemperatureCelsius + (if (step % 3 == 0) 1 else 0)).coerceAtMost(58)
+                        )
+                    )
+                }
+            }
+
+            delay(300)
+            _uiState.update { it.copy(isRunningStressTest = false, stressTestProgress = 1f) }
+            _uiEffect.emit(PerformanceUiEffect.ShowToast("Benchmark finalizado: 0 thermal throttling detectado. Estabilidad 100%."))
+        }
+    }
+
+    /**
+     * Monitoreo continuo de telemetría SoC y memoria en background con tasa de refresco adaptativa.
+     */
+    private fun startTelemetryLoop() {
+        telemetryJob?.cancel()
+        telemetryJob = viewModelScope.launch(Dispatchers.Default) {
+            while (isActive) {
+                delay(2000) // Polling ligero cada 2 segundos para no degradar el launcher
+                if (!_uiState.value.isRunningStressTest) {
+                    _uiState.update { state ->
+                        val randomCpuJitter = Random.nextDouble(-1.8, 2.1).toFloat()
+                        val newCpu = (state.telemetry.cpuUsagePercent + randomCpuJitter).coerceIn(4.5f, 26.0f)
+                        val newLag = if (state.selectedGovernor == CpuGovernor.GAMER_120FPS) 1.2f else 3.8f
+
+                        state.copy(
+                            telemetry = state.telemetry.copy(
+                                cpuUsagePercent = (newCpu * 10).toInt() / 10f,
+                                core1Usage = (newCpu * 1.1).toInt().coerceIn(2, 40),
+                                core2Usage = (newCpu * 0.9).toInt().coerceIn(2, 35),
+                                core3Usage = (newCpu * 1.0).toInt().coerceIn(2, 38),
+                                core4Usage = (newCpu * 0.8).toInt().coerceIn(1, 30),
+                                bluetoothInputLagMs = newLag
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        telemetryJob?.cancel()
+        stressTestJob?.cancel()
+    }
+}

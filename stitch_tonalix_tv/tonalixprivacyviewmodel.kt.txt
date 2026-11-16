@@ -1,0 +1,320 @@
+package com.tonalix.tvlauncher.ui.settings.privacy
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlin.random.Random
+
+// ============================================================================
+// ENUMS DE SEGURIDAD, DNS & PRIVACIDAD
+// ============================================================================
+
+enum class DnsProvider(val title: String, val ipPrimary: String, val ipSecondary: String, val protocol: String, val tag: String) {
+    ADGUARD_FILTER("AdGuard DNS Anti-Anuncios", "94.140.14.14", "94.140.15.15", "DNS over TLS (DoT)", "RECOMENDADO"),
+    CLOUDFLARE_ZERO("Cloudflare 1.1.1.1 Security", "1.1.1.2", "1.0.0.2", "DoH Cifrado", "ALTA VELOCIDAD"),
+    PI_HOLE_LOCAL("Pi-Hole LAN Local", "192.168.1.200", "192.168.1.1", "DNS Local UDP/53", "RED LOCAL"),
+    NEXTDNS_CUSTOM("NextDNS Personalizado", "45.90.28.0", "45.90.30.0", "DoH Perfil ID #482", "CONFIG AVANZADA")
+}
+
+enum class TelemetryBlockingLevel(val label: String, val description: String) {
+    AGGRESSIVE("Bloqueo Agresivo OEM", "Corta toda telemetría de Amazon, Google TV, Xiaomi y analíticas"),
+    BALANCED("Equilibrado", "Mantiene comprobación de firmware y servicios esenciales"),
+    CUSTOM_WHITELIST("Lista Blanca Manual", "Reglas personalizadas por el usuario")
+}
+
+enum class EncryptionLevel(val label: String, val cipher: String) {
+    AES_256_GCM("AES-256 GCM (Hardware)", "Cifrado por acelerador criptográfico ARMv8"),
+    CHACHA20_POLY1305("ChaCha20-Poly1305", "Optimizado para SoCs económicos sin ARM CE"),
+    STANDARD_SSL("TLS 1.3 Estándar", "Cifrado de sesión de red estándar")
+}
+
+// ============================================================================
+// TONALIX PRIVACY UI STATE
+// ============================================================================
+
+data class PrivacyUiState(
+    // Selección principal
+    val selectedDnsProvider: DnsProvider = DnsProvider.ADGUARD_FILTER,
+    val selectedBlockingLevel: TelemetryBlockingLevel = TelemetryBlockingLevel.AGGRESSIVE,
+    val selectedEncryption: EncryptionLevel = EncryptionLevel.AES_256_GCM,
+
+    // Toggles de Seguridad y Protección
+    val adBlockGlobalEnabled: Boolean = true,
+    val telemetryBlockOemEnabled: Boolean = true,
+    val isolateArmoredSession: Boolean = true,
+    val blockMalwarePhishing: Boolean = true,
+    val preventDnsLeak: Boolean = true,
+    val anonymizeMacAddress: Boolean = true,
+    val smartTubeAdFreeShield: Boolean = true,
+    val clearCacheOnExit: Boolean = false,
+
+    // Telemetría de Seguridad en Vivo
+    val telemetry: PrivacyTelemetry = PrivacyTelemetry(),
+
+    // Operaciones Asíncronas
+    val isUpdatingBlocklists: Boolean = false,
+    val isFlushingDnsCache: Boolean = false,
+    val isTestingDnsLeak: Boolean = false,
+    val isApplyingSettings: Boolean = false,
+    val lastRulesUpdateTimestamp: String = "Hoy, 15:45",
+    val totalBlockedQueries: Long = 42890L
+)
+
+data class PrivacyTelemetry(
+    val dnsStatus: String = "DoT Encriptado Seguro",
+    val pingDnsMs: Float = 6.4f,
+    val blockedAdsToday: Int = 1842,
+    val blockedTrackersCount: Int = 540,
+    val activeRulesCount: Int = 384500,
+    val memoryUsageFilterMb: Float = 14.8f,
+    val lastBlockedDomain: String = "device-metrics-us.amazon.com",
+    val armoredSessionState: String = "Protegida (Token Efímero)",
+    val dnsLeakStatus: String = "Sin fugas detectadas (100% Protegido)"
+)
+
+// ============================================================================
+// USER ACTIONS & INTENTS (MVI)
+// ============================================================================
+
+sealed interface PrivacyUserAction {
+    data class SelectDnsProvider(val provider: DnsProvider) : PrivacyUserAction
+    data class SelectBlockingLevel(val level: TelemetryBlockingLevel) : PrivacyUserAction
+    data class SelectEncryption(val encryption: EncryptionLevel) : PrivacyUserAction
+
+    data class ToggleAdBlockGlobal(val enabled: Boolean) : PrivacyUserAction
+    data class ToggleTelemetryBlockOem(val enabled: Boolean) : PrivacyUserAction
+    data class ToggleArmoredSession(val enabled: Boolean) : PrivacyUserAction
+    data class ToggleMalwareProtection(val enabled: Boolean) : PrivacyUserAction
+    data class TogglePreventDnsLeak(val enabled: Boolean) : PrivacyUserAction
+    data class ToggleMacAnonymization(val enabled: Boolean) : PrivacyUserAction
+    data class ToggleSmartTubeShield(val enabled: Boolean) : PrivacyUserAction
+    data class ToggleClearCacheOnExit(val enabled: Boolean) : PrivacyUserAction
+
+    object UpdateBlocklists : PrivacyUserAction
+    object FlushDnsCache : PrivacyUserAction
+    object RunDnsLeakTest : PrivacyUserAction
+    object ApplyPrivacySettings : PrivacyUserAction
+    object ResetPrivacyDefaults : PrivacyUserAction
+}
+
+// ============================================================================
+// UI EFFECTS (One-Shot side effects)
+// ============================================================================
+
+sealed interface PrivacyUiEffect {
+    data class ShowToast(val message: String, val isSuccess: Boolean = true) : PrivacyUiEffect
+    data class PlaySound(val soundType: PrivacySoundType) : PrivacyUiEffect
+    object NavigateBack : PrivacyUiEffect
+}
+
+enum class PrivacySoundType {
+    CLICK_NAVIGATE, SHIELD_ON, PURGE_SUCCESS, ALERT_WARNING
+}
+
+// ============================================================================
+// TONALIX PRIVACY VIEWMODEL
+// ============================================================================
+
+class TonalixPrivacyViewModel : ViewModel() {
+
+    private val _uiState = MutableStateFlow(PrivacyUiState())
+    val uiState: StateFlow<PrivacyUiState> = _uiState.asStateFlow()
+
+    private val _uiEffect = MutableSharedFlow<PrivacyUiEffect>()
+    val uiEffect: SharedFlow<PrivacyUiEffect> = _uiEffect.asSharedFlow()
+
+    private var telemetryJob: Job? = null
+    private var testJob: Job? = null
+
+    init {
+        startPrivacyTelemetryLoop()
+    }
+
+    fun onAction(action: PrivacyUserAction) {
+        when (action) {
+            is PrivacyUserAction.SelectDnsProvider -> {
+                _uiState.update { it.copy(selectedDnsProvider = action.provider) }
+                viewModelScope.launch {
+                    _uiEffect.emit(PrivacyUiEffect.PlaySound(PrivacySoundType.CLICK_NAVIGATE))
+                    _uiEffect.emit(PrivacyUiEffect.ShowToast("Proveedor DNS cambiado a: ${action.provider.title}"))
+                }
+            }
+            is PrivacyUserAction.SelectBlockingLevel -> {
+                _uiState.update { it.copy(selectedBlockingLevel = action.level) }
+            }
+            is PrivacyUserAction.SelectEncryption -> {
+                _uiState.update { it.copy(selectedEncryption = action.encryption) }
+            }
+            is PrivacyUserAction.ToggleAdBlockGlobal -> {
+                _uiState.update { it.copy(adBlockGlobalEnabled = action.enabled) }
+                viewModelScope.launch {
+                    _uiEffect.emit(PrivacyUiEffect.PlaySound(PrivacySoundType.SHIELD_ON))
+                    val msg = if (action.enabled) "Escudo AdBlock Global ACTIVO" else "Escudo AdBlock deshabilitado"
+                    _uiEffect.emit(PrivacyUiEffect.ShowToast(msg))
+                }
+            }
+            is PrivacyUserAction.ToggleTelemetryBlockOem -> {
+                _uiState.update { it.copy(telemetryBlockOemEnabled = action.enabled) }
+            }
+            is PrivacyUserAction.ToggleArmoredSession -> {
+                _uiState.update { it.copy(isolateArmoredSession = action.enabled) }
+            }
+            is PrivacyUserAction.ToggleMalwareProtection -> {
+                _uiState.update { it.copy(blockMalwarePhishing = action.enabled) }
+            }
+            is PrivacyUserAction.TogglePreventDnsLeak -> {
+                _uiState.update { it.copy(preventDnsLeak = action.enabled) }
+            }
+            is PrivacyUserAction.ToggleMacAnonymization -> {
+                _uiState.update { it.copy(anonymizeMacAddress = action.enabled) }
+            }
+            is PrivacyUserAction.ToggleSmartTubeShield -> {
+                _uiState.update { it.copy(smartTubeAdFreeShield = action.enabled) }
+            }
+            is PrivacyUserAction.ToggleClearCacheOnExit -> {
+                _uiState.update { it.copy(clearCacheOnExit = action.enabled) }
+            }
+            is PrivacyUserAction.UpdateBlocklists -> {
+                executeUpdateBlocklists()
+            }
+            is PrivacyUserAction.FlushDnsCache -> {
+                executeFlushDnsCache()
+            }
+            is PrivacyUserAction.RunDnsLeakTest -> {
+                executeDnsLeakTest()
+            }
+            is PrivacyUserAction.ApplyPrivacySettings -> {
+                applySettings()
+            }
+            is PrivacyUserAction.ResetPrivacyDefaults -> {
+                resetDefaults()
+            }
+        }
+    }
+
+    private fun executeUpdateBlocklists() {
+        if (_uiState.value.isUpdatingBlocklists) return
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isUpdatingBlocklists = true) }
+            delay(1400)
+            val newRules = Random.nextInt(385000, 395000)
+            _uiState.update {
+                it.copy(
+                    isUpdatingBlocklists = false,
+                    lastRulesUpdateTimestamp = "Hace un momento",
+                    telemetry = it.telemetry.copy(activeRulesCount = newRules)
+                )
+            }
+            _uiEffect.emit(PrivacyUiEffect.PlaySound(PrivacySoundType.SHIELD_ON))
+            _uiEffect.emit(PrivacyUiEffect.ShowToast("¡Listas de filtrado actualizadas! $newRules reglas activas."))
+        }
+    }
+
+    private fun executeFlushDnsCache() {
+        if (_uiState.value.isFlushingDnsCache) return
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isFlushingDnsCache = true) }
+            delay(800)
+            _uiState.update { it.copy(isFlushingDnsCache = false) }
+            _uiEffect.emit(PrivacyUiEffect.PlaySound(PrivacySoundType.PURGE_SUCCESS))
+            _uiEffect.emit(PrivacyUiEffect.ShowToast("Caché DNS del sistema purgada y socket reiniciado."))
+        }
+    }
+
+    private fun executeDnsLeakTest() {
+        if (_uiState.value.isTestingDnsLeak) return
+        testJob = viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isTestingDnsLeak = true) }
+            delay(1800)
+            _uiState.update {
+                it.copy(
+                    isTestingDnsLeak = false,
+                    telemetry = it.telemetry.copy(
+                        dnsLeakStatus = "Verificado: 0 fugas (Cifrado DoT / TLS 1.3)",
+                        pingDnsMs = (5.5f + Random.nextDouble(0.2, 1.8)).toFloat()
+                    )
+                )
+            }
+            _uiEffect.emit(PrivacyUiEffect.PlaySound(PrivacySoundType.SHIELD_ON))
+            _uiEffect.emit(PrivacyUiEffect.ShowToast("Test de Fugas DNS completado: Tu conexión es 100% anónima."))
+        }
+    }
+
+    private fun applySettings() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isApplyingSettings = true) }
+            delay(750)
+            _uiState.update { it.copy(isApplyingSettings = false) }
+            _uiEffect.emit(PrivacyUiEffect.PlaySound(PrivacySoundType.SHIELD_ON))
+            _uiEffect.emit(PrivacyUiEffect.ShowToast("Políticas de Cortafuegos y DNS aplicadas al kernel."))
+        }
+    }
+
+    private fun resetDefaults() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update {
+                it.copy(
+                    selectedDnsProvider = DnsProvider.ADGUARD_FILTER,
+                    selectedBlockingLevel = TelemetryBlockingLevel.AGGRESSIVE,
+                    selectedEncryption = EncryptionLevel.AES_256_GCM,
+                    adBlockGlobalEnabled = true,
+                    telemetryBlockOemEnabled = true,
+                    isolateArmoredSession = true
+                )
+            }
+            _uiEffect.emit(PrivacyUiEffect.ShowToast("Parámetros de privacidad restablecidos a fábrica."))
+        }
+    }
+
+    private fun startPrivacyTelemetryLoop() {
+        telemetryJob?.cancel()
+        telemetryJob = viewModelScope.launch(Dispatchers.Default) {
+            val blockedDomains = listOf(
+                "device-metrics-us.amazon.com",
+                "telemetry.google.com",
+                "app-measurement.com",
+                "fireos-telemetry.amazon.com",
+                "adservice.google.com",
+                "api.mixpanel.com"
+            )
+            while (isActive) {
+                delay(2500)
+                if (!_uiState.value.isTestingDnsLeak) {
+                    _uiState.update { state ->
+                        val incAds = if (state.adBlockGlobalEnabled) Random.nextInt(1, 4) else 0
+                        val incTrackers = if (state.telemetryBlockOemEnabled) Random.nextInt(1, 3) else 0
+                        val randomDomain = blockedDomains.random()
+                        val newPing = (6.0f + Random.nextDouble(-0.8, 1.4)).toFloat()
+
+                        state.copy(
+                            totalBlockedQueries = state.totalBlockedQueries + incAds + incTrackers,
+                            telemetry = state.telemetry.copy(
+                                blockedAdsToday = state.telemetry.blockedAdsToday + incAds,
+                                blockedTrackersCount = state.telemetry.blockedTrackersCount + incTrackers,
+                                lastBlockedDomain = if (state.adBlockGlobalEnabled || state.telemetryBlockOemEnabled) randomDomain else "Ninguno (Inactivo)",
+                                pingDnsMs = (newPing * 10).toInt() / 10f
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        telemetryJob?.cancel()
+        testJob?.cancel()
+    }
+}

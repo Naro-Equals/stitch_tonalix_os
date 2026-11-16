@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV - Configuración</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            tonal: {
+              base: '#060B0E',
+              sidebar: '#0A1116',
+              surface: '#0F1A21',
+              card: '#14222B',
+              cardHover: '#1B2C37',
+              border: '#1E323F',
+              cyan: '#00D1E6',
+              cyanHover: '#33E0F1',
+              cyanDim: 'rgba(0, 209, 230, 0.12)',
+              slateText: '#94A3B8',
+              muted: '#64748B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 17, 22, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e323f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00D1E6;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-tonal-base text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-tonal-cyan selection:text-black">
+<!-- TOP HEADER / STATUS BAR -->
+<header class="h-14 border-b border-tonal-border/60 bg-tonal-sidebar/95 backdrop-blur px-5 flex items-center justify-between z-20 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<!-- TonalixTV Logo Mark -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-600 to-tonal-cyan flex items-center justify-center shadow-lg shadow-cyan-950/40">
+<svg class="w-4 h-4 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div class="flex items-baseline font-bold tracking-tight text-lg">
+<span class="text-white">Tonalix</span><span class="text-tonal-cyan">TV</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Inicio</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Aplicaciones</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Entradas</a>
+<a class="px-3 py-1.5 rounded-lg text-tonal-cyan bg-tonal-cyanDim font-semibold border border-tonal-cyan/30" href="#">Ajustes</a>
+</nav>
+</div>
+<!-- Quick Telemetry & Status Badges -->
+<div class="flex items-center gap-3">
+<!-- Live Metrics Pill -->
+<div class="hidden lg:flex items-center gap-3 px-3 py-1 rounded-full bg-tonal-surface border border-tonal-border text-xs font-mono text-tonal-slateText">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          CPU <span class="text-white font-semibold">6.2%</span>
+</span>
+<span class="text-slate-600">|</span>
+<span>Red <span class="text-white font-semibold">12ms</span></span>
+<span class="text-slate-600">|</span>
+<span>RAM <span class="text-tonal-cyan font-semibold">1.8 / 3 GB</span></span>
+</div>
+<!-- Quick Session Badge -->
+<div class="flex items-center gap-2 pl-2">
+<span class="text-xs bg-cyan-950/70 border border-tonal-cyan/40 text-tonal-cyan font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Sesión Blindada</span>
+</span>
+<div class="text-xs font-mono text-slate-400 font-bold bg-tonal-card px-2.5 py-1 rounded-md border border-tonal-border">
+          17:42
+        </div>
+</div>
+</div>
+</header>
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-tonal-sidebar border-r border-tonal-border/70 flex flex-col justify-between shrink-0 p-4">
+<div>
+<div class="px-3 pb-3 mb-2 border-b border-tonal-border/50 flex items-center justify-between">
+<span class="text-xs font-semibold text-tonal-muted tracking-wider uppercase">Configuración del Sistema</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-tonal-border text-slate-300">v4.8 PRO</span>
+</div>
+<nav class="space-y-1">
+<!-- Item: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Red e Internet</p>
+<p class="text-[11px] text-tonal-muted">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+</button>
+<!-- Item: Pantalla y Video (Active) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-semibold text-tonal-cyan">Pantalla y Video</p>
+<p class="text-[11px] text-cyan-200/60">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="text-tonal-cyan font-bold text-xs">●</span>
+</button>
+<!-- Item: Audio y Sonido -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Audio y Salida</p>
+<p class="text-[11px] text-tonal-muted">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Privacidad y Seguridad</p>
+<p class="text-[11px] text-tonal-muted">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-1.5 py-0.5 rounded">ON</span>
+</button>
+<!-- Item: Rendimiento y Caché -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Modo Rendimiento</p>
+<p class="text-[11px] text-tonal-muted">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Acerca de</p>
+<p class="text-[11px] text-tonal-muted">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3 rounded-xl bg-tonal-surface border border-tonal-border text-xs text-slate-400 space-y-2">
+<div class="flex items-center justify-between text-slate-300 font-medium">
+<span>Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-tonal-cyan"></span>
+</div>
+<p class="text-[11px] leading-relaxed text-tonal-muted">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1 border-t border-tonal-border/50 text-[10px] font-mono text-slate-400">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-gradient-to-b from-tonal-base to-tonal-surface"><div class="flex flex-col w-full space-y-6">
+<!-- TOP CONTEXT CRUMBS & CONTROLS -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-container-low p-5 rounded-xl shadow-lg">
+<div class="space-y-1">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="text-primary-container font-mono tracking-wider uppercase">Ajustes del Sistema</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface tracking-wider uppercase">Modo Rendimiento</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary text-[10px] font-mono font-bold tracking-normal ml-2">ESTADO: OPTIMIZADO</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">
+        Optimización de Recursos y Modo Ultra-Lite
+      </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary-container">bolt</span>
+        Perfil Seleccionado: <strong class="text-primary">Gamer &amp; Baja Latencia (120 FPS)</strong> • ZRAM 1024 MB Activo
+      </p>
+</div>
+<!-- Quick Boost Trigger Buttons -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="group relative px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface hover:text-white transition-all duration-200 shadow-md flex items-center gap-2.5 active:scale-95" id="ramBoostBtn" onclick="runRamBoost()">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="material-symbols-outlined text-primary-container text-[18px] group-hover:rotate-180 transition-transform duration-500">cleaning_services</span>
+<span class="font-label-lg text-label-lg tracking-wide">Liberar RAM (Boost)</span>
+</button>
+<button class="px-5 py-2.5 rounded-xl bg-primary-container hover:bg-primary-fixed-dim text-on-primary font-label-lg text-label-lg font-bold shadow-lg shadow-primary-container/20 flex items-center gap-2 transition-all hover:scale-[1.02] active:scale-95">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Aplicar Perfil</span>
+</button>
+</div>
+</div>
+<!-- MAIN 2-COLUMN GRID (SETTINGS CONTENT + TELEMETRY HUD) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- LEFT / CENTER COLUMN: CONFIGURATION MODULES (8 COLS) -->
+<div class="xl:col-span-8 space-y-6">
+<!-- SECTION 1: GOVERNOR CPU PROFILES -->
+<section class="bg-surface-container-low rounded-xl p-5 shadow-md space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">speed</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Gobernador CPU &amp; Frecuencia SoC</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Priorización de núcleos para Fire TV / Android TV Stick</p>
+</div>
+</div>
+<span class="text-primary-container font-mono text-label-sm bg-primary-container/10 px-2.5 py-1 rounded-md">D-PAD NAVEGABLE</span>
+</div>
+<!-- 4 Profile Cards Bento -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+<!-- Profile 1: Ultra-Lite Eco -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all cursor-pointer group text-left relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface group-hover:text-primary">Ultra-Lite / Eco</span>
+<span class="text-[11px] font-mono text-on-surface-variant bg-surface-container-lowest px-2 py-0.5 rounded">1.2 GHz</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+              Baja disipación térmica (-35%). Ideal para dongles de 1GB RAM y streaming IPTV continuo.
+            </p>
+<div class="mt-3 flex items-center gap-1.5 text-[11px] text-outline font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Conservativo
+            </div>
+</div>
+<!-- Profile 2: Equilibrado -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all cursor-pointer group text-left relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface group-hover:text-primary">Equilibrado (Default)</span>
+<span class="text-[11px] font-mono text-on-surface-variant bg-surface-container-lowest px-2 py-0.5 rounded">1.8 GHz</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+              Frecuencia escalonada adaptativa. Balance dinámico de temperatura y decodificación 4K.
+            </p>
+<div class="mt-3 flex items-center gap-1.5 text-[11px] text-outline font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Schedutil Android
+            </div>
+</div>
+<!-- Profile 3: Gamer & 120 FPS (ACTIVE) -->
+<div class="p-4 rounded-xl bg-surface-container-high shadow-lg shadow-primary-container/10 relative overflow-hidden text-left cursor-pointer">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-2 relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="font-label-lg text-label-lg font-bold text-primary">Gamer &amp; 120 FPS</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+</div>
+<span class="text-[11px] font-mono text-primary bg-surface-container-lowest px-2 py-0.5 rounded font-bold">2.2 GHz</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface leading-snug relative z-10">
+              Gobernador Performance constante. Latencia de mando reducida a 1.2ms y bloqueo a 120 FPS.
+            </p>
+<div class="mt-3 flex items-center justify-between text-[11px] font-mono relative z-10">
+<span class="text-secondary flex items-center gap-1.5 font-bold">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse"></span> ACTIVO AHORA
+              </span>
+<span class="text-on-surface-variant">GPU Boost Mali +30%</span>
+</div>
+</div>
+<!-- Profile 4: Overdrive -->
+<div class="p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-all cursor-pointer group text-left relative overflow-hidden">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-lg text-label-lg font-bold text-on-surface group-hover:text-primary">Overdrive Sin Límite</span>
+<span class="text-[11px] font-mono text-error bg-surface-container-lowest px-2 py-0.5 rounded">Turbo Max</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+              Desactiva mitigaciones térmicas ligeras. Se aconseja disipador de aluminio o ventilador USB.
+            </p>
+<div class="mt-3 flex items-center gap-1.5 text-[11px] text-error font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Alerta Térmica
+            </div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: LOW-RAM KILLER & MEMORY MANAGEMENT -->
+<section class="bg-surface-container-low rounded-xl p-5 shadow-md space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">memory</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Gestión de Memoria y Low-RAM Killer</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Asignación dinámica de ZRAM y mitigación de cuellos de botella</p>
+</div>
+</div>
+<span class="text-secondary font-mono text-label-sm bg-secondary/10 px-2.5 py-1 rounded-md">81% LIBRE</span>
+</div>
+<div class="space-y-3 pt-1">
+<!-- Item 1: Auto-Kill OTT apps -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5 max-w-xl">
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">Auto-Kill Agresivo de Apps en Background</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-container-highest text-primary">Ultra-Lite Core</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Liquida procesos remanentes de Netflix, Disney+ y Prime al alternar al reproductor IPTV o Emby.
+              </p>
+</div>
+<!-- Toggle ON -->
+<button class="w-12 h-6 rounded-full bg-primary-container relative p-0.5 transition-colors focus:outline-none">
+<span class="block w-5 h-5 rounded-full bg-on-primary ml-auto shadow-sm"></span>
+</button>
+</div>
+<!-- Item 2: Selector límite de procesos -->
+<div class="p-4 rounded-xl bg-surface-container flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="space-y-0.5">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">Límite Estricto de Tareas en Background</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Restringe el planificador para dispositivos con 1.5GB a 2GB de RAM.</p>
+</div>
+<!-- Segmented Pill for TV Focus -->
+<div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-xl shrink-0">
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary font-mono text-label-sm font-bold shadow">
+                Máx 1 Proceso
+              </button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-white font-mono text-label-sm">
+                2 Procesos
+              </button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-white font-mono text-label-sm">
+                Estándar
+              </button>
+</div>
+</div>
+<!-- Item 3: ZRAM Swapping -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5 max-w-xl">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">ZRAM Swapping Dinámico en NVMe/eMMC</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                1024 MB virtuales comprimidos con LZ4 para impedir que Android TV cierre el Launcher principal.
+              </p>
+</div>
+<!-- Toggle ON -->
+<button class="w-12 h-6 rounded-full bg-primary-container relative p-0.5 transition-colors focus:outline-none">
+<span class="block w-5 h-5 rounded-full bg-on-primary ml-auto shadow-sm"></span>
+</button>
+</div>
+<!-- Item 4: Limpieza de Caché al Suspender -->
+<div class="p-4 rounded-xl bg-surface-container flex items-center justify-between gap-4">
+<div class="space-y-0.5 max-w-xl">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">Limpieza de Buffers y Thumbnails al Suspender</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Purga directorios /cache y libera memoria gráfica antes de entrar en standby de pantalla.
+              </p>
+</div>
+<!-- Toggle ON -->
+<button class="w-12 h-6 rounded-full bg-primary-container relative p-0.5 transition-colors focus:outline-none">
+<span class="block w-5 h-5 rounded-full bg-on-primary ml-auto shadow-sm"></span>
+</button>
+</div>
+</div>
+</section>
+<!-- SECTION 3: GRAPHICS & 10-FOOT LEAN UI -->
+<section class="bg-surface-container-low rounded-xl p-5 shadow-md space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Renderizado Gráfico &amp; 10-Foot UI Lean Mode</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Optimización de SurfaceFlinger y aceleración de hardware VPU</p>
+</div>
+</div>
+<span class="text-primary-container font-mono text-label-sm bg-primary-container/10 px-2.5 py-1 rounded-md">VPU HW ACCEL</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+<!-- Toggle Box 1 -->
+<div class="p-4 rounded-xl bg-surface-container space-y-3 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Escala de Animación 0x</span>
+<span class="text-secondary font-mono text-label-sm font-bold">0.0x (Instantáneo)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Suprime transiciones lentas de ventanas para responder inmediatamente a cada toque del D-Pad.
+              </p>
+</div>
+<div class="flex justify-end">
+<button class="w-11 h-6 rounded-full bg-primary-container relative p-0.5">
+<span class="block w-5 h-5 rounded-full bg-on-primary ml-auto shadow-sm"></span>
+</button>
+</div>
+</div>
+<!-- Toggle Box 2 -->
+<div class="p-4 rounded-xl bg-surface-container space-y-3 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Forzar Renderizado GPU</span>
+<span class="text-secondary font-mono text-label-sm font-bold">2D HW ON</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Bypasea el software draw de Android TV y delega todo el dibujo al núcleo ARM Mali-G31.
+              </p>
+</div>
+<div class="flex justify-end">
+<button class="w-11 h-6 rounded-full bg-primary-container relative p-0.5">
+<span class="block w-5 h-5 rounded-full bg-on-primary ml-auto shadow-sm"></span>
+</button>
+</div>
+</div>
+<!-- Framebuffer Selector Box -->
+<div class="p-4 rounded-xl bg-surface-container space-y-3 flex flex-col justify-between sm:col-span-2">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<span class="font-label-lg text-label-lg font-bold text-on-surface">Resolución de Launcher Framebuffer</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Mantiene videos en 4K UHD nativo mientras el menú funciona a 1080p@120Hz sin lags.
+                </p>
+</div>
+<span class="px-2.5 py-1 rounded bg-surface-container-highest text-primary font-mono text-label-sm font-bold self-start sm:self-auto">
+                1080p @ 120Hz Nativo
+              </span>
+</div>
+<div class="grid grid-cols-3 gap-2 pt-1 font-mono text-body-sm">
+<div class="p-2 rounded-lg bg-surface-container-highest text-center text-on-surface-variant cursor-pointer hover:bg-surface-variant">
+                720p (Ultra Stick)
+              </div>
+<div class="p-2 rounded-lg bg-primary-container text-on-primary text-center font-bold shadow cursor-pointer">
+                1080p (Recomendado)
+              </div>
+<div class="p-2 rounded-lg bg-surface-container-highest text-center text-on-surface-variant cursor-pointer hover:bg-surface-variant">
+                2160p (4K Pesado)
+              </div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN: REAL-TIME TELEMETRY HUD & DIAGNOSTICS (4 COLS) -->
+<div class="xl:col-span-4 space-y-6">
+<!-- TELEMETRY CARD -->
+<div class="bg-surface-container-low rounded-xl p-5 shadow-xl space-y-5 relative overflow-hidden">
+<!-- Living ambient glow -->
+<div class="absolute -top-10 -right-10 w-44 h-44 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between border-b border-surface-container-high/40 pb-3">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="font-label-lg text-label-lg font-bold text-on-surface uppercase tracking-wider">Telemetría SoC En Vivo</span>
+</div>
+<span class="text-secondary font-mono text-label-sm font-bold">120 FPS</span>
+</div>
+<!-- Big Metric: CPU Load SVG Radial/Bar Combo -->
+<div class="bg-surface-container p-4 rounded-xl space-y-3">
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-mono">Carga CPU SoC</span>
+<span class="font-mono text-headline-sm font-bold text-primary">14% <span class="text-body-sm text-on-surface-variant font-normal">@ 2.0 GHz</span></span>
+</div>
+<!-- Animated Multi-Core Activity Bars (4 Cores) -->
+<div class="grid grid-cols-4 gap-2 pt-1">
+<div class="space-y-1">
+<div class="h-14 bg-surface-container-lowest rounded-md flex flex-col justify-end p-1">
+<div class="w-full bg-primary-container rounded-sm transition-all duration-300" style="height: 18%"></div>
+</div>
+<div class="text-[10px] font-mono text-center text-on-surface-variant">C1</div>
+</div>
+<div class="space-y-1">
+<div class="h-14 bg-surface-container-lowest rounded-md flex flex-col justify-end p-1">
+<div class="w-full bg-primary-container rounded-sm transition-all duration-300" style="height: 24%"></div>
+</div>
+<div class="text-[10px] font-mono text-center text-on-surface-variant">C2</div>
+</div>
+<div class="space-y-1">
+<div class="h-14 bg-surface-container-lowest rounded-md flex flex-col justify-end p-1">
+<div class="w-full bg-primary-container rounded-sm transition-all duration-300" style="height: 10%"></div>
+</div>
+<div class="text-[10px] font-mono text-center text-on-surface-variant">C3</div>
+</div>
+<div class="space-y-1">
+<div class="h-14 bg-surface-container-lowest rounded-md flex flex-col justify-end p-1">
+<div class="w-full bg-secondary-container rounded-sm transition-all duration-300" style="height: 8%"></div>
+</div>
+<div class="text-[10px] font-mono text-center text-on-surface-variant">C4</div>
+</div>
+</div>
+</div>
+<!-- Metric 2: SoC Thermal State -->
+<div class="bg-surface-container p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">thermostat</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase font-mono">Temperatura SoC</p>
+<p class="font-headline-sm text-headline-sm text-on-surface font-bold">41°C</p>
+</div>
+</div>
+<span class="px-2 py-1 rounded bg-secondary/15 text-secondary font-mono text-label-sm font-bold">
+            ÓPTIMO / FRÍO
+          </span>
+</div>
+<!-- Metric 3: RAM Footprint Detail -->
+<div class="bg-surface-container p-4 rounded-xl space-y-2.5">
+<div class="flex justify-between items-baseline">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-mono">Memoria RAM Libre</span>
+<span class="font-mono text-body-md font-bold text-secondary">1,662 MB <span class="text-on-surface-variant font-normal">/ 2,048 MB</span></span>
+</div>
+<!-- Stylized progress bar -->
+<div class="w-full h-2.5 bg-surface-container-lowest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary-container rounded-full" style="width: 19%"></div>
+<div class="h-full bg-surface-container-high rounded-full" style="width: 81%"></div>
+</div>
+<div class="flex justify-between text-[11px] font-mono text-on-surface-variant pt-0.5">
+<span>Usado: 386 MB (19%)</span>
+<span class="text-secondary font-semibold">81% Disponible</span>
+</div>
+</div>
+<!-- Metric 4: Low Latency D-Pad -->
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container p-3 rounded-xl">
+<p class="text-[10px] font-mono text-on-surface-variant uppercase">Input Lag Mando</p>
+<p class="font-mono text-headline-sm text-primary font-bold mt-1">1.2 ms</p>
+<p class="text-[10px] text-on-surface-variant mt-0.5">Bluetooth LE Direct</p>
+</div>
+<div class="bg-surface-container p-3 rounded-xl">
+<p class="text-[10px] font-mono text-on-surface-variant uppercase">Frame Drops UI</p>
+<p class="font-mono text-headline-sm text-secondary font-bold mt-1">0 Drops</p>
+<p class="text-[10px] text-on-surface-variant mt-0.5">119.8 FPS Sync</p>
+</div>
+</div>
+<!-- Benchmark Action Button -->
+<button class="w-full py-3 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface hover:text-white transition font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 group shadow-md active:scale-95">
+<span class="material-symbols-outlined text-primary-container text-[18px] group-hover:animate-spin">tune</span>
+<span>Ejecutar Test de Estrés SoC / RAM</span>
+</button>
+</div>
+<!-- DEVICE HARDWARE PASSPORT -->
+<div class="bg-surface-container-low rounded-xl p-5 shadow-md space-y-3 font-mono text-body-sm">
+<div class="flex items-center justify-between pb-2 border-b border-surface-container-high/40">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Ficha Técnica de Dispositivo</span>
+<span class="text-[10px] bg-primary-container/20 text-primary px-1.5 py-0.5 rounded font-bold">CUSTOM ROM</span>
+</div>
+<div class="space-y-2 text-on-surface-variant text-[12px]">
+<div class="flex justify-between py-1">
+<span>Procesador:</span>
+<span class="text-on-surface font-semibold">Amlogic S905X4 4-Core</span>
+</div>
+<div class="flex justify-between py-1">
+<span>Acelerador 3D:</span>
+<span class="text-on-surface font-semibold">ARM Mali-G31 MP2</span>
+</div>
+<div class="flex justify-between py-1">
+<span>Swap de Memoria:</span>
+<span class="text-secondary font-semibold">ZRAM 1.0 GB LZ4 Activo</span>
+</div>
+<div class="flex justify-between py-1">
+<span>Kernel Base:</span>
+<span class="text-on-surface font-semibold">Linux 5.4.180-tonalix+</span>
+</div>
+<div class="flex justify-between py-1">
+<span>Capa Gráfica:</span>
+<span class="text-primary font-semibold">Lean UI 10-Foot Engine</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- INLINE INTERACTION SCRIPT FOR MICRO-INTERACTIONS -->
+<script>
+    function runRamBoost() {
+      const btn = document.getElementById('ramBoostBtn');
+      if (!btn) return;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `
+        <span class="material-symbols-outlined text-secondary animate-spin text-[18px]">autorenew</span>
+        <span class="font-label-lg text-label-lg text-secondary font-bold">Purgando Caché...</span>
+      `;
+      setTimeout(() => {
+        btn.innerHTML = `
+          <span class="material-symbols-outlined text-secondary text-[18px]">done_all</span>
+          <span class="font-label-lg text-label-lg text-secondary font-bold">+184 MB Liberados!</span>
+        `;
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2200);
+      }, 1200);
+    }
+  </script>
+</div></main>
+</div>
+<!-- TV FOOTER NAVIGATION CHEAT SHEET (Standard Tonalix Remote Guide) -->
+<footer class="h-10 bg-tonal-base border-t border-tonal-border/60 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0 font-mono">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">▲▼◀▶</span>
+<span>Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">OK</span>
+<span>Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Atrás</span>
+<span>Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Menú</span>
+<span>Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-tonal-cyan">Android TV 11/12</span>
+<span class="text-slate-600">•</span>
+<span class="text-emerald-400">DNS Anti-Ad: Conectado</span>
+</div>
+</footer>
+</body></html>

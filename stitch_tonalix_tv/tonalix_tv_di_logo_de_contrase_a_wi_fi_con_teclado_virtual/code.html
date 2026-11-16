@@ -1,0 +1,635 @@
+<!DOCTYPE html><html class="h-full" lang="es"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Tonalix TV - Configuración</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            tonal: {
+              base: '#060B0E',
+              sidebar: '#0A1116',
+              surface: '#0F1A21',
+              card: '#14222B',
+              cardHover: '#1B2C37',
+              border: '#1E323F',
+              cyan: '#00D1E6',
+              cyanHover: '#33E0F1',
+              cyanDim: 'rgba(0, 209, 230, 0.12)',
+              slateText: '#94A3B8',
+              muted: '#64748B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 17, 22, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e323f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00D1E6;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"></head>
+<body class="bg-tonal-base text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-tonal-cyan selection:text-black">
+<!-- TOP HEADER / STATUS BAR -->
+<header class="h-14 border-b border-tonal-border/60 bg-tonal-sidebar/95 backdrop-blur px-5 flex items-center justify-between z-20 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<!-- TonalixTV Logo Mark -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-600 to-tonal-cyan flex items-center justify-center shadow-lg shadow-cyan-950/40">
+<svg class="w-4 h-4 text-black fill-current" viewBox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div class="flex items-baseline font-bold tracking-tight text-lg">
+<span class="text-white">Tonalix</span><span class="text-tonal-cyan">TV</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Inicio</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Aplicaciones</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Entradas</a>
+<a class="px-3 py-1.5 rounded-lg text-tonal-cyan bg-tonal-cyanDim font-semibold border border-tonal-cyan/30" href="#">Ajustes</a>
+</nav>
+</div>
+<!-- Quick Telemetry & Status Badges -->
+<div class="flex items-center gap-3">
+<!-- Live Metrics Pill -->
+<div class="hidden lg:flex items-center gap-3 px-3 py-1 rounded-full bg-tonal-surface border border-tonal-border text-xs font-mono text-tonal-slateText">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          CPU <span class="text-white font-semibold">6.2%</span>
+</span>
+<span class="text-slate-600">|</span>
+<span>Red <span class="text-white font-semibold">12ms</span></span>
+<span class="text-slate-600">|</span>
+<span>RAM <span class="text-tonal-cyan font-semibold">1.8 / 3 GB</span></span>
+</div>
+<!-- Quick Session Badge -->
+<div class="flex items-center gap-2 pl-2">
+<span class="text-xs bg-cyan-950/70 border border-tonal-cyan/40 text-tonal-cyan font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Sesión Blindada</span>
+</span>
+<div class="text-xs font-mono text-slate-400 font-bold bg-tonal-card px-2.5 py-1 rounded-md border border-tonal-border">
+          17:42
+        </div>
+</div>
+</div>
+</header>
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-tonal-sidebar border-r border-tonal-border/70 flex flex-col justify-between shrink-0 p-4">
+<div>
+<div class="px-3 pb-3 mb-2 border-b border-tonal-border/50 flex items-center justify-between">
+<span class="text-xs font-semibold text-tonal-muted tracking-wider uppercase">Configuración del Sistema</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-tonal-border text-slate-300">v4.8 PRO</span>
+</div>
+<nav class="space-y-1">
+<!-- Item: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Red e Internet</p>
+<p class="text-[11px] text-tonal-muted">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+</button>
+<!-- Item: Pantalla y Video (Active) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-semibold text-tonal-cyan">Pantalla y Video</p>
+<p class="text-[11px] text-cyan-200/60">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="text-tonal-cyan font-bold text-xs">●</span>
+</button>
+<!-- Item: Audio y Sonido -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Audio y Salida</p>
+<p class="text-[11px] text-tonal-muted">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Privacidad y Seguridad</p>
+<p class="text-[11px] text-tonal-muted">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-1.5 py-0.5 rounded">ON</span>
+</button>
+<!-- Item: Rendimiento y Caché -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Modo Rendimiento</p>
+<p class="text-[11px] text-tonal-muted">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Acerca de</p>
+<p class="text-[11px] text-tonal-muted">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3 rounded-xl bg-tonal-surface border border-tonal-border text-xs text-slate-400 space-y-2">
+<div class="flex items-center justify-between text-slate-300 font-medium">
+<span>Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-tonal-cyan"></span>
+</div>
+<p class="text-[11px] leading-relaxed text-tonal-muted">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1 border-t border-tonal-border/50 text-[10px] font-mono text-slate-400">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-gradient-to-b from-tonal-base to-tonal-surface"><div class="flex flex-col w-full relative -m-6 md:-m-8 min-h-[calc(100vh-3.5rem-2.5rem)] overflow-hidden font-body-md select-none">
+<!-- BACKGROUND LAYER: Wi-Fi Settings Dashboard (Context from SCREEN_35) -->
+<div class="w-full flex-1 p-6 md:p-8 space-y-8 bg-surface-container-lowest opacity-40 filter blur-[2px] pointer-events-none">
+<!-- Top Configuration Header -->
+<div class="flex items-center justify-between pb-4">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary-container">Redes &amp; Conectividad</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+<span class="font-label-sm text-label-sm text-secondary-fixed">En línea</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Configuración de Wi-Fi</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="px-4 py-2 rounded-xl bg-surface-container text-on-surface-variant flex items-center gap-2 font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+<span>Escanear redes</span>
+</div>
+</div>
+</div>
+<!-- Main Settings Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Network List Shelf -->
+<div class="col-span-8 space-y-4">
+<!-- Connected AP Card -->
+<div class="p-5 rounded-2xl bg-surface-container flex items-center justify-between shadow-md">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">wifi</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-headline-sm text-headline-sm text-on-surface">CyberNet-Mesh_5G</p>
+<span class="px-2 py-0.5 rounded text-[10px] font-label-sm bg-secondary-fixed/20 text-secondary-fixed">ACTIVA</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Conectado • 5 GHz • 866 Mbps • Excelente señal</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary-fixed">check_circle</span>
+</div>
+<!-- Available APs Group -->
+<div class="pt-2 space-y-2">
+<p class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase px-2">Redes Disponibles (6)</p>
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">wifi_password</span>
+<span class="font-label-lg text-label-lg text-on-surface">FibraOptica_Tonalix_Gaming</span>
+<span class="px-1.5 py-0.5 rounded text-[9px] font-label-sm bg-surface-container-high text-on-surface-variant">Wi-Fi 6E</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">lock</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">wifi</span>
+<span class="font-label-lg text-label-lg text-on-surface">Studio_MediaVault_IoT</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">lock</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">wifi</span>
+<span class="font-label-lg text-label-lg text-on-surface">Invitados_Tonalix_2.4G</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">lock_open</span>
+</div>
+</div>
+</div>
+<!-- Network Details Telemetry Panel -->
+<div class="col-span-4 p-5 rounded-2xl bg-surface-container-low space-y-4">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Diagnóstico IP</h3>
+<div class="space-y-3 font-body-sm text-body-sm">
+<div class="flex justify-between py-1 border-b border-surface-variant/20">
+<span class="text-on-surface-variant">Dirección IPv4</span>
+<span class="text-on-surface font-label-sm">192.168.1.144</span>
+</div>
+<div class="flex justify-between py-1 border-b border-surface-variant/20">
+<span class="text-on-surface-variant">Puerta de Enlace</span>
+<span class="text-on-surface font-label-sm">192.168.1.1</span>
+</div>
+<div class="flex justify-between py-1 border-b border-surface-variant/20">
+<span class="text-on-surface-variant">DNS Seguro Tonalix</span>
+<span class="text-secondary-fixed font-label-sm">1.1.1.2 (AdBlock On)</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-on-surface-variant">Potencia RSSI</span>
+<span class="text-on-surface font-label-sm">-48 dBm</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL SCRIM OVERLAY -->
+<div class="absolute inset-0 bg-[#05080c]/85 backdrop-blur-md flex items-center justify-center p-4 z-40">
+<!-- MODAL CARD CONTAINER: TonalixWifiPasswordDialog.kt 10-foot UI -->
+<div class="w-full max-w-[900px] rounded-3xl bg-surface-container-lowest shadow-2xl shadow-cyan-950/60 p-7 flex flex-col gap-6 relative overflow-hidden" style="box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.25), 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 40px -10px rgba(0, 229, 255, 0.2);">
+<!-- Ambient Backlight Gradient Glow -->
+<div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-36 bg-gradient-to-b from-primary-container/20 to-transparent blur-3xl pointer-events-none"></div>
+<!-- 1. DIALOG HEADER -->
+<div class="flex items-start justify-between relative z-10">
+<div class="flex items-center gap-4">
+<!-- Wi-Fi Lock Cyber Icon -->
+<div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center shadow-inner" style="box-shadow: inset 0 0 12px rgba(0, 229, 255, 0.15);">
+<span class="material-symbols-outlined text-primary-container text-3xl" style="font-variation-settings: 'FILL' 1;">wifi_password</span>
+</div>
+<div>
+<div class="flex items-center gap-2.5">
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-tight">Conectar a Red Wi-Fi</h2>
+<span class="px-2.5 py-0.5 rounded-full font-label-sm text-[10px] bg-secondary-fixed/15 text-secondary-fixed uppercase tracking-wider">
+                WPA3 Personal (SAE)
+              </span>
+</div>
+<div class="flex items-center gap-2 mt-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="text-primary font-medium">FibraOptica_Tonalix_Gaming</span>
+<span>•</span>
+<span class="text-tertiary-fixed-dim">6 GHz (Wi-Fi 6E)</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+                -59 dBm (Óptima)
+              </span>
+</div>
+</div>
+</div>
+<!-- TV D-Pad Quick Dismiss Pill -->
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant hover:text-on-surface cursor-pointer" id="btn-close-modal">
+<span class="px-1.5 py-0.5 rounded bg-surface-variant text-[10px] font-label-sm text-primary-fixed">ESC / ATRÁS</span>
+<span class="font-label-sm text-label-sm">Cerrar</span>
+</button>
+</div>
+<!-- 2. INTERACTIVE PASSWORD VIEWER INPUT -->
+<div class="space-y-1.5 relative z-10">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Clave de Seguridad Precompartida</span>
+<div class="flex items-center gap-1 font-label-sm text-label-sm">
+<span class="text-secondary-fixed" id="char-counter">16</span>
+<span class="text-on-surface-variant">/ 64 caracteres</span>
+</div>
+</div>
+<!-- Screen-Focused Input Capsule -->
+<div class="w-full h-14 rounded-2xl bg-surface-container-low px-4 flex items-center justify-between transition-all" style="box-shadow: rgb(255, 180, 171) 0px 0px 0px 1.5px, rgba(255, 82, 82, 0.35) 0px 0px 22px; background-color: rgba(147, 0, 10, 0.15);">
+<!-- Left: Key Glyph & Password Text Display -->
+<div class="flex items-center gap-3.5 flex-1 min-w-0 pr-4">
+<span class="material-symbols-outlined text-primary-container text-xl shrink-0" style="font-variation-settings: 'FILL' 1;">key</span>
+<div class="flex items-center gap-1 min-w-0 overflow-hidden font-label-lg text-lg text-primary tracking-widest" id="password-display">
+<span class="font-bold" id="pwd-chars">Tonalix2025!#Pro</span>
+<span class="w-2.5 h-6 bg-primary-container animate-pulse shrink-0 rounded-sm ml-0.5"></span>
+</div>
+</div>
+<!-- Right: Interactive Toggle & Clear Buttons -->
+<div class="flex items-center gap-2 shrink-0">
+<!-- Show/Hide Password Pill -->
+<button class="h-9 px-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 font-label-sm text-label-sm transition-colors cursor-pointer" id="toggle-visibility-btn">
+<span class="material-symbols-outlined text-base" id="eye-icon">visibility</span>
+<span class="hidden sm:inline" id="eye-label">Visible</span>
+</button>
+<!-- Clear Input Pill -->
+<button class="h-9 px-3 rounded-lg bg-surface-container hover:bg-error-container/40 text-error hover:text-on-error-container flex items-center gap-1.5 font-label-sm text-label-sm transition-colors cursor-pointer" id="clear-input-btn">
+<span class="material-symbols-outlined text-base">backspace</span>
+<span class="hidden sm:inline">Limpiar</span>
+</button>
+</div>
+</div><div class="flex items-center justify-between px-3 py-2 rounded-xl bg-error-container/40 border border-error/50 text-error gap-3 mt-1.5" id="auth-error-banner"><div class="flex items-center gap-2.5 min-w-0"><span class="material-symbols-outlined text-xl text-error shrink-0" style="font-variation-settings: 'FILL' 1;">error</span><div class="min-w-0"><div class="flex items-center gap-2 flex-wrap"><p class="font-label-sm text-label-sm font-bold tracking-tight text-error">Fallo de autenticación WPA3 (SAE) • Timeout adaptativo: <span class="text-secondary font-mono font-bold">8s</span></p><span class="px-2 py-0.5 rounded bg-secondary-fixed/20 border border-secondary-fixed/30 text-secondary-fixed font-mono text-[10px] flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>Auto: -59 dBm</span></div><p class="font-body-sm text-body-sm text-on-error-container">Tiempo de negociación agotado • Modo Auto Adaptativo RSSI activo (ajuste en curso según fluctuación)</p></div></div><div class="flex items-center gap-2 shrink-0"><button id="btn-retry-banner" class="px-3 py-1.5 rounded-lg bg-surface-container-high border border-tonal-cyan/40 hover:bg-surface-variant text-tonal-cyan font-label-sm text-label-sm flex items-center gap-2 cursor-pointer shadow-md transition-all"><svg class="w-3.5 h-3.5 animate-spin text-primary-container shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="font-semibold">Reintentar handshake WPA3...</span></button><div class="shrink-0 flex items-center gap-1.5 px-2 py-0.5 rounded bg-error-container text-[11px] font-mono text-error font-semibold"><span>Intento 1/3</span></div></div></div>
+</div>
+<!-- 3. VIRTUAL ON-SCREEN KEYBOARD (10-Foot UI Grid for D-Pad Remote) -->
+<div class="w-full rounded-2xl bg-surface-container p-3 space-y-2 relative z-10 shadow-inner">
+<!-- Row 1: Numbers -->
+<div class="grid grid-cols-10 gap-1.5">
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">1</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">2</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">3</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">4</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">5</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">6</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">7</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">8</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">9</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">0</button>
+</div>
+<!-- Row 2: QWERTY Row 1 -->
+<div class="grid grid-cols-10 gap-1.5">
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">Q</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">W</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">E</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">R</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">T</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">Y</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">U</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">I</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">O</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">P</button>
+</div>
+<!-- Row 3: QWERTY Row 2 (With Focused D-Pad Active Key) -->
+<div class="grid grid-cols-10 gap-1.5">
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">A</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">S</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">D</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">F</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">G</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">H</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">J</button>
+<!-- FOCUSED D-PAD KEY: Illuminated Neon Cyan with pitch dark typography -->
+<button class="key-btn h-11 rounded-xl bg-primary-container text-on-primary-fixed font-headline-sm text-headline-sm font-bold flex items-center justify-center scale-105 z-10 transition-all cursor-pointer" style="box-shadow: 0 0 20px #00e5ff, 0 0 0 2px #c3f5ff;">K</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">L</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">Ñ</button>
+</div>
+<!-- Row 4: QWERTY Row 3 + Punctuation -->
+<div class="grid grid-cols-10 gap-1.5">
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">Z</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">X</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">C</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">V</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">B</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">N</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">M</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">-</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">_</button>
+<button class="key-btn h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center transition-all cursor-pointer">.</button>
+</div>
+<!-- Row 5: Function & Space Keys -->
+<div class="grid grid-cols-12 gap-1.5 pt-0.5">
+<!-- Shift Key -->
+<button class="col-span-2 h-11 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer" id="shift-btn">
+<span class="material-symbols-outlined text-base">arrow_upward</span>
+<span>MAYÚS</span>
+</button>
+<!-- Symbols Key -->
+<button class="col-span-2 h-11 rounded-xl bg-surface-container-high hover:bg-surface-variant text-primary-container font-label-sm text-label-sm flex items-center justify-center transition-all cursor-pointer">
+            ?123
+          </button>
+<!-- Space Bar -->
+<button class="key-space col-span-6 h-11 rounded-xl bg-surface-container-low hover:bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center gap-2 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-base">space_bar</span>
+<span>ESPACIO</span>
+</button>
+<!-- Backspace Key -->
+<button class="col-span-2 h-11 rounded-xl bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-sm text-label-sm flex items-center justify-center gap-1 transition-all cursor-pointer" id="key-backspace">
+<span class="material-symbols-outlined text-base">backspace</span>
+<span>BORRAR</span>
+</button>
+</div>
+</div>
+<!-- 4. DIALOG FOOTER & ACTIONS -->
+<div class="w-full rounded-2xl bg-surface-container-low border border-tonal-border/60 p-3.5 flex items-center justify-between gap-4 relative z-10" id="wpa3-timeout-setting-row"><div class="flex items-center gap-3 min-w-0"><div class="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary-container shrink-0"><span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">tune</span></div><div class="min-w-0"><div class="flex items-center gap-2 flex-wrap"><p class="font-label-lg text-label-lg text-on-surface font-semibold">Tiempo de espera Handshake WPA3 (SAE)</p><span class="px-2 py-0.5 rounded bg-surface-container text-[10px] font-mono text-primary-container border border-primary-container/30">PARAM_AUTH_TIMEOUT</span><span class="px-2 py-0.5 rounded-full bg-secondary-fixed/15 border border-secondary-fixed/30 text-secondary-fixed text-[10px] font-mono font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-ping"></span>Modo Auto-Adaptativo RSSI (-59 dBm → 8s)</span></div><p class="font-body-sm text-body-sm text-on-surface-variant">Calcula automáticamente el tiempo de negociación criptográfica según la potencia de recepción (dBm) y fluctuación RSSI</p></div></div><div class="flex items-center gap-2 shrink-0"><div class="flex items-center gap-1.5 p-1 rounded-xl bg-surface-container-lowest border border-tonal-border/50"><button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-fixed font-mono text-xs font-bold transition-all shadow-md cursor-pointer flex items-center gap-1.5" style="box-shadow: 0 0 16px rgba(0, 229, 255, 0.45);"><span class="material-symbols-outlined text-[14px]">auto_awesome</span><span>Auto (-59 dBm)</span><span class="text-[9px] bg-black/25 px-1 py-0.2 rounded font-mono">8s</span></button><button class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono text-xs transition-all cursor-pointer">5s</button><button class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono text-xs transition-all cursor-pointer flex items-center gap-1"><span>10s</span><span class="text-[9px] text-tonal-muted font-sans hidden md:inline">(Manual)</span></button><button class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono text-xs transition-all cursor-pointer flex items-center gap-1"><span>15s</span><span class="text-[9px] text-tonal-muted font-sans hidden md:inline">(Mesh)</span></button><button class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white font-mono text-xs transition-all cursor-pointer flex items-center gap-1"><span>30s</span></button></div><div class="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-container text-[10px] font-mono text-tonal-muted border border-tonal-border/40 shrink-0"><span class="text-primary-container">◄ ►</span><span>Ajustar</span></div></div></div><div class="flex items-center justify-between pt-1 relative z-10">
+<!-- Remember Network Auto-Connect Switch -->
+<div class="flex items-center gap-3 cursor-pointer group" id="remember-network-toggle">
+<!-- Toggle Track -->
+<div class="w-11 h-6 rounded-full bg-primary-container p-0.5 transition-colors flex items-center justify-end" id="switch-track" style="box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);">
+<div class="w-5 h-5 rounded-full bg-surface-container-lowest transition-transform" id="switch-thumb"></div>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors">Recordar esta red</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Conectar automáticamente al encender la TV</p>
+</div>
+</div>
+<!-- Action Push Buttons -->
+<div class="flex items-center gap-3">
+<!-- Cancel Button -->
+<button class="h-12 px-5 rounded-xl bg-surface-container-high border border-primary-container/40 hover:bg-surface-variant text-primary-container font-label-lg text-label-lg flex items-center gap-2.5 shadow-md transition-all hover:scale-[1.02] cursor-pointer" id="btn-retry-action" style="box-shadow: rgba(0, 229, 255, 0.25) 0px 0px 16px;"><svg class="w-4 h-4 animate-spin text-primary-container shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="font-semibold">Reintentar conexión</span><span class="px-1.5 py-0.5 rounded bg-surface-variant text-[10px] font-mono text-secondary-fixed">[AMARILLO]</span></button><button class="h-12 px-6 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-lg text-label-lg transition-colors cursor-pointer" id="btn-cancel">
+            Cancelar
+          </button>
+<!-- Primary Submit Action: Glowing Ready State -->
+<button class="h-12 px-7 rounded-xl bg-primary-container hover:bg-primary-fixed text-on-primary-fixed font-headline-sm text-headline-sm font-bold flex items-center gap-2.5 shadow-lg transition-all scale-100 hover:scale-[1.02] cursor-pointer" id="btn-connect" style="box-shadow: 0 0 24px rgba(0, 229, 255, 0.45);">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">wifi</span>
+<span>Conectar [OK]</span>
+</button>
+</div>
+</div>
+<!-- 5. IN-DIALOG D-PAD NAVIGATION CHEAT SHEET -->
+<div class="pt-3 border-t border-surface-variant/20 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm relative z-10">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-primary-container text-[10px]">▲▼◀▶</span>
+<span>Navegar por teclas</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-[10px]">OK</span>
+<span>Seleccionar letra</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface text-[10px]">ATRÁS</span>
+<span>Cancelar</span>
+</span>
+</div>
+<div class="flex items-center gap-2"><span class="flex items-center gap-1.5 text-primary-container mr-3"><svg class="w-3 h-3 animate-spin text-primary-container inline shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="font-semibold">[AMARILLO] Reintentar</span></span><span class="text-slate-600 mr-2">|</span>
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="text-secondary-fixed font-semibold">[VERDE / PLAY] Conectar rápido</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    let currentPassword = "Tonalix2025!#Pro";
+    let isMasked = false;
+    let isRememberActive = true;
+
+    const pwdDisplay = document.getElementById('pwd-chars');
+    const charCounter = document.getElementById('char-counter');
+    const toggleBtn = document.getElementById('toggle-visibility-btn');
+    const eyeIcon = document.getElementById('eye-icon');
+    const eyeLabel = document.getElementById('eye-label');
+    const clearBtn = document.getElementById('clear-input-btn');
+    const rememberToggle = document.getElementById('remember-network-toggle');
+    const switchTrack = document.getElementById('switch-track');
+    const connectBtn = document.getElementById('btn-connect');
+
+    function updateDisplay() {
+      if (isMasked) {
+        pwdDisplay.textContent = "•".repeat(currentPassword.length);
+        eyeIcon.textContent = "visibility_off";
+        eyeLabel.textContent = "Oculto";
+      } else {
+        pwdDisplay.textContent = currentPassword;
+        eyeIcon.textContent = "visibility";
+        eyeLabel.textContent = "Visible";
+      }
+      charCounter.textContent = currentPassword.length;
+    }
+
+    // Toggle password visibility
+    toggleBtn.addEventListener('click', () => {
+      isMasked = !isMasked;
+      updateDisplay();
+    });
+
+    // Clear password
+    clearBtn.addEventListener('click', () => {
+      currentPassword = "";
+      updateDisplay();
+    });
+
+    // Click Virtual Keyboard Keys
+    document.querySelectorAll('.key-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        if (currentPassword.length < 64) {
+          currentPassword += button.textContent.trim();
+          updateDisplay();
+        }
+      });
+    });
+
+    // Space Key
+    const spaceBtn = document.querySelector('.key-space');
+    if (spaceBtn) {
+      spaceBtn.addEventListener('click', () => {
+        if (currentPassword.length < 64) {
+          currentPassword += " ";
+          updateDisplay();
+        }
+      });
+    }
+
+    // Backspace Key
+    const backspaceBtn = document.getElementById('key-backspace');
+    if (backspaceBtn) {
+      backspaceBtn.addEventListener('click', () => {
+        if (currentPassword.length > 0) {
+          currentPassword = currentPassword.slice(0, -1);
+          updateDisplay();
+        }
+      });
+    }
+
+    // Toggle Remember Network
+    rememberToggle.addEventListener('click', () => {
+      isRememberActive = !isRememberActive;
+      if (isRememberActive) {
+        switchTrack.className = "w-11 h-6 rounded-full bg-primary-container p-0.5 transition-colors flex items-center justify-end";
+        switchTrack.style.boxShadow = "0 0 10px rgba(0, 229, 255, 0.4)";
+      } else {
+        switchTrack.className = "w-11 h-6 rounded-full bg-surface-variant p-0.5 transition-colors flex items-center justify-start";
+        switchTrack.style.boxShadow = "none";
+      }
+    });
+
+    // Simulate Connect button visual feedback
+    connectBtn.addEventListener('click', () => {
+      connectBtn.classList.add('scale-95');
+      setTimeout(() => {
+        connectBtn.classList.remove('scale-95');
+        alert("Autenticando con FibraOptica_Tonalix_Gaming...");
+      }, 150);
+    });
+
+    updateDisplay();
+  })();
+</script></main>
+</div>
+<!-- TV FOOTER NAVIGATION CHEAT SHEET (Standard Tonalix Remote Guide) -->
+<footer class="h-10 bg-tonal-base border-t border-tonal-border/60 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0 font-mono">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">▲▼◀▶</span>
+<span>Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">OK</span>
+<span>Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Atrás</span>
+<span>Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Menú</span>
+<span>Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-tonal-cyan">Android TV 11/12</span>
+<span class="text-slate-600">•</span>
+<span class="text-emerald-400">DNS Anti-Ad: Conectado</span>
+</div>
+</footer>
+
+
+</body></html>

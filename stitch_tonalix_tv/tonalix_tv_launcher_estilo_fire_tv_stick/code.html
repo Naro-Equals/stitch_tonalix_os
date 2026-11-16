@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-[#080d12]" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV Launcher</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- BEGIN: Custom Styling -->
+<style data-purpose="base-styling">
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Hide standard scrollbars for a clean TV UI feel */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style data-purpose="card-glow">
+    .focused-card {
+      box-shadow: 0 0 0 2.5px #18e1ef, 0 10px 25px -5px rgba(24, 225, 239, 0.4);
+    }
+    .neon-cyan-bg {
+      background-color: #17e2ee;
+    }
+    .text-neon-cyan {
+      color: #17e2ee;
+    }
+  </style>
+<!-- END: Custom Styling -->
+</head>
+<body class="bg-[#090d11] text-[#9da6b3] min-h-screen flex flex-col justify-start overflow-x-hidden selection:bg-cyan-500 selection:text-black">
+<!-- BEGIN: MainHeader -->
+<header class="w-full px-7 pt-4 pb-2.5 flex flex-col gap-3 bg-gradient-to-b from-[#090e13] to-transparent">
+<!-- Top Bar Navigation & Status Indicators -->
+<div class="flex items-center justify-between">
+<!-- Brand & Primary Navigation -->
+<div class="flex items-center space-x-7">
+<div class="text-white font-bold text-xl tracking-tight flex items-center gap-0.5">
+<span>Tonalix</span>
+<span class="text-white font-semibold ml-1.5">TV</span>
+</div>
+<nav class="flex items-center space-x-6 text-[13px] font-semibold tracking-wide ml-3">
+<a class="text-white relative pb-1 flex flex-col items-center" href="#">
+            Inicio
+            <span class="absolute bottom-0 w-full h-[2.5px] bg-[#18e1ef] rounded-full"></span>
+</a>
+<a class="text-[#848f9e] hover:text-white transition" href="#">Aplicaciones</a>
+<a class="text-[#848f9e] hover:text-white transition" href="#">Entradas</a>
+</nav>
+</div>
+<!-- Quick Action Icons & Telemetry/User Status -->
+<div class="flex items-center space-x-2 text-[#7f8c9b]">
+<!-- Search icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-gray-300">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+<!-- Boost / Turbo icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-[#18e1ef]">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+</button>
+<!-- Gamepad icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="12" rx="6" stroke-width="2" width="20" x="2" y="6"></rect><path d="M6 12h4m-2-2v4m9-2h.01m2.99 0h.01" stroke-width="2"></path></svg>
+</button>
+<!-- Display / Inputs icon -->
+<button class="w-7 h-7 rounded-full bg-[#121922] hover:bg-[#1a2330] flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="12" rx="2" stroke-width="2" width="18" x="3" y="4"></rect><path d="M8 20h8m-4-4v4" stroke-linecap="round" stroke-width="2"></path></svg>
+</button>
+<!-- RAM Usage pill -->
+<div class="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#101b24] border border-[#1b2b3a] text-[11px] font-medium text-[#18e1ef] mx-0.5">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="16" rx="2" stroke-width="2" width="16" x="4" y="4"></rect><circle cx="12" cy="12" r="3" stroke-width="2"></circle><path d="M9 1v3m6-3v3m-6 16v3m6-3v3m4-13h3m-3 6h3M1 9h3m-3 6h3" stroke-linecap="round"></path></svg>
+<span class="tracking-tight">386 MB</span>
+</div>
+<!-- Wi-Fi icon -->
+<button class="w-6 h-6 flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><path d="M12 18c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-4.95-3.36l1.41 1.41C9.54 15.01 10.72 14.5 12 14.5s2.46.51 3.54 1.55l1.41-1.41C15.42 13.11 13.78 12.3 12 12.3s-3.42.81-4.95 2.34zm-3.54-3.54l1.41 1.41C6.73 10.7 9.24 9.5 12 9.5s5.27 1.2 7.08 2.98l1.41-1.41C18.42 8.98 15.37 7.5 12 7.5s-6.42 1.48-8.49 3.6z"></path></svg>
+</button>
+<!-- Bluetooth icon -->
+<button class="w-6 h-6 flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M7 7l10 10-5 5V2l5 5L7 17" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<!-- Channels / Category dots icon -->
+<button class="w-6 h-6 flex items-center justify-center text-gray-400">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><circle cx="7" cy="7" r="2"></circle><circle cx="17" cy="7" r="2"></circle><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
+</button>
+<!-- Current Profile pill with Lock icon -->
+<div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#121c27] border border-[#1b2b3b] text-gray-300 text-[11px] font-medium ml-1">
+<span class="w-3.5 h-3.5 rounded-full bg-[#18e1ef] text-[#080d12] flex items-center justify-center text-[9px] font-black">I</span>
+<span>Inicio Principal</span>
+<svg class="w-2.5 h-2.5 text-gray-400 ml-0.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="11" rx="2" stroke-width="2" width="18" x="3" y="11"></rect><path d="M7 11V7a5 5 0 0110 0v4" stroke-linecap="round" stroke-width="2"></path></svg>
+</div>
+<!-- Settings Cog -->
+<button class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-white">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><circle cx="12" cy="12" r="3" stroke-width="2"></circle></svg>
+</button>
+<!-- Power Off Button -->
+<button class="w-7 h-7 flex items-center justify-center text-red-500 hover:text-red-400">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M18.364 5.636a9 9 0 11-12.728 0M12 2v10" stroke-linecap="round" stroke-width="2.5"></path></svg>
+</button>
+<!-- System Clock -->
+<span class="text-white text-xs font-semibold tracking-wider pl-1">10:39</span>
+</div>
+</div>
+<!-- Secondary Filter Bar & Hardware Telemetry -->
+<div class="flex items-center justify-between text-xs pt-1 pb-1">
+<!-- Layout Preset Pills -->
+<div class="flex items-center space-x-1.5 text-[11px] font-medium text-[#788596]">
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Tonalix Dock</button>
+<button class="px-3 py-1 rounded-md bg-[#18e1ef] text-[#080d12] font-semibold shadow-sm">Fire TV Stick</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Android TV Clásico</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Solo Apps Ligero</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Dock Zen Minimal</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Barra Lateral Pro</button>
+<button class="px-2.5 py-1 hover:text-gray-300 transition">Cine Compacto</button>
+</div>
+<!-- Realtime Hardware Telemetry Bar -->
+<div class="flex items-center space-x-1.5 text-[10.5px] font-medium text-[#657385] tracking-tight">
+<span class="flex items-center gap-1 text-[#18e1ef]">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-[#7f8f9f]">CPU <span class="text-[#a4b4c4]">1.5ms</span></span>
+</span>
+<span class="text-[#414d5c]">·</span>
+<span>Red <span class="text-[#a4b4c4]">86ms</span></span>
+<span class="text-[#414d5c]">·</span>
+<span class="flex items-center gap-1">
+<svg class="w-2.5 h-2.5 text-[#6c7d91]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><rect height="14" rx="2" stroke-width="2" width="18" x="3" y="5"></rect></svg>
+          TV Box
+        </span>
+<span class="text-[#414d5c]">·</span>
+<span>1.5-2 GB RAM</span>
+<span class="text-[#414d5c]">·</span>
+<span>55"</span>
+<span class="text-[#414d5c]">·</span>
+<span class="flex items-center gap-0.5">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 24 24"><rect height="7" width="7" x="3" y="3"></rect><rect height="7" width="7" x="14" y="3"></rect><rect height="7" width="7" x="3" y="14"></rect><rect height="7" width="7" x="14" y="14"></rect></svg>
+          QR
+        </span>
+<span class="text-[#414d5c]">·</span>
+<span class="flex items-center gap-1">
+<svg class="w-2.5 h-2.5 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          APK / TV
+        </span>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 px-7 flex flex-col space-y-6 pb-6">
+<!-- BEGIN: HeroBanner (Fire TV Stick Style) -->
+<section class="w-full relative rounded-2xl overflow-hidden shadow-2xl border border-white/5 bg-[#121820]" data-purpose="hero-featured-content">
+<!-- Background Image with Dark Vignette & Gradient Overlays -->
+<div class="relative w-full h-[235px]">
+<img alt="Horizonte de Obsidiana" class="w-full h-full object-cover object-center filter brightness-[0.78] contrast-[1.08]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI-JBWYH0L5rvkyAuaeg1P6D-ucLLHcu4T4bc-379HHaoIUCwYgVH4k8INs73NwI-DTWQNmJyaEzpfta2mt785aZUL1UBDsx2vA4a8mDiARNQb9W_w_M0-dLJXvjyW54UdIi2SzX367-_SUxvELAaS2iYh0nUuyDAr1FJkxz4gl9ProU2oDXUb52-ZSnY-i40IlhAc7-gbZbbIyKZyat1VSbbl8bJ_sBjyljZUizQ"/>
+<!-- Cinematic dark gradient overlay on left for readable text -->
+<div class="absolute inset-0 bg-gradient-to-r from-[#080d12]/95 via-[#080d12]/70 to-transparent w-3/5"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#080d12]/60 via-transparent to-black/20"></div>
+<!-- Content details overlaid -->
+<div class="absolute inset-0 p-8 flex flex-col justify-center max-w-xl z-10">
+<span class="text-[#a5b1c2] text-[11px] font-medium tracking-wide mb-1.5 flex items-center gap-1.5">
+            Fire TV · Ahora en streaming en Plex
+          </span>
+<h1 class="text-white text-3xl font-extrabold tracking-tight mb-2 leading-none drop-shadow-md">
+            Horizonte de Obsidiana
+          </h1>
+<p class="text-[#96a2b2] text-xs font-normal mb-5 tracking-wide">
+            Película <span class="mx-1">·</span> 4K HDR <span class="mx-1">·</span> 42 min restantes
+          </p>
+<!-- Interactive TV Action Buttons -->
+<div class="flex items-center space-x-3 text-xs font-semibold">
+<button class="px-5 py-2 rounded-lg bg-[#18e1ef] text-[#091016] flex items-center space-x-2 shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-95 transition">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"></path></svg>
+<span class="tracking-tight font-bold">Más información</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-[#272e38]/85 text-gray-200 border border-white/5 hover:bg-[#343d4a] transition">
+              Siguiente
+            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HeroBanner -->
+<!-- BEGIN: AppsRowSection (Tus aplicaciones) -->
+<section class="flex flex-col space-y-2.5" data-purpose="installed-applications-row">
+<h2 class="text-white text-xs font-bold tracking-normal text-opacity-95">Tus aplicaciones</h2>
+<!-- Horizontal App Grid / Carousel -->
+<div class="grid grid-cols-7 gap-3.5">
+<!-- App 1: YouTube (FOCUSED / ACTIVE STATE) -->
+<div class="flex flex-col space-y-2">
+<div class="focused-card h-24 rounded-xl bg-gradient-to-tr from-[#141d26] to-[#1e2a37] flex items-center justify-center relative cursor-pointer group transition-transform duration-150">
+<!-- Context 3-dots Menu Button -->
+<button class="absolute top-2 right-2 w-4 h-4 text-gray-400 flex items-center justify-center">
+<svg class="w-3.5 h-3.5" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
+</button>
+<!-- App Logo Content -->
+<div class="flex items-center space-x-2">
+<div class="w-8 h-6 bg-[#ff0000] rounded-lg flex items-center justify-center shadow-sm">
+<svg class="w-3.5 h-3.5 text-white fill-current" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+</div>
+<span class="text-white font-bold text-sm tracking-tight">YouTube</span>
+</div>
+</div>
+<span class="text-white text-[11px] font-medium pl-0.5">YouTube</span>
+</div>
+<!-- App 2: VLC Media -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#1b1916] to-[#272118] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 rounded-md border border-[#ff8800]/40 flex items-center justify-center text-[#ff8800]">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24"><path d="M4 6.5A1.5 1.5 0 015.5 5h13A1.5 1.5 0 0120 6.5v11a1.5 1.5 0 01-1.5 1.5h-13A1.5 1.5 0 014 17.5v-11zM10 8v8l6-4-6-4z"></path></svg>
+</div>
+<span class="text-white font-bold text-sm tracking-tight">VLC</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">VLC Media</span>
+</div>
+<!-- App 3: YouTube Music -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#251016] to-[#3a151f] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-2">
+<div class="w-7 h-7 rounded-full bg-[#ff0000] flex items-center justify-center shadow-inner">
+<svg class="w-3 h-3 text-white fill-current ml-0.5" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+</div>
+<span class="text-white font-bold text-xs tracking-tight">YT Music</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">YouTube Music</span>
+</div>
+<!-- App 4: Netflix -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#1d1214] to-[#2c1316] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-1">
+<span class="text-[#e50914] font-black text-base tracking-tighter mr-0.5">N</span>
+<span class="text-[#e50914] font-bold text-xs tracking-widest uppercase">Netflix</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">Netflix</span>
+</div>
+<!-- App 5: Prime Video -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#0e1c28] to-[#122b3f] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex flex-col items-center">
+<span class="text-white font-bold text-xs tracking-tight lowercase">prime video</span>
+<!-- Smile curved arrow -->
+<svg class="w-9 h-2 text-[#00a8e1] -mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 36 8"><path d="M1 2c9 5 25 5 34 0" stroke-linecap="round"></path></svg>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">Prime Video</span>
+</div>
+<!-- App 6: Spotify -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#0c2419] to-[#123826] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-1.5">
+<div class="w-6 h-6 rounded-full bg-[#1db954] flex items-center justify-center">
+<svg class="w-3.5 h-3.5 text-black" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.625.625 0 01-.861.208c-2.357-1.44-5.324-1.765-8.818-.967a.625.625 0 11-.277-1.218c3.824-.875 7.098-.507 9.748 1.116a.625.625 0 01.208.861zm1.225-2.723a.782.782 0 01-1.077.257c-2.698-1.658-6.81-2.138-9.999-1.171a.782.782 0 01-.456-1.496c3.64-1.104 8.188-.574 11.275 1.333a.782.782 0 01.257 1.077zm.105-2.834C14.68 8.946 9.35 8.769 6.262 9.706a.938.938 0 01-.548-1.794c3.553-1.078 9.429-.87 13.149 1.338a.938.938 0 11-.947 1.617z"></path></svg>
+</div>
+<span class="text-white font-bold text-xs tracking-tight">Spotify</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">Spotify</span>
+</div>
+<!-- App 7: ViX -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#2d1b0f] to-[#452410] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<span class="px-2.5 py-0.5 bg-[#ff5e00] text-white font-extrabold text-xs tracking-wider rounded-md">VIX</span>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">ViX</span>
+</div>
+</div>
+</section>
+<!-- END: AppsRowSection -->
+<!-- BEGIN: StreamingRowSection (Streaming y TV en vivo) -->
+<section class="flex flex-col space-y-2.5 pt-1" data-purpose="streaming-tv-live-row">
+<h2 class="text-white text-xs font-bold tracking-normal text-opacity-95">Streaming y TV en vivo</h2>
+<!-- Horizontal Streaming Grid -->
+<div class="grid grid-cols-7 gap-3.5">
+<!-- Stream 1: YouTube -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#2a0e14] to-[#381119] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-6 bg-[#ff0000] rounded-lg flex items-center justify-center shadow-sm">
+<svg class="w-3.5 h-3.5 text-white fill-current" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+</div>
+<span class="text-white font-bold text-sm tracking-tight">YouTube</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">YouTube</span>
+</div>
+<!-- Stream 2: YouTube Music -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#290d13] to-[#3a131b] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-2">
+<div class="w-7 h-7 rounded-full bg-[#ff0000] flex items-center justify-center">
+<svg class="w-3 h-3 text-white fill-current ml-0.5" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+</div>
+<span class="text-white font-bold text-xs tracking-tight">YT Music</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">YouTube Music</span>
+</div>
+<!-- Stream 3: SmartTube -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#1f151b] to-[#2e1925] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-2">
+<div class="w-6 h-6 rounded-md bg-[#c41e3a]/40 border border-[#c41e3a]/60 flex items-center justify-center">
+<svg class="w-3.5 h-3.5 text-[#ff4c6a] fill-current" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+</div>
+<span class="text-white font-semibold text-xs tracking-tight">SmartTube</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">SmartTube</span>
+</div>
+<!-- Stream 4: Netflix -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#1f1115] to-[#2c131a] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex items-center space-x-1">
+<span class="text-[#e50914] font-black text-base tracking-tighter mr-0.5">N</span>
+<span class="text-[#e50914] font-bold text-xs tracking-widest uppercase">Netflix</span>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">Netflix</span>
+</div>
+<!-- Stream 5: Prime Video -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#0e1c28] to-[#122b3f] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<div class="flex flex-col items-center">
+<span class="text-white font-bold text-xs tracking-tight lowercase">prime video</span>
+<svg class="w-9 h-2 text-[#00a8e1] -mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 36 8"><path d="M1 2c9 5 25 5 34 0" stroke-linecap="round"></path></svg>
+</div>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">Prime Video</span>
+</div>
+<!-- Stream 6: ViX -->
+<div class="flex flex-col space-y-2">
+<div class="h-24 rounded-xl bg-gradient-to-tr from-[#2d1b0f] to-[#452410] border border-white/5 flex items-center justify-center cursor-pointer hover:border-gray-500 transition">
+<span class="px-2.5 py-0.5 bg-[#ff5e00] text-white font-extrabold text-xs tracking-wider rounded-md">VIX</span>
+</div>
+<span class="text-[#8e98a5] text-[11px] font-medium pl-0.5">ViX</span>
+</div>
+<!-- Stream 7: Empty / Placeholder slot for grid completeness -->
+<div class="flex flex-col space-y-2 opacity-0 pointer-events-none">
+<div class="h-24 rounded-xl"></div>
+</div>
+</div>
+</section>
+<!-- END: StreamingRowSection -->
+<!-- BEGIN: GamesRowSection (Juegos y nube - Partially Visible Bottom Header) -->
+<section class="flex flex-col space-y-2.5 pt-1" data-purpose="games-cloud-row">
+<h2 class="text-white text-xs font-bold tracking-normal text-opacity-95">Juegos y nube</h2>
+<div class="grid grid-cols-7 gap-3.5 opacity-30">
+<div class="h-10 rounded-xl bg-[#14231b] border border-white/5"></div>
+<div class="h-10 rounded-xl bg-[#16202c] border border-white/5"></div>
+</div>
+</section>
+<!-- END: GamesRowSection -->
+</main>
+<!-- END: MainContent -->
+</body></html>

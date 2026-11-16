@@ -1,0 +1,1418 @@
+package com.tonalix.tvlauncher.ui.settings.performance
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// ============================================================================
+// TONALIX TV - PALETA DE COLORES (Obsidian & Cyan Neon)
+// ============================================================================
+object TonalixColors {
+    val Background = Color(0xFF090F15)
+    val Surface = Color(0xFF0E141A)
+    val SurfaceCard = Color(0xFF131A22)
+    val SurfaceCardHover = Color(0xFF1B2430)
+    val SurfaceBorder = Color(0xFF222D39)
+    val PrimaryCyan = Color(0xFF00E5FF)
+    val PrimaryCyanGlow = Color(0x3300E5FF)
+    val AccentEmerald = Color(0xFF00F2C3)
+    val AccentEmeraldBg = Color(0x1F00F2C3)
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFF8E9BAE)
+    val TextMuted = Color(0xFF556577)
+    val WarningAmber = Color(0xFFFFB300)
+    val DangerRed = Color(0xFFFF5252)
+}
+
+enum class SettingsCategory(val title: String, val subtitle: String, val icon: ImageVector) {
+    NETWORK("Red e Internet", "Wi-Fi 6 Conectado (5GHz)", Icons.Default.Wifi),
+    DISPLAY("Pantalla y Video", "4K HDR10+ • 120Hz", Icons.Default.Tv),
+    AUDIO("Audio y Salida", "Dolby Atmos • HDMI eARC", Icons.Default.VolumeUp),
+    PRIVACY("Privacidad y Seguridad", "Bloqueo telemetría activo [ON]", Icons.Default.Security),
+    PERFORMANCE("Modo Rendimiento", "Optimización Ultra-Lite", Icons.Default.FlashOn),
+    ABOUT("Acerca de", "Android TV 12 Custom ROM", Icons.Default.Info)
+}
+
+enum class CpuGovernor(
+    val title: String,
+    val speed: String,
+    val description: String,
+    val tag: String
+) {
+    GAMER_120FPS(
+        title = "Gamer & 120 FPS",
+        speed = "2.2 GHz",
+        description = "Gobernador Performance constante. Latencia de mando reducida a 1.2ms y bloqueo a 120 FPS.",
+        tag = "ACTIVO AHORA"
+    ),
+    ULTRA_LITE_ECO(
+        title = "Ultra-Lite / Eco",
+        speed = "1.2 GHz",
+        description = "Baja disipación térmica (-35%). Ideal para dongles de 1GB RAM y streaming IPTV continuo.",
+        tag = "Conservativo"
+    ),
+    EQUILIBRADO(
+        title = "Equilibrado (Default)",
+        speed = "1.8 GHz",
+        description = "Frecuencia escalonada adaptativa. Balance dinámico de temperatura y decodificación 4K.",
+        tag = "Schedutil Android"
+    ),
+    OVERDRIVE(
+        title = "Overdrive Sin Límite",
+        speed = "Turbo Max",
+        description = "Desactiva mitigaciones térmicas ligeras. Se aconseja disipador de aluminio o ventilador USB.",
+        tag = "Alerta Térmica"
+    )
+}
+
+enum class BackgroundProcessLimit(val label: String) {
+    ONE_PROCESS("Máx 1 Proceso"),
+    TWO_PROCESSES("2 Procesos"),
+    STANDARD("Estándar")
+}
+
+enum class FramebufferResolution(val label: String, val description: String) {
+    RES_720P("720p", "(Ultra Stick)"),
+    RES_1080P("1080p", "(Recomendado)"),
+    RES_2160P("2160p", "(4K Pesado)")
+}
+
+/**
+ * Pantalla de Modo Rendimiento (Optimización Ultra-Lite) para Tonalix TV OS.
+ * Optimizada para control remoto D-Pad 10-foot UI en Smart TV / Android TV Boxes.
+ */
+@Composable
+fun TonalixPerformanceScreen(
+    onNavigateBack: () -> Unit = {},
+    onFreeRamBoost: () -> Unit = {},
+    onApplyProfile: () -> Unit = {},
+    onRunStressTest: () -> Unit = {}
+) {
+    var selectedCategory by remember { mutableStateOf(SettingsCategory.PERFORMANCE) }
+    var selectedGovernor by remember { mutableStateOf(CpuGovernor.GAMER_120FPS) }
+    var selectedProcessLimit by remember { mutableStateOf(BackgroundProcessLimit.ONE_PROCESS) }
+    var selectedResolution by remember { mutableStateOf(FramebufferResolution.RES_1080P) }
+
+    // Toggles de Optimización
+    var autoKillBackgroundApps by remember { mutableStateOf(true) }
+    var zramDynamicSwapping by remember { mutableStateOf(true) }
+    var bufferPurgeOnSuspend by remember { mutableStateOf(true) }
+    var zeroAnimationScale by remember { mutableStateOf(true) }
+    var forceGpuRendering by remember { mutableStateOf(true) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TonalixColors.Background)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Barra superior fija con estado del sistema y telemetría
+            TonalixTopBar()
+
+            // Cuerpo principal: Sidebar Izquierdo + Contenido Central + Panel Derecho de Telemetría
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                // 1. Sidebar de navegación lateral
+                TonalixSettingsSidebar(
+                    selectedCategory = selectedCategory,
+                    onSelectCategory = { selectedCategory = it }
+                )
+
+                // Separador vertical sutil
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 2. Contenido Central (Ajustes de Rendimiento y Memoria)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 26.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        // Encabezado y acciones principales (Liberar RAM Boost y Aplicar)
+                        item {
+                            PerformanceHeaderSection(
+                                onFreeRamBoost = onFreeRamBoost,
+                                onApplyProfile = onApplyProfile
+                            )
+                        }
+
+                        // Tarjeta 1: Gobernador CPU & Frecuencia SoC (D-PAD Navegable)
+                        item {
+                            CpuGovernorSection(
+                                selectedGovernor = selectedGovernor,
+                                onSelectGovernor = { selectedGovernor = it }
+                            )
+                        }
+
+                        // Tarjeta 2: Gestión de Memoria y Low-RAM Killer
+                        item {
+                            MemoryManagementSection(
+                                autoKill = autoKillBackgroundApps,
+                                onToggleAutoKill = { autoKillBackgroundApps = it },
+                                selectedLimit = selectedProcessLimit,
+                                onSelectLimit = { selectedProcessLimit = it },
+                                zramEnabled = zramDynamicSwapping,
+                                onToggleZram = { zramDynamicSwapping = it },
+                                bufferPurge = bufferPurgeOnSuspend,
+                                onToggleBufferPurge = { bufferPurgeOnSuspend = it }
+                            )
+                        }
+
+                        // Tarjeta 3: Renderizado Gráfico & 10-Foot UI Lean Mode
+                        item {
+                            GraphicRenderSection(
+                                zeroAnimation = zeroAnimationScale,
+                                onToggleZeroAnimation = { zeroAnimationScale = it },
+                                forceGpu = forceGpuRendering,
+                                onToggleForceGpu = { forceGpuRendering = it },
+                                selectedResolution = selectedResolution,
+                                onSelectResolution = { selectedResolution = it }
+                            )
+                        }
+                    }
+                }
+
+                // Separador vertical
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 3. Panel Lateral Derecho (Telemetría SoC en Vivo 120 FPS y Ficha Técnica)
+                TonalixPerformanceDiagnosticsSidebar(
+                    onRunStressTest = onRunStressTest
+                )
+            }
+
+            // Barra inferior con guía de botones de control remoto D-PAD
+            TonalixBottomBar()
+        }
+    }
+}
+
+// ============================================================================
+// BARRA SUPERIOR (HEADER GLOBAL)
+// ============================================================================
+@Composable
+private fun TonalixTopBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(TonalixColors.PrimaryCyan),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tv,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "Tonalix",
+                color = TonalixColors.TextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+            Text(
+                text = "TV",
+                color = TonalixColors.PrimaryCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp
+            )
+
+            Spacer(modifier = Modifier.width(36.dp))
+
+            listOf("Inicio", "Aplicaciones", "Entradas", "Ajustes").forEach { tab ->
+                val isSelected = tab == "Ajustes"
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent,
+                            RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = tab,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SystemTelemetryBadge(label = "CPU", value = "6.2%", color = TonalixColors.AccentEmerald)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "Red", value = "12ms", color = TonalixColors.TextSecondary)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "RAM", value = "1.8 / 3 GB", color = TonalixColors.PrimaryCyan)
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF003842))
+                    .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(13.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Sesión Blindada",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "17:42",
+                color = TonalixColors.TextPrimary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+@Composable
+private fun SystemTelemetryBadge(label: String, value: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 11.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// SIDEBAR IZQUIERDO DE CONFIGURACIÓN
+// ============================================================================
+@Composable
+private fun TonalixSettingsSidebar(
+    selectedCategory: SettingsCategory,
+    onSelectCategory: (SettingsCategory) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(260.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.padding(bottom = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONFIGURACIÓN DEL SISTEMA",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "v4.8 PRO",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            SettingsCategory.values().forEach { category ->
+                val isSelected = category == selectedCategory
+                SidebarCategoryItem(
+                    category = category,
+                    isSelected = isSelected,
+                    onClick = { onSelectCategory(category) }
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
+        }
+
+        // Tarjeta Modo Mando TV
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(TonalixColors.PrimaryCyan)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Modo Mando TV",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row {
+                    Text(text = "Perfil Activo: ", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                    Text(
+                        text = "Tonalix Master",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SidebarCategoryItem(
+    category: SettingsCategory,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val bgColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyanGlow
+            isFocused -> TonalixColors.SurfaceCardHover
+            else -> Color.Transparent
+        }, label = "bg"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyan
+            isFocused -> TonalixColors.TextSecondary
+            else -> Color.Transparent
+        }, label = "border"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = category.icon,
+            contentDescription = null,
+            tint = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = category.title,
+                color = if (isSelected) TonalixColors.TextPrimary else TonalixColors.TextSecondary,
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+            Text(
+                text = category.subtitle,
+                color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.PrimaryCyan)
+            )
+        }
+    }
+}
+
+// ============================================================================
+// ENCABEZADO DE PANTALLA Y ACCIONES RÁPIDAS
+// ============================================================================
+@Composable
+private fun PerformanceHeaderSection(
+    onFreeRamBoost: () -> Unit,
+    onApplyProfile: () -> Unit
+) {
+    Column {
+        // Breadcrumb
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "AJUSTES DEL SISTEMA", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "MODO RENDIMIENTO", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "ESTADO: OPTIMIZADO",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier
+                    .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Optimización de Recursos y Modo Ultra-Lite",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.FlashOn,
+                        contentDescription = null,
+                        tint = TonalixColors.PrimaryCyan,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Perfil Seleccionado: ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                    Text(
+                        text = "Gamer & Baja Latencia (120 FPS)",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                    Text(text = "ZRAM 1024 MB Activo", color = TonalixColors.AccentEmerald, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                // Liberar RAM (Boost)
+                OutlinedButton(
+                    onClick = onFreeRamBoost,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.CleaningServices, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Liberar RAM (Boost)", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+
+                // Aplicar Perfil
+                Button(
+                    onClick = onApplyProfile,
+                    colors = ButtonDefaults.buttonColors(containerColor = TonalixColors.PrimaryCyan),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Tune, contentDescription = null, tint = Color.Black, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Aplicar Perfil", color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 1: GOBERNADOR CPU & FRECUENCIA SOC
+// ============================================================================
+@Composable
+private fun CpuGovernorSection(
+    selectedGovernor: CpuGovernor,
+    onSelectGovernor: (CpuGovernor) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Gobernador CPU & Frecuencia SoC",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Priorización de núcleos para Fire TV / Android TV Stick",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "D-PAD NAVEGABLE",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Selector 2x2 de Gobernadores
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                CpuGovernorCard(
+                    governor = CpuGovernor.ULTRA_LITE_ECO,
+                    isSelected = selectedGovernor == CpuGovernor.ULTRA_LITE_ECO,
+                    onClick = { onSelectGovernor(CpuGovernor.ULTRA_LITE_ECO) },
+                    modifier = Modifier.weight(1f)
+                )
+                CpuGovernorCard(
+                    governor = CpuGovernor.EQUILIBRADO,
+                    isSelected = selectedGovernor == CpuGovernor.EQUILIBRADO,
+                    onClick = { onSelectGovernor(CpuGovernor.EQUILIBRADO) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                CpuGovernorCard(
+                    governor = CpuGovernor.GAMER_120FPS,
+                    isSelected = selectedGovernor == CpuGovernor.GAMER_120FPS,
+                    onClick = { onSelectGovernor(CpuGovernor.GAMER_120FPS) },
+                    modifier = Modifier.weight(1f)
+                )
+                CpuGovernorCard(
+                    governor = CpuGovernor.OVERDRIVE,
+                    isSelected = selectedGovernor == CpuGovernor.OVERDRIVE,
+                    onClick = { onSelectGovernor(CpuGovernor.OVERDRIVE) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CpuGovernorCard(
+    governor: CpuGovernor,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val borderColor = when {
+        isSelected -> TonalixColors.PrimaryCyan
+        isFocused -> TonalixColors.TextSecondary
+        else -> TonalixColors.SurfaceBorder
+    }
+
+    val bgColor = when {
+        isSelected -> Color(0xFF00222B)
+        isFocused -> TonalixColors.SurfaceCardHover
+        else -> Color(0xFF0A0F14)
+    }
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = governor.title,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextPrimary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (isSelected) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = TonalixColors.PrimaryCyan,
+                            modifier = Modifier.size(13.dp)
+                        )
+                    }
+                }
+                Text(
+                    text = governor.speed,
+                    color = if (isSelected) TonalixColors.AccentEmerald else TonalixColors.TextSecondary,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = governor.description,
+                color = TonalixColors.TextSecondary,
+                fontSize = 10.sp,
+                lineHeight = 13.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = governor.tag,
+                    color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color(0xFF0E141A), RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+                if (governor == CpuGovernor.GAMER_120FPS) {
+                    Text(text = "GPU Boost Mali +30%", color = TonalixColors.AccentEmerald, fontSize = 8.sp, fontFamily = FontFamily.Monospace)
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 2: GESTIÓN DE MEMORIA & LOW-RAM KILLER
+// ============================================================================
+@Composable
+private fun MemoryManagementSection(
+    autoKill: Boolean,
+    onToggleAutoKill: (Boolean) -> Unit,
+    selectedLimit: BackgroundProcessLimit,
+    onSelectLimit: (BackgroundProcessLimit) -> Unit,
+    zramEnabled: Boolean,
+    onToggleZram: (Boolean) -> Unit,
+    bufferPurge: Boolean,
+    onToggleBufferPurge: (Boolean) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Gestión de Memoria y Low-RAM Killer",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Asignación dinámica de ZRAM y mitigación de cuellos de botella",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "81% LIBRE",
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Auto-Kill Agresivo
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Auto-Kill Agresivo de Apps en Background", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Ultra-Lite Core",
+                            color = TonalixColors.TextMuted,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.background(Color(0xFF0A0F14), RoundedCornerShape(3.dp)).padding(horizontal = 4.dp, vertical = 1.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Liquida procesos remanentes de Netflix, Disney+ y Prime al alternar al reproductor IPTV o Emby.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = autoKill,
+                    onCheckedChange = onToggleAutoKill,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Límite Estricto de Tareas
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Límite Estricto de Tareas en Background", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Restringe el planificador para dispositivos con 1.5GB a 2GB de RAM.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                        .padding(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    BackgroundProcessLimit.values().forEach { limit ->
+                        val isSelected = limit == selectedLimit
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent)
+                                .clickable { onSelectLimit(limit) }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = limit.label,
+                                color = if (isSelected) Color.Black else TonalixColors.TextSecondary,
+                                fontSize = 10.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // ZRAM Swapping Dinámico
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "ZRAM Swapping Dinámico en NVMe/eMMC", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "1024 MB virtuales comprimidos con LZ4 para impedir que Android TV cierre el Launcher principal.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = zramEnabled,
+                    onCheckedChange = onToggleZram,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Limpieza de Buffers al Suspender
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Limpieza de Buffers y Thumbnails al Suspender", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Purga directorios /cache y libera memoria gráfica antes de entrar en standby de pantalla.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = bufferPurge,
+                    onCheckedChange = onToggleBufferPurge,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 3: RENDERIZADO GRÁFICO & 10-FOOT UI LEAN MODE
+// ============================================================================
+@Composable
+private fun GraphicRenderSection(
+    zeroAnimation: Boolean,
+    onToggleZeroAnimation: (Boolean) -> Unit,
+    forceGpu: Boolean,
+    onToggleForceGpu: (Boolean) -> Unit,
+    selectedResolution: FramebufferResolution,
+    onSelectResolution: (FramebufferResolution) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Renderizado Gráfico & 10-Foot UI Lean Mode",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Optimización de SurfaceFlinger y aceleración de hardware VPU",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "VPU HW ACCEL",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Escala de Animación 0x
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "Escala de Animación 0x", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = "(Instantáneo)", color = TonalixColors.PrimaryCyan, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(text = "Suprime transiciones lentas de ventanas para responder inmediatamente a cada toque del D-Pad.", color = TonalixColors.TextMuted, fontSize = 9.sp, lineHeight = 12.sp)
+                        }
+                        Switch(
+                            checked = zeroAnimation,
+                            onCheckedChange = onToggleZeroAnimation,
+                            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                        )
+                    }
+                }
+
+                // Forzar Renderizado GPU 2D
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                        .padding(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "Forzar Renderizado GPU", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(text = "2D HW ON", color = TonalixColors.AccentEmerald, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(text = "Bypasea el software draw de Android TV y delega todo el dibujo al núcleo ARM Mali-G31.", color = TonalixColors.TextMuted, fontSize = 9.sp, lineHeight = 12.sp)
+                        }
+                        Switch(
+                            checked = forceGpu,
+                            onCheckedChange = onToggleForceGpu,
+                            colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Selector de Resolución del Framebuffer
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Resolución de Launcher Framebuffer", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Mantiene videos en 4K UHD nativo mientras el menú funciona a 1080p@120Hz sin lags.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF0A0F14))
+                        .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                        .padding(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    FramebufferResolution.values().forEach { res ->
+                        val isSelected = res == selectedResolution
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent)
+                                .clickable { onSelectResolution(res) }
+                                .padding(horizontal = 10.dp, vertical = 5.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = res.label,
+                                    color = if (isSelected) Color.Black else TonalixColors.TextPrimary,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = res.description,
+                                    color = if (isSelected) Color.Black else TonalixColors.TextMuted,
+                                    fontSize = 9.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PANEL LATERAL DERECHO (TELEMETRÍA EN VIVO 120 FPS & FICHA TÉCNICA)
+// ============================================================================
+@Composable
+private fun TonalixPerformanceDiagnosticsSidebar(
+    onRunStressTest: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(280.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(18.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Título Telemetría
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Speed,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "TELEMETRÍA SOC EN VIVO",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                text = "120 FPS",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+
+        // Carga CPU SoC
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "CARGA CPU SOC", color = TonalixColors.TextMuted, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(text = "14% @ 2.0 GHz", color = TonalixColors.PrimaryCyan, fontSize = 11.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(0xFF090F15))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.14f)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(TonalixColors.PrimaryCyan)
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                listOf("C1", "C2", "C3", "C4").forEach { core ->
+                    Text(text = core, color = TonalixColors.TextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                }
+            }
+        }
+
+        // Temperatura SoC
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.Thermostat, contentDescription = null, tint = TonalixColors.AccentEmerald, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Column {
+                    Text(text = "TEMPERATURA SOC", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "41°C", color = TonalixColors.TextPrimary, fontSize = 15.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                }
+            }
+            Text(
+                text = "ÓPTIMO / FRÍO",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // Memoria RAM Libre
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "MEMORIA RAM LIBRE", color = TonalixColors.TextMuted, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                Text(text = "1,662 MB / 2,048 MB", color = TonalixColors.TextPrimary, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(0xFF090F15))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.19f)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(2.dp))
+                        .background(TonalixColors.AccentEmerald)
+                )
+            }
+            Spacer(modifier = Modifier.height(3.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Usado: 386 MB (19%)", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                Text(text = "81% Disponible", color = TonalixColors.AccentEmerald, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+
+        // Métricas de Input Lag y Frame Drops
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Column {
+                Text(text = "INPUT LAG MANDO", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(text = "1.2 ms", color = TonalixColors.PrimaryCyan, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                Text(text = "Bluetooth LE Direct", color = TonalixColors.TextMuted, fontSize = 8.sp)
+            }
+            Column(horizontalAlignment = Alignment.End) {
+                Text(text = "FRAME DROPS UI", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(text = "0 Drops", color = TonalixColors.AccentEmerald, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                Text(text = "119.8 FPS Sync", color = TonalixColors.TextMuted, fontSize = 8.sp)
+            }
+        }
+
+        // Botón Ejecutar Test de Estrés
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color(0xFF0A0F14))
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                .clickable(onClick = onRunStressTest)
+                .padding(vertical = 10.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.Tune, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(14.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = "Ejecutar Test de Estrés SoC / RAM", color = TonalixColors.PrimaryCyan, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+            }
+        }
+
+        Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+
+        // Ficha Técnica de Dispositivo
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "FICHA TÉCNICA DE DISPOSITIVO", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                Text(text = "CUSTOM ROM", color = TonalixColors.TextSecondary, fontSize = 8.sp, fontFamily = FontFamily.Monospace)
+            }
+            InfoSpecRow("Procesador:", "Amlogic S905X4 4-Core")
+            InfoSpecRow("Acelerador 3D:", "ARM Mali-G31 MP2")
+            InfoSpecRow("Swap de Memoria:", "ZRAM 1.0 GB LZ4 Activo")
+            InfoSpecRow("Kernel Base:", "Linux 5.4.180-tonalix+")
+            InfoSpecRow("Capa Gráfica:", "Lean UI 10-Foot Engine")
+        }
+    }
+}
+
+@Composable
+private fun InfoSpecRow(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 10.sp)
+        Text(text = value, color = TonalixColors.TextPrimary, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+    }
+}
+
+// ============================================================================
+// BARRA INFERIOR (FOOTER CON GUÍA D-PAD)
+// ============================================================================
+@Composable
+private fun TonalixBottomBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(38.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            DpadKeyGuide(key = "▲▼", label = "Navegar")
+            DpadKeyGuide(key = "OK", label = "Seleccionar / Alternar")
+            DpadKeyGuide(key = "Atrás", label = "Regresar")
+            DpadKeyGuide(key = "Menú", label = "Opciones avanzadas")
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "Android TV 11/12",
+                color = TonalixColors.TextMuted,
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace
+            )
+            Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(
+                text = "DNS Anti-Ad: Conectado",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+private fun DpadKeyGuide(key: String, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color(0xFF1B2430))
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(4.dp))
+                .padding(horizontal = 5.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = key,
+                color = TonalixColors.TextPrimary,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = label,
+            color = TonalixColors.TextSecondary,
+            fontSize = 11.sp
+        )
+    }
+}

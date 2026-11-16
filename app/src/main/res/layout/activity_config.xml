@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark_end"
+    android:padding="32dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/launcher_settings"
+            android:textColor="@color/accent_color"
+            android:textSize="28sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Configura el fondo, widgets, dock y comportamiento en tiempo real"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvConfigDeviceSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_capsule_translucent"
+            android:padding="12dp"
+            android:textColor="@color/accent_color"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="Dispositivo: TV Box • RAM 2.0 GB • Perfil Automático: Alto Rendimiento" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#20FFFFFF" />
+
+        <!-- Wallpaper Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estilo de Fondo"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnBgGradient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:text="Degradado Oscuro" />
+
+            <Button
+                android:id="@+id/btnBgOled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:text="Negro OLED Puro" />
+
+            <Button
+                android:id="@+id/btnBgCustom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:text="Imagen Personalizada" />
+
+            <Button
+                android:id="@+id/btnBgQrTransfer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@string/btn_qr_wallpaper" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#20FFFFFF" />
+
+        <!-- Widgets Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Widgets y Multimedia Dinámica"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/cbShowClock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:focusable="true"
+            android:text="Mostrar Reloj Digital y Fecha"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbClock24h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Formato de Reloj 24 Horas"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Clima y Temperatura"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowMediaCapsule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Cápsula Superior"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbMusicBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="@string/settings_music_bg"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbMiniPlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="@string/settings_mini_player"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbVisualEffects"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="@string/settings_visual_effects"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbLowRamMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:focusable="true"
+            android:text="⚡ Modo Rendimiento / Bajo Consumo (Optimizado TV Box - Cero Lag)"
+            android:textColor="@color/text_primary" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#20FFFFFF" />
+
+        <!-- Dock Customization -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configuración del Dock Flotante"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Número de Slots en el Dock (3 - 8): "
+                android:textColor="@color/text_primary" />
+
+            <Button
+                android:id="@+id/btnDockMinus"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="-" />
+
+            <TextView
+                android:id="@+id/tvDockSlotCount"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="6"
+                android:textColor="@color/accent_color"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnDockPlus"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="+" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSelectDockApps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:focusable="true"
+            android:text="Seleccionar Apps del Dock" />
+
+        <Button
+            android:id="@+id/btnConfigStartupApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:focusable="true"
+            android:text="🚀 Configurar App de Arranque al Iniciar" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#20FFFFFF" />
+
+        <!-- Comfort, Gaming & Palette Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎮 Experiencia Gamer, Distancia y Color"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnConfigGameMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:text="🎮 Conmutar Modo Juego (TV Stick Gamer)" />
+
+            <Button
+                android:id="@+id/btnConfigViewingDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:focusable="true"
+                android:text="📏 Distancia de Visión y Fuentes" />
+
+            <Button
+                android:id="@+id/btnConfigPalette"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="🎨 Paleta de Acento" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="#20FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Visibilidad de Iconos y Panel Rápido"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <CheckBox
+            android:id="@+id/cbShowFeaturedBanner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:focusable="true"
+            android:text="Mostrar Banner Google TV Destacado"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Búsqueda"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnTurbo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Turbo Boost"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnWifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón WiFi"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnBluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Bluetooth"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Modo Juego"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Distancia/Fuentes"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnHealth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Memoria / Salud RAM"
+            android:textColor="@color/text_primary" />
+
+        <CheckBox
+            android:id="@+id/cbShowBtnSecurity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:text="Mostrar Botón Seguridad / Firewall"
+            android:textColor="@color/text_primary" />
+
+        <Button
+            android:id="@+id/btnFireTvHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:focusable="true"
+            android:text="📥 Guía de Instalación Fire TV / Sideload" />
+
+        <Button
+            android:id="@+id/btnSetDefaultLauncher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:focusable="true"
+            android:text="🏠 Establecer como Launcher Predeterminado" />
+
+        <CheckBox
+            android:id="@+id/cbGameDockAuto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:focusable="true"
+            android:text="Cambiar dock a Emuladores/Juegos automáticamente en Modo Juego"
+            android:textColor="@color/text_primary" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="16dp"
+            android:background="#20FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/users_section_title"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvActiveUserLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/accent_color"
+            android:textSize="14sp"
+            tools:text="Perfil activo: Inicio Principal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSwitchUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:focusable="true"
+                android:text="@string/btn_switch_user" />
+
+            <Button
+                android:id="@+id/btnEditUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:focusable="true"
+                android:text="@string/btn_edit_user" />
+
+            <Button
+                android:id="@+id/btnCreateUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@string/btn_create_user" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSyncExportQr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:focusable="true"
+                android:text="@string/btn_sync_export_qr" />
+
+            <Button
+                android:id="@+id/btnSyncImport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@string/btn_sync_import" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV - Configuración</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            tonal: {
+              base: '#060B0E',
+              sidebar: '#0A1116',
+              surface: '#0F1A21',
+              card: '#14222B',
+              cardHover: '#1B2C37',
+              border: '#1E323F',
+              cyan: '#00D1E6',
+              cyanHover: '#33E0F1',
+              cyanDim: 'rgba(0, 209, 230, 0.12)',
+              slateText: '#94A3B8',
+              muted: '#64748B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 17, 22, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e323f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00D1E6;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-tonal-base text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-tonal-cyan selection:text-black">
+<!-- TOP HEADER / STATUS BAR -->
+<header class="h-14 border-b border-tonal-border/60 bg-tonal-sidebar/95 backdrop-blur px-5 flex items-center justify-between z-20 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<!-- TonalixTV Logo Mark -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-600 to-tonal-cyan flex items-center justify-center shadow-lg shadow-cyan-950/40">
+<svg class="w-4 h-4 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div class="flex items-baseline font-bold tracking-tight text-lg">
+<span class="text-white">Tonalix</span><span class="text-tonal-cyan">TV</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Inicio</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Aplicaciones</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Entradas</a>
+<a class="px-3 py-1.5 rounded-lg text-tonal-cyan bg-tonal-cyanDim font-semibold border border-tonal-cyan/30" href="#">Ajustes</a>
+</nav>
+</div>
+<!-- Quick Telemetry & Status Badges -->
+<div class="flex items-center gap-3">
+<!-- Live Metrics Pill -->
+<div class="hidden lg:flex items-center gap-3 px-3 py-1 rounded-full bg-tonal-surface border border-tonal-border text-xs font-mono text-tonal-slateText">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          CPU <span class="text-white font-semibold">6.2%</span>
+</span>
+<span class="text-slate-600">|</span>
+<span>Red <span class="text-white font-semibold">12ms</span></span>
+<span class="text-slate-600">|</span>
+<span>RAM <span class="text-tonal-cyan font-semibold">1.8 / 3 GB</span></span>
+</div>
+<!-- Quick Session Badge -->
+<div class="flex items-center gap-2 pl-2">
+<span class="text-xs bg-cyan-950/70 border border-tonal-cyan/40 text-tonal-cyan font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Sesión Blindada</span>
+</span>
+<div class="text-xs font-mono text-slate-400 font-bold bg-tonal-card px-2.5 py-1 rounded-md border border-tonal-border">
+          17:42
+        </div>
+</div>
+</div>
+</header>
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-tonal-sidebar border-r border-tonal-border/70 flex flex-col justify-between shrink-0 p-4">
+<div>
+<div class="px-3 pb-3 mb-2 border-b border-tonal-border/50 flex items-center justify-between">
+<span class="text-xs font-semibold text-tonal-muted tracking-wider uppercase">Configuración del Sistema</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-tonal-border text-slate-300">v4.8 PRO</span>
+</div>
+<nav class="space-y-1">
+<!-- Item: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Red e Internet</p>
+<p class="text-[11px] text-tonal-muted">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+</button>
+<!-- Item: Pantalla y Video (Active) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-semibold text-tonal-cyan">Pantalla y Video</p>
+<p class="text-[11px] text-cyan-200/60">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="text-tonal-cyan font-bold text-xs">●</span>
+</button>
+<!-- Item: Audio y Sonido -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Audio y Salida</p>
+<p class="text-[11px] text-tonal-muted">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Privacidad y Seguridad</p>
+<p class="text-[11px] text-tonal-muted">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-1.5 py-0.5 rounded">ON</span>
+</button>
+<!-- Item: Rendimiento y Caché -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Modo Rendimiento</p>
+<p class="text-[11px] text-tonal-muted">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Acerca de</p>
+<p class="text-[11px] text-tonal-muted">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3 rounded-xl bg-tonal-surface border border-tonal-border text-xs text-slate-400 space-y-2">
+<div class="flex items-center justify-between text-slate-300 font-medium">
+<span>Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-tonal-cyan"></span>
+</div>
+<p class="text-[11px] leading-relaxed text-tonal-muted">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1 border-t border-tonal-border/50 text-[10px] font-mono text-slate-400">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-gradient-to-b from-tonal-base to-tonal-surface"><div class="flex flex-col w-full">
+<!-- Interactive Navigation / Active Sidebar Switcher Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Re-target sidebar active states to reflect "Acerca de"
+      const navButtons = document.querySelectorAll("aside nav button");
+      navButtons.forEach((btn) => {
+        const text = btn.innerText || "";
+        if (text.includes("Acerca de")) {
+          btn.className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left";
+          const iconBox = btn.querySelector("div > div");
+          if (iconBox) iconBox.className = "w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center";
+          const title = btn.querySelector("p.font-medium");
+          if (title) title.className = "text-sm font-semibold text-tonal-cyan";
+          const subtitle = btn.querySelector("p.text-\\[11px\\]");
+          if (subtitle) subtitle.className = "text-[11px] text-cyan-200/60";
+          let dot = btn.querySelector("span.text-tonal-cyan");
+          if (!dot) {
+            dot = document.createElement("span");
+            dot.className = "text-tonal-cyan font-bold text-xs";
+            dot.textContent = "●";
+            btn.appendChild(dot);
+          }
+        } else if (text.includes("Pantalla y Video")) {
+          btn.className = "w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left";
+          const iconBox = btn.querySelector("div > div");
+          if (iconBox) iconBox.className = "w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors";
+          const title = btn.querySelector("p.font-semibold");
+          if (title) title.className = "text-sm font-medium text-slate-300";
+          const subtitle = btn.querySelector("p.text-\\[11px\\]");
+          if (subtitle) subtitle.className = "text-[11px] text-tonal-muted";
+          const dot = btn.querySelector("span.text-tonal-cyan");
+          if (dot) dot.remove();
+        }
+      });
+    });
+
+    function toggleOTAChannel(channel) {
+      document.querySelectorAll("[data-channel-pill]").forEach((el) => {
+        el.classList.remove("bg-primary-container", "text-on-primary-container", "shadow-lg");
+        el.classList.add("bg-surface-container-high", "text-on-surface-variant");
+      });
+      const selected = document.getElementById("channel-" + channel);
+      if (selected) {
+        selected.classList.remove("bg-surface-container-high", "text-on-surface-variant");
+        selected.classList.add("bg-primary-container", "text-on-primary-container", "shadow-lg");
+      }
+    }
+
+    function checkUpdatesAction() {
+      const btn = document.getElementById("btn-check-updates");
+      const icon = document.getElementById("check-icon");
+      const statusText = document.getElementById("ota-timestamp");
+      if (!btn || !icon) return;
+      icon.classList.add("animate-spin");
+      statusText.innerText = "Conectando al clúster OTA...";
+      setTimeout(() => {
+        icon.classList.remove("animate-spin");
+        statusText.innerText = "Última comprobación: Hace unos segundos • Repositorio SHA-256 Validado";
+      }, 1300);
+    }
+  </script>
+<!-- BREADCRUMB & HEADER SECTION -->
+<section class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
+<div class="space-y-2">
+<!-- Breadcrumb Bar -->
+<div class="flex items-center gap-2 text-label-sm font-label-sm uppercase tracking-widest text-on-surface-variant">
+<span class="hover:text-primary transition-colors cursor-pointer">Ajustes</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary-container font-bold">Acerca del Dispositivo</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface">OTA Engine</span>
+</div>
+<!-- Main Headline + Status Pill -->
+<div class="flex flex-wrap items-center gap-4">
+<h1 class="font-headline-lg text-headline-lg tracking-tight text-on-surface">
+          Información del Sistema y Actualizaciones OTA
+        </h1>
+<div class="flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-container-high shadow-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_12px_rgba(131,255,204,0.8)] animate-pulse"></span>
+<span class="font-label-sm text-label-sm tracking-wider uppercase text-secondary font-bold">Sistema Actualizado</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl">
+        Información de kernel bare-metal, llaves criptográficas DRM, registros de versión y gestión de paquetes over-the-air cifrados para decodificadores Tonalix.
+      </p>
+</div>
+<!-- Quick Actions Header (10-Foot Focus Targets) -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="group flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-variant active:scale-95 transition-all shadow-md focus:outline-none" id="btn-check-updates" onclick="checkUpdatesAction()">
+<span class="material-symbols-outlined text-primary-container group-hover:rotate-180 transition-transform duration-500" id="check-icon">
+          sync
+        </span>
+<span class="font-label-lg text-label-lg font-semibold">Buscar Actualizaciones</span>
+</button>
+<button class="flex items-center gap-2.5 px-5 py-3 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm hover:brightness-110 active:scale-95 transition-all shadow-[0_0_24px_rgba(0,229,255,0.3)] focus:outline-none" onclick="alert('Iniciando secuencia de reinicio rápido en TonalixOS...')">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+          restart_alt
+        </span>
+<span>Reiniciar Sistema</span>
+</button>
+</div>
+</section>
+<!-- MAIN 2-COLUMN GRID (12-COL RATIO: 8 COLS SETTINGS / 4 COLS DIAGNOSTIC TELEMETRY) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+<!-- LEFT 8 COLS: OTA SPOTLIGHT + SPECS CARDS + MAINTENANCE -->
+<div class="xl:col-span-8 space-y-8 min-w-0">
+<!-- SECTION 2: OTA HIGHLIGHT HERO CARD (Interactive D-Pad Focusable) -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container p-6 shadow-xl space-y-6">
+<!-- Living Cyan Radial Gradient Scrim -->
+<div class="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-gradient-to-br from-primary-container/20 to-transparent blur-3xl pointer-events-none"></div>
+<!-- Upper Row: Version Tag & Branch Pill Selector -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+<div class="flex items-start gap-4">
+<div class="w-14 h-14 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary-container shadow-inner shrink-0">
+<span class="material-symbols-outlined text-[32px]">system_update</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest">Compilación Oficial</span>
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-secondary-fixed">Kernel 5.4 Bare-Metal</span>
+</div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight mt-0.5">
+                TonalixOS 12.4.1 Ultra-Lean Stable
+              </h2>
+<p class="font-label-sm text-label-sm font-mono text-on-surface-variant mt-0.5">
+                ID Compilación: TNX-20250226-EXT4-RELEASE-AMLOGIC
+              </p>
+</div>
+</div>
+<!-- Channel Selector Pill -->
+<div class="bg-surface-container-lowest p-1 rounded-xl flex items-center gap-1 self-start sm:self-auto shadow-inner">
+<button class="px-3.5 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold shadow-md transition-all" data-channel-pill="" id="channel-stable" onclick="toggleOTAChannel('stable')">
+              Estable Oficial
+            </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm font-medium transition-all" data-channel-pill="" id="channel-beta" onclick="toggleOTAChannel('beta')">
+              Beta Developer
+            </button>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm font-medium transition-all" data-channel-pill="" id="channel-nightly" onclick="toggleOTAChannel('nightly')">
+              Nightly
+            </button>
+</div>
+</div>
+<!-- Telemetry & OTA Mirror Source -->
+<div class="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-surface-container-lowest text-on-surface-variant font-mono text-body-sm font-body-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-on-surface font-medium" id="ota-timestamp">Última comprobación: Hoy, hace 18 minutos</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-outline">Servidor OTA:</span>
+<span class="text-primary font-semibold">ota.tonalix.tv</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary-container text-[10px] tracking-wide">
+              TLS 1.3 / SHA-256
+            </span>
+</div>
+</div>
+<!-- Version Highlights / Changelog Scrim -->
+<div class="space-y-3 pt-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">
+              Cambios Clave de la Versión Instalada
+            </span>
+<a class="font-label-sm text-label-sm text-primary-container hover:underline flex items-center gap-1" href="#changelog">
+              Ver changelog exhaustivo
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+<div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-secondary shrink-0 mt-0.5 text-[20px]">speed</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface font-semibold">Kernel 5.4.180 Zero-Latency</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Parches predictivos para microcontroladores Amlogic/Rockchip sin hipos de búfer.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary-container shrink-0 mt-0.5 text-[20px]">movie_filter</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface font-semibold">Decodificación AV1 + Dolby Atmos 7.1.4</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Passthrough digital DirectPlay TrueHD activo vía HDMI eARC sin recompresión.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-secondary shrink-0 mt-0.5 text-[20px]">security</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface font-semibold">Anti-Telemetría DoH / DoT Nativo</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Filtro de rastreadores OEM y analítica no consentida bloqueado en capa de loopback.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary-container shrink-0 mt-0.5 text-[20px]">memory</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface font-semibold">ZRAM 1024 MB LZ4 Algoritmo</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Compresión ultra-rápida de RAM para mantener hasta 12 apps en suspensión activa.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3: DUAL SYSTEM SPEC CARDS (HARDWARE & SOFTWARE IDENTITY) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Software Identity & Cryptography Card -->
+<div class="rounded-2xl bg-surface-container p-6 space-y-5 shadow-lg">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Identidad &amp; Certificación</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Seguridad y credenciales DRM</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary" title="Certificado">verified</span>
+</div>
+<div class="space-y-3 font-body-sm text-body-sm">
+<!-- Row: Device Name -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Nombre de Red:</span>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-[14px] text-on-surface font-semibold">Living Room TV Box</span>
+<button class="text-primary-container hover:text-white p-1" title="Editar alias">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+</button>
+</div>
+</div>
+<!-- Row: Hardware Model -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Modelo de Chasis:</span>
+<span class="font-mono text-on-surface font-semibold">Tonalix Pro 4K Ultra (TNX-9842)</span>
+</div>
+<!-- Row: Widevine Level -->
+<div class="flex flex-col gap-1 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant">Nivel Widevine DRM:</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary font-mono text-[11px] font-bold">
+                  WIDEVINE L1 HDCP 2.3
+                </span>
+</div>
+<p class="text-[11px] text-on-surface-variant font-body-sm">
+                4K UHD nativo autorizado en Netflix, Disney+, Prime Video y Max.
+              </p>
+</div>
+<!-- Row: Android Version Base -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Android Base OS:</span>
+<div class="flex items-center gap-2">
+<span class="font-mono text-on-surface">Android 12 (API 31)</span>
+<span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-surface-container-high text-primary">No Bloat</span>
+</div>
+</div>
+<!-- Row: Security Patch -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Parche de Seguridad:</span>
+<span class="text-on-surface font-medium">1 de Febrero de 2025</span>
+</div>
+<!-- Row: SELinux -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Estado SELinux / Root:</span>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-mono text-secondary text-label-sm">Enforcing (Blindado)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Hardware Specs & SoC Core Card -->
+<div class="rounded-2xl bg-surface-container p-6 space-y-5 shadow-lg">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">developer_board</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Especificaciones de Hardware</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Arquitectura SoC y memoria física</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[10px]">64-BIT</span>
+</div>
+<div class="space-y-3 font-body-sm text-body-sm">
+<!-- Row: SoC -->
+<div class="flex flex-col gap-0.5 p-3 rounded-xl bg-surface-container-low">
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant">Procesador SoC:</span>
+<span class="font-headline-sm text-[13px] text-primary-container font-semibold">Amlogic S905X4</span>
+</div>
+<p class="text-[11px] text-on-surface-variant font-mono">Quad-Core ARM Cortex-A55 @ 2.00 GHz</p>
+</div>
+<!-- Row: GPU -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">GPU / Gráficos:</span>
+<span class="font-mono text-on-surface text-[12px]">ARM Mali-G31 MP2 (Vulkan 1.2)</span>
+</div>
+<!-- Row: RAM -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Memoria RAM Total:</span>
+<div class="flex items-center gap-1.5 font-mono text-on-surface text-[12px]">
+<span class="font-bold text-white">2 GB</span> LPDDR4 + <span class="text-primary font-bold">1 GB</span> ZRAM
+              </div>
+</div>
+<!-- Row: Storage -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Almacenamiento eMMC:</span>
+<span class="font-mono text-on-surface text-[12px]">32 GB (18.4 GB Disponibles)</span>
+</div>
+<!-- Row: MAC Addresses -->
+<div class="flex flex-col gap-1 p-3 rounded-xl bg-surface-container-low font-mono">
+<div class="flex items-center justify-between text-[11px]">
+<span class="text-on-surface-variant">MAC Ethernet:</span>
+<span class="text-on-surface">e4:5f:01:8b:2c:10</span>
+</div>
+<div class="flex items-center justify-between text-[11px]">
+<span class="text-on-surface-variant">MAC Wi-Fi 6:</span>
+<span class="text-on-surface">e4:5f:01:8b:2c:11</span>
+</div>
+</div>
+<!-- Row: Serial Number -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low">
+<span class="text-on-surface-variant">Número de Serie:</span>
+<span class="font-mono text-primary text-[12px] font-bold">TNX-2025-X4-99814-A</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 4: MAINTENANCE & ADVANCED DEVELOPER CONTROLS -->
+<div class="rounded-2xl bg-surface-container p-6 space-y-4 shadow-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">build_circle</span>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Herramientas de Mantenimiento y Depuración</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">D-PAD COMPATIBLE</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+<!-- Developer Options Switch -->
+<div class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
+<div class="space-y-0.5">
+<p class="font-label-lg text-label-lg font-semibold text-on-surface">Opciones de Desarrollador</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Depuración por red ADB y superposición GPU</p>
+</div>
+<!-- Custom Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container shadow-inner"></div>
+</label>
+</div>
+<!-- Full Changelog Modal Trigger -->
+<button class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors text-left group">
+<div class="space-y-0.5">
+<p class="font-label-lg text-label-lg font-semibold text-on-surface group-hover:text-primary-container transition-colors">Registro Completo (Changelog)</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Historial de parches desde v1.0 a v4.8 PRO</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary-container transition-transform group-hover:translate-x-1">
+              chevron_right
+            </span>
+</button>
+<!-- Anonymous Diagnostics Dispatch -->
+<button class="flex items-center justify-between p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors text-left group">
+<div class="space-y-0.5">
+<p class="font-label-lg text-label-lg font-semibold text-on-surface group-hover:text-primary-container transition-colors">Enviar Reporte Diagnóstico</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dumps de kernel cifrados sin datos personales</p>
+</div>
+<span class="material-symbols-outlined text-primary-container">send</span>
+</button>
+<!-- Factory Reset Option (Warning Styling) -->
+<button class="flex items-center justify-between p-4 rounded-xl bg-error/10 hover:bg-error/20 transition-colors text-left group" onclick="confirm('¿Deseas restablecer TonalixOS a su estado original de fábrica? Todos tus datos locales serán eliminados.')">
+<div class="space-y-0.5">
+<p class="font-label-lg text-label-lg font-semibold text-error">Restablecimiento de Fábrica</p>
+<p class="font-body-sm text-body-sm text-on-error-container">Clean Flash y borrado total de partición /data</p>
+</div>
+<span class="material-symbols-outlined text-error">warning</span>
+</button>
+</div>
+</div>
+</div>
+<!-- RIGHT 4 COLS: SYSTEM INTEGRITY, STORAGE GAUGES & DIAGNOSTICS -->
+<div class="xl:col-span-4 space-y-6">
+<!-- Integrity Gauge Dashboard Box -->
+<div class="rounded-2xl bg-surface-container p-6 space-y-6 shadow-xl relative overflow-hidden">
+<!-- Soft top ambient light -->
+<div class="absolute top-0 right-0 w-48 h-48 bg-secondary/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between pb-2 border-b border-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">health_and_safety</span>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">Estado de Integridad</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary font-mono text-[10px] font-bold">
+            ÓPTIMO
+          </span>
+</div>
+<!-- Uptime Indicator -->
+<div class="p-4 rounded-xl bg-surface-container-low space-y-1.5">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant">Tiempo Activo (Uptime):</span>
+<span class="text-secondary font-mono font-semibold">14d 06h 22m</span>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span>Sin cuelgues ni reinicios forzados</span>
+</div>
+</div>
+<!-- Kernel Cryptographic Verification -->
+<div class="p-4 rounded-xl bg-surface-container-low space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Firma del Kernel:</span>
+<span class="font-mono text-secondary text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+              PASS
+            </span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface-variant leading-relaxed">
+            Compilación firmada criptográficamente por la clave maestra de <strong class="text-on-surface">Tonalix OS Engineering</strong>.
+          </p>
+</div>
+<!-- Storage Bar Visualization -->
+<div class="p-4 rounded-xl bg-surface-container-low space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg font-semibold text-on-surface">Almacenamiento eMMC</span>
+<span class="font-mono text-body-sm text-primary font-bold">13.6 / 32 GB</span>
+</div>
+<!-- Progress Bar Track -->
+<div class="w-full h-3 rounded-full bg-surface-container-highest overflow-hidden p-0.5">
+<div class="h-full rounded-full bg-gradient-to-r from-primary-container to-secondary shadow-[0_0_12px_rgba(0,229,255,0.4)]" style="width: 42.5%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-[11px] text-on-surface-variant font-mono">
+<span>Usado: 42.5%</span>
+<span class="text-secondary">Libre: 18.4 GB (57.5%)</span>
+</div>
+</div>
+<!-- Flash Temperature & Telemetry Micro-cards -->
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3.5 rounded-xl bg-surface-container-low space-y-1">
+<span class="text-[11px] text-on-surface-variant uppercase font-mono">Temp. eMMC</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">38</span>
+<span class="text-on-surface-variant text-body-sm">°C</span>
+</div>
+<span class="text-secondary font-label-sm text-[10px] uppercase font-bold">Saludable</span>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low space-y-1">
+<span class="text-[11px] text-on-surface-variant uppercase font-mono">SoC Thermal</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md font-bold text-primary">44</span>
+<span class="text-on-surface-variant text-body-sm">°C</span>
+</div>
+<span class="text-primary font-label-sm text-[10px] uppercase font-bold">Enfriado Activo</span>
+</div>
+</div>
+<!-- DRM & HDCP Key Status -->
+<div class="p-4 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-on-surface">Widevine L1 Provisioning</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">HDCP 2.3 Ready</p>
+</div>
+</div>
+<span class="w-3 h-3 rounded-full bg-secondary shadow-[0_0_8px_rgba(131,255,204,0.8)]"></span>
+</div>
+<!-- Interactive Self-Diagnostic Test Action -->
+<button class="w-full py-3.5 rounded-xl bg-surface-container-high hover:bg-surface-variant active:scale-[0.98] transition-all text-on-surface font-label-lg text-label-lg font-bold flex items-center justify-center gap-2 shadow-md" onclick="alert('Ejecutando test integral: CPU Stress, Memoria ZRAM, Búfer eMMC y Passthrough HDMI. Todos los subsistemas operan dentro del rango nominal.');">
+<span class="material-symbols-outlined text-primary-container">speed</span>
+<span>Ejecutar Autodiagnóstico de Hardware</span>
+</button>
+</div>
+<!-- Quick Tips Card for 10-Foot Remote Experience -->
+<div class="rounded-2xl bg-surface-container-low p-5 space-y-3">
+<div class="flex items-center gap-2 text-primary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[18px]">touchpad_mouse</span>
+<span>Consejo de Soporte Tonalix</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Para acceder rápidamente a la consola de recuperación o reiniciar en modo <span class="text-on-surface font-semibold">Fastboot OTA</span>, mantén presionado el botón central <strong>OK</strong> en el control remoto durante el inicio del sistema.
+        </p>
+</div>
+</div>
+</div>
+</div></main>
+</div>
+<!-- TV FOOTER NAVIGATION CHEAT SHEET (Standard Tonalix Remote Guide) -->
+<footer class="h-10 bg-tonal-base border-t border-tonal-border/60 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0 font-mono">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">▲▼◀▶</span>
+<span>Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">OK</span>
+<span>Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Atrás</span>
+<span>Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Menú</span>
+<span>Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-tonal-cyan">Android TV 11/12</span>
+<span class="text-slate-600">•</span>
+<span class="text-emerald-400">DNS Anti-Ad: Conectado</span>
+</div>
+</footer>
+</body></html>

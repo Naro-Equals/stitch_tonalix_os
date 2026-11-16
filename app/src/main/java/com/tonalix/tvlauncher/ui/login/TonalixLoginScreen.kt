@@ -1,0 +1,850 @@
+package com.tonalix.tvlauncher.ui.login
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+
+/**
+
+
+
+
+
+Tonalix TV Design Tokens & Theme Colors
+ */
+object TonalixTheme {
+    val BackgroundDark = Color(0xFF090F15)
+    val SurfaceDark = Color(0xFF101419)
+    val SurfaceCard = Color(0xFF161C22)
+    val SurfaceCardHover = Color(0xFF1F2630)
+    val BorderSubtle = Color(0xFF26323D)
+
+    val PrimaryCyan = Color(0xFF00E5FF)
+    val PrimaryCyanGlow = Color(0x3300E5FF)
+    val AccentGreen = Color(0xFF00F2C3)
+    val AccentRed = Color(0xFFFF4A5A)
+
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFF90A4AE)
+    val TextTertiary = Color(0xFF546E7A)
+}
+
+enum class LoginTab(val title: String, val icon: ImageVector) {
+    QR_LINK("Vincular con QR", Icons.Default.QrCode),
+    PIN_CODE("Código PIN de TV", Icons.Default.Pin),
+    CREDENTIALS("Credenciales / Tonalix Pass", Icons.Default.Lock)
+}
+
+/**
+
+
+
+
+
+TonalixLoginScreen: Pantalla completa de autenticación para Tonalix TV Launcher.
+
+
+
+Compatible tanto con interacción táctil (móvil/tablet) como con D-Pad de Smart TV.
+ */
+@Composable
+fun TonalixLoginScreen(
+    onLoginSuccess: (token: String, userEmail: String) -> Unit = { _, _ -> },
+    onSkipOrGuest: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    var selectedTab by remember { mutableStateOf(LoginTab.QR_LINK) }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(
+                        Color(0xFF131D27),
+                        TonalixTheme.BackgroundDark
+                    ),
+                    radius = 1600f
+                )
+            )
+            .padding(horizontal = 24.dp, vertical = 20.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .widthIn(max = 1100.dp)
+                .align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header / Barra Superior con branding
+            TonalixHeaderBar(onSkipOrGuest = onSkipOrGuest)
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Selector de Método de Acceso (Tabs)
+            LoginTabsSelector(
+                selectedTab = selectedTab,
+                onTabSelected = {
+                    selectedTab = it
+                    errorMessage = null
+                }
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Error Message Banner si existe
+            AnimatedVisibility(visible = errorMessage != null) {
+                Surface(
+                    color = TonalixTheme.AccentRed.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(8.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixTheme.AccentRed.copy(alpha = 0.5f)),
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .padding(bottom = 16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Error",
+                            tint = TonalixTheme.AccentRed,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = errorMessage ?: "",
+                            color = TonalixTheme.TextPrimary,
+                            fontSize = 13.sp
+                        )
+                    }
+                }
+            }
+
+            // Contenedor dinámico según el Tab seleccionado
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                when (selectedTab) {
+                    LoginTab.QR_LINK -> QrLoginSection(
+                        onSimulateApproved = {
+                            isLoading = true
+                            // Simulación de respuesta inmediata de webhook
+                            onLoginSuccess("tnx_token_qr_sample", "master@tonalix.tv")
+                        }
+                    )
+                    LoginTab.PIN_CODE -> PinLoginSection(
+                        onVerifyPin = { pin ->
+                            if (pin.length == 6) {
+                                isLoading = true
+                                onLoginSuccess("tnx_token_pin_$pin", "alejandro.m@tonalix.tv")
+                            } else {
+                                errorMessage = "El código PIN de TV debe contener 6 dígitos."
+                            }
+                        }
+                    )
+                    LoginTab.CREDENTIALS -> CredentialsLoginSection(
+                        isLoading = isLoading,
+                        onLogin = { email, pass ->
+                            if (email.isBlank() || pass.isBlank()) {
+                                errorMessage = "Por favor completa el usuario y la contraseña."
+                            } else {
+                                isLoading = true
+                                onLoginSuccess("tnx_token_cred", email)
+                            }
+                        }
+                    )
+                }
+            }
+
+            // Pie de página de estado del sistema (D-Pad / Android TV Status)
+            TonalixFooterStatus()
+        }
+    }
+}
+
+@Composable
+fun TonalixHeaderBar(
+    onSkipOrGuest: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Logo y Versión
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(TonalixTheme.PrimaryCyan.copy(alpha = 0.15f))
+                    .border(1.dp, TonalixTheme.PrimaryCyan, RoundedCornerShape(10.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tv,
+                    contentDescription = "Tonalix Logo",
+                    tint = TonalixTheme.PrimaryCyan,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Tonalix",
+                        color = TonalixTheme.TextPrimary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "TV",
+                        color = TonalixTheme.PrimaryCyan,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+                Text(
+                    text = "OS v4.2 PRO • INICIO DE SESIÓN BLINDADO",
+                    color = TonalixTheme.TextTertiary,
+                    fontSize = 10.sp,
+                    letterSpacing = 1.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        // Botón Modo Invitado / Saltar
+        TextButton(
+            onClick = onSkipOrGuest,
+            colors = ButtonDefaults.textButtonColors(contentColor = TonalixTheme.TextSecondary),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.border(1.dp, TonalixTheme.BorderSubtle, RoundedCornerShape(8.dp))
+        ) {
+            Text(
+                text = "Continuar como Invitado (Modo Offline)",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+
+}
+
+@Composable
+fun LoginTabsSelector(
+    selectedTab: LoginTab,
+    onTabSelected: (LoginTab) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .background(TonalixTheme.SurfaceDark, RoundedCornerShape(12.dp))
+            .border(1.dp, TonalixTheme.BorderSubtle, RoundedCornerShape(12.dp))
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        LoginTab.values().forEach { tab ->
+            val isSelected = tab == selectedTab
+            val interactionSource = remember { MutableInteractionSource() }
+            val isFocused by interactionSource.collectIsFocusedAsState()
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(
+                        when {
+                            isSelected -> TonalixTheme.PrimaryCyan
+                            isFocused -> TonalixTheme.SurfaceCardHover
+                            else -> Color.Transparent
+                        }
+                    )
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null
+                    ) { onTabSelected(tab) }
+                    .focusable(interactionSource = interactionSource)
+                    .padding(horizontal = 18.dp, vertical = 10.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = tab.icon,
+                        contentDescription = tab.title,
+                        tint = if (isSelected) Color.Black else TonalixTheme.TextSecondary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = tab.title,
+                        color = if (isSelected) Color.Black else TonalixTheme.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+/**
+
+
+
+
+
+
+
+
+
+Sección de Login con Código QR (Optimizado para 10-Foot UI en TV)
+ */
+@Composable
+fun QrLoginSection(
+    onSimulateApproved: () -> Unit
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = TonalixTheme.SurfaceCard),
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TonalixTheme.BorderSubtle),
+        modifier = Modifier
+            .fillMaxWidth(0.85f)
+            .shadow(16.dp, spotColor = TonalixTheme.PrimaryCyanGlow)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(32.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            // Contenedor visual del QR
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color.White)
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Placeholder visual que representa el QR generado
+                    Icon(
+                        imageVector = Icons.Default.QrCode2,
+                        contentDescription = "Código QR de vinculación",
+                        tint = Color(0xFF0F172A),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                Spacer(modifier = Modifier.height(14.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(TonalixTheme.AccentGreen, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Código QR dinámico válido por 04:59",
+                        color = TonalixTheme.TextSecondary,
+                        fontSize = 11.sp
+                    )
+                }
+            }
+
+// Instrucciones paso a paso
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 420.dp)
+                    .padding(start = 24.dp)
+            ) {
+                Text(
+                    text = "Vinculación Ultrarrápida",
+                    color = TonalixTheme.TextPrimary,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Inicia sesión sin escribir con el mando a distancia escaneando el código desde tu app móvil Tonalix TV.",
+                    color = TonalixTheme.TextSecondary,
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                StepItem(number = "1", text = "Abre la cámara o app Tonalix en tu teléfono.")
+                StepItem(number = "2", text = "Apunta al código QR de la pantalla.")
+                StepItem(number = "3", text = "Presiona 'Autorizar dispositivo TV'.")
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onSimulateApproved,
+                    colors = ButtonDefaults.buttonColors(containerColor = TonalixTheme.PrimaryCyan),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Simular Aprobación Móvil",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun StepItem(number: String, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(22.dp)
+                .background(TonalixTheme.SurfaceDark, CircleShape)
+                .border(1.dp, TonalixTheme.PrimaryCyan, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = number,
+                color = TonalixTheme.PrimaryCyan,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(text = text, color = TonalixTheme.TextPrimary, fontSize = 12.sp)
+    }
+}
+
+/**
+
+
+
+
+
+
+
+
+
+Sección de Login con Código PIN de TV (6 Dígitos)
+ */
+@Composable
+fun PinLoginSection(
+    onVerifyPin: (String) -> Unit
+) {
+    var pinValue by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = TonalixTheme.SurfaceCard),
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TonalixTheme.BorderSubtle),
+        modifier = Modifier
+            .fillMaxWidth(0.65f)
+            .shadow(16.dp, spotColor = TonalixTheme.PrimaryCyanGlow)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(32.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Ingresa el PIN de Acceso",
+                color = TonalixTheme.TextPrimary,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Genera un PIN temporal desde tonalix.tv/pair o tu cuenta activa.",
+                color = TonalixTheme.TextSecondary,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Display de los 6 dígitos
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                for (i in 0 until 6) {
+                    val char = pinValue.getOrNull(i)?.toString() ?: ""
+                    val isCurrent = i == pinValue.length
+                    Box(
+                        modifier = Modifier
+                            .size(width = 48.dp, height = 58.dp)
+                            .background(TonalixTheme.SurfaceDark, RoundedCornerShape(10.dp))
+                            .border(
+                                width = if (isCurrent) 2.dp else 1.dp,
+                                color = if (isCurrent) TonalixTheme.PrimaryCyan else TonalixTheme.BorderSubtle,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = char,
+                            color = TonalixTheme.TextPrimary,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Campo de entrada oculto pero enfocado para recibir inputs del mando/teclado
+            OutlinedTextField(
+                value = pinValue,
+                onValueChange = {
+                    if (it.length <= 6 && it.all { char -> char.isDigit() }) {
+                        pinValue = it
+                        if (it.length == 6) {
+                            onVerifyPin(it)
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .size(1.dp)
+                    .focusRequester(focusRequester),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.NumberPassword,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = { onVerifyPin(pinValue) })
+            )
+
+            // Teclado numérico en pantalla optimizado para D-Pad
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val keypad = listOf(
+                    listOf("1", "2", "3"),
+                    listOf("4", "5", "6"),
+                    listOf("7", "8", "9"),
+                    listOf("C", "0", "OK")
+                )
+
+                keypad.forEach { row ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        row.forEach { key ->
+                            KeypadButton(
+                                label = key,
+                                onClick = {
+                                    when (key) {
+                                        "C" -> pinValue = ""
+                                        "OK" -> onVerifyPin(pinValue)
+                                        else -> if (pinValue.length < 6) {
+                                            pinValue += key
+                                            if (pinValue.length == 6) onVerifyPin(pinValue)
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun KeypadButton(label: String, onClick: () -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    Box(
+        modifier = Modifier
+            .size(width = 64.dp, height = 44.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(
+                when {
+                    isFocused -> TonalixTheme.PrimaryCyan
+                    label == "OK" -> TonalixTheme.PrimaryCyan.copy(alpha = 0.2f)
+                    else -> TonalixTheme.SurfaceDark
+                }
+            )
+            .border(
+                1.dp,
+                if (isFocused || label == "OK") TonalixTheme.PrimaryCyan else TonalixTheme.BorderSubtle,
+                RoundedCornerShape(8.dp)
+            )
+            .clickable(interactionSource = interactionSource, indication = null) { onClick() }
+            .focusable(interactionSource = interactionSource),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            color = if (isFocused) Color.Black else TonalixTheme.TextPrimary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+
+}
+
+/**
+
+
+
+
+
+
+
+
+
+Sección de Login con Credenciales / Tonalix Pass
+ */
+@Composable
+fun CredentialsLoginSection(
+    isLoading: Boolean,
+    onLogin: (email: String, pass: String) -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = TonalixTheme.SurfaceCard),
+        shape = RoundedCornerShape(16.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, TonalixTheme.BorderSubtle),
+        modifier = Modifier
+            .fillMaxWidth(0.55f)
+            .shadow(16.dp, spotColor = TonalixTheme.PrimaryCyanGlow)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(32.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Tonalix Pass & Cloud Sync",
+                color = TonalixTheme.TextPrimary,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Sincroniza tus listas IPTV, Plex, ajustes de red y atajos.",
+                color = TonalixTheme.TextSecondary,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Campo Correo / Usuario
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Usuario o Correo Electrónico", fontSize = 12.sp) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = null,
+                        tint = TonalixTheme.PrimaryCyan,
+                        modifier = Modifier.size(18.dp)
+                    )
+                },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = TonalixTheme.PrimaryCyan,
+                    unfocusedBorderColor = TonalixTheme.BorderSubtle,
+                    focusedLabelColor = TonalixTheme.PrimaryCyan,
+                    cursorColor = TonalixTheme.PrimaryCyan,
+                    focusedTextColor = TonalixTheme.TextPrimary,
+                    unfocusedTextColor = TonalixTheme.TextPrimary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Campo Contraseña
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contraseña", fontSize = 12.sp) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Key,
+                        contentDescription = null,
+                        tint = TonalixTheme.PrimaryCyan,
+                        modifier = Modifier.size(18.dp)
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = "Alternar Visibilidad",
+                            tint = TonalixTheme.TextSecondary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = TonalixTheme.PrimaryCyan,
+                    unfocusedBorderColor = TonalixTheme.BorderSubtle,
+                    focusedLabelColor = TonalixTheme.PrimaryCyan,
+                    cursorColor = TonalixTheme.PrimaryCyan,
+                    focusedTextColor = TonalixTheme.TextPrimary,
+                    unfocusedTextColor = TonalixTheme.TextPrimary
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { onLogin(email, password) },
+                enabled = !isLoading,
+                colors = ButtonDefaults.buttonColors(containerColor = TonalixTheme.PrimaryCyan),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.Black,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        text = "Iniciar Sesión en TV",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun TonalixFooterStatus() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Indicadores de Mando a distancia (D-Pad Navigation Guide)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            KeyHint(key = "D-PAD", label = "Navegar")
+            KeyHint(key = "OK", label = "Seleccionar")
+            KeyHint(key = "ATRÁS", label = "Regresar / Salir")
+        }
+
+        // Info de Seguridad y Encriptación
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Security,
+                contentDescription = null,
+                tint = TonalixTheme.AccentGreen,
+                modifier = Modifier.size(14.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "Sesión Blindada • Encriptación AES-256 GCM • Android TV 11/12",
+                color = TonalixTheme.TextTertiary,
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+
+}
+
+@Composable
+fun KeyHint(key: String, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Surface(
+            color = TonalixTheme.SurfaceDark,
+            shape = RoundedCornerShape(4.dp),
+            border = androidx.compose.foundation.BorderStroke(1.dp, TonalixTheme.BorderSubtle)
+        ) {
+            Text(
+                text = key,
+                color = TonalixTheme.PrimaryCyan,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = label,
+            color = TonalixTheme.TextSecondary,
+            fontSize = 11.sp
+        )
+    }
+}

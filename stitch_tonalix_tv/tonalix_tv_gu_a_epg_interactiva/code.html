@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface":"#0e141a","tertiary":"#e2eeff","on-surface-variant":"#bac9cc","on-primary":"#00363d","tertiary-container":"#bdd3ed","on-tertiary":"#1d3246","on-primary-fixed":"#001f24","surface-bright":"#343a41","on-tertiary-fixed":"#051d30","on-tertiary-container":"#465b71","primary-fixed":"#9cf0ff","on-primary-fixed-variant":"#004f58","primary-container":"#00e5ff","tertiary-fixed":"#cfe5ff","on-surface":"#dde3ec","surface-container-highest":"#2f353c","inverse-surface":"#dde3ec","on-secondary-fixed":"#002115","error-container":"#93000a","outline":"#849396","surface-container":"#1a2027","on-error-container":"#ffdad6","secondary-fixed-dim":"#00e1a4","primary-fixed-dim":"#00daf3","tertiary-fixed-dim":"#b3c9e2","surface-container-low":"#161c22","on-primary-container":"#00626e","on-tertiary-fixed-variant":"#34495e","error":"#ffb4ab","surface-container-high":"#252b31","secondary-fixed":"#42ffbf","inverse-on-surface":"#2b3138","primary":"#c3f5ff","on-background":"#dde3ec","surface-tint":"#00daf3","on-secondary-container":"#006346","surface-container-lowest":"#090f15","surface-variant":"#2f353c","background":"#0e141a","on-secondary":"#003826","on-secondary-fixed-variant":"#005139","secondary-container":"#09e7a9","on-error":"#690005","surface-dim":"#0e141a","outline-variant":"#3b494c","inverse-primary":"#006875","secondary":"#83ffcc"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"space-md":"1rem","space-xs":"0.25rem","space-lg":"1.5rem","margin":"3rem","margin-mobile":"1.25rem","gutter-mobile":"0.75rem","space-sm":"0.5rem","gutter":"1.5rem","space-xl":"2.5rem"},fontFamily:{"body-sm":["Manrope"],"body-lg":["Manrope"],"label-sm":["Space Grotesk"],"display-hero":["Space Grotesk"],"headline-md":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"],"label-lg":["Space Grotesk"],"body-md":["Manrope"],"display-hero-mobile":["Space Grotesk"],"headline-sm":["Space Grotesk"],"headline-lg":["Space Grotesk"]},fontSize:{"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}],"display-hero":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.04em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"display-hero-mobile":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"26px","letterSpacing":"0em","fontWeight":"500"}],"headline-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface select-none"><header class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-2xl shadow-[0_1px_16px_rgba(0,0,0,0.4)]"><div class="h-20 w-full px-margin flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-xl"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center shadow-[0_0_16px_rgba(0,229,255,0.4)]"><span class="material-symbols-outlined text-on-primary-container text-[22px]">tv_gen</span></div><span class="font-headline-md text-headline-md tracking-tight text-primary font-bold">Tonalix<span class="text-secondary">TV</span></span></div><nav class="flex items-center gap-space-sm" data-active-classes="bg-primary-container text-on-primary-container font-bold rounded-lg shadow-[0_0_18px_rgba(0,229,255,0.35)]"><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-path="inicio" href="#">Inicio</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-path="guia-epg" href="#">Guía EPG</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-path="aplicaciones" href="#">Aplicaciones</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-path="entradas" href="#">Entradas</a><a class="px-space-md py-space-xs rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" data-path="ajustes" href="#">Ajustes</a></nav></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs bg-surface-container-low px-space-md py-space-xs rounded-full"><div class="flex items-center gap-space-xs px-space-xs"><span class="material-symbols-outlined text-primary text-[14px]">memory</span><span class="font-label-sm text-label-sm text-on-surface-variant">CPU</span><span class="font-label-sm text-label-sm text-primary font-bold">6.2%</span></div><div class="w-1 h-3 bg-surface-container-highest rounded-full"></div><div class="flex items-center gap-space-xs px-space-xs"><span class="material-symbols-outlined text-secondary text-[14px]">wifi</span><span class="font-label-sm text-label-sm text-on-surface-variant">Red</span><span class="font-label-sm text-label-sm text-secondary font-bold">12ms</span></div><div class="w-1 h-3 bg-surface-container-highest rounded-full"></div><div class="flex items-center gap-space-xs px-space-xs"><span class="material-symbols-outlined text-tertiary-fixed text-[14px]">storage</span><span class="font-label-sm text-label-sm text-on-surface-variant">RAM</span><span class="font-label-sm text-label-sm text-tertiary font-bold">1.8/3GB</span></div><div class="w-1 h-3 bg-surface-container-highest rounded-full"></div><div class="flex items-center gap-space-xs px-space-xs bg-secondary-container/20 rounded-full py-0.5 px-space-sm"><span class="material-symbols-outlined text-secondary text-[12px]">shield_locked</span><span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-wider">Sesión Blindada</span></div></div><div class="flex items-center gap-space-sm bg-surface-container-high px-space-md py-space-xs rounded-full"><span class="material-symbols-outlined text-primary text-[16px]">schedule</span><span class="font-label-lg text-label-lg text-on-surface font-bold tracking-widest">17:45</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.25)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 pb-20 bg-surface min-h-screen"><div class="flex flex-col w-full text-on-surface select-none pb-12">
+<!-- Dynamic Glow Background Aura -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-32 -left-20 w-96 h-96 bg-primary-container/10 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-10 right-10 w-[30rem] h-64 bg-secondary-container/10 rounded-full blur-[160px] pointer-events-none"></div>
+<!-- UPPER SECTION: TOP FILTER BAR & QUICK DETAIL PREVIEW -->
+<div class="px-margin pt-space-lg flex flex-col gap-space-lg">
+<!-- Filter Bar & Date Control -->
+<div class="flex items-center justify-between gap-space-md flex-wrap">
+<!-- Date Selector & Day Navigation -->
+<div class="flex items-center gap-space-sm bg-surface-container-lowest p-1.5 rounded-xl shadow-md">
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<div class="flex items-center gap-space-xs px-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">HOY</span>
+<span class="font-label-lg text-label-lg text-on-surface-variant">— Miércoles, 26 Febrero 2025</span>
+</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container-high hover:bg-surface-bright flex items-center justify-center text-on-surface transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<!-- Quick Genre Filter Pills -->
+<div class="flex items-center gap-space-xs overflow-x-auto py-1">
+<button class="px-space-md py-1.5 rounded-lg font-label-lg text-label-lg bg-primary text-on-primary font-bold shadow-[0_0_16px_rgba(0,229,255,0.35)] transition-all">
+            Todos
+          </button>
+<button class="px-space-md py-1.5 rounded-lg font-label-lg text-label-lg bg-surface-container text-on-surface-variant hover:text-secondary hover:bg-surface-container-high transition-all flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span> Deportes
+          </button>
+<button class="px-space-md py-1.5 rounded-lg font-label-lg text-label-lg bg-surface-container text-on-surface-variant hover:text-tertiary hover:bg-surface-container-high transition-all flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Cine &amp; Series
+          </button>
+<button class="px-space-md py-1.5 rounded-lg font-label-lg text-label-lg bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-fixed"></span> Noticias &amp; Doc
+          </button>
+<button class="px-space-md py-1.5 rounded-lg font-label-lg text-label-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-outline"></span> Infantil
+          </button>
+<button class="px-space-md py-1.5 rounded-lg font-label-lg text-label-lg bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span> Música
+          </button>
+</div>
+<!-- Search & Grid View Toggles -->
+<div class="flex items-center gap-space-xs">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined text-outline absolute left-3 text-[18px]">search</span>
+<input class="bg-surface-container-lowest text-on-surface placeholder:text-outline text-body-sm font-body-sm pl-9 pr-4 py-2 rounded-xl focus:outline-none focus:bg-surface-container-low transition-all w-56" placeholder="Buscar canal o evento..." type="text"/>
+</div>
+<button class="w-9 h-9 rounded-xl bg-surface-container-lowest hover:bg-surface-container flex items-center justify-center text-primary-fixed transition-all" title="Ver Favoritos">
+<span class="material-symbols-outlined text-[20px]">star</span>
+</button>
+<button class="w-9 h-9 rounded-xl bg-surface-container-lowest hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-all" title="Modo Pantalla Completa EPG">
+<span class="material-symbols-outlined text-[20px]">fullscreen</span>
+</button>
+</div>
+</div>
+<!-- Quick Preview & Now Playing Hero Panel -->
+<div class="w-full bg-surface-container-lowest rounded-2xl p-space-lg shadow-xl relative overflow-hidden flex flex-col lg:flex-row gap-space-lg items-stretch">
+<!-- Background Ambient Cover Art -->
+<div class="absolute inset-0 bg-cover bg-center opacity-15 mix-blend-luminosity scale-105 pointer-events-none" data-alt="High-intensity night soccer stadium match scene illuminated under cold cyan and teal neon floodlights with atmospheric stadium mist and dynamic players in high-speed motion" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQ2O3X13i31OJcD5ZmxzMhEDOzUvAsnesGiUyt7C1rn7Wu_BWqlMc5f4fsns76e1cuEcQgQBHvfZy6dAkzTdK-nevynWaF3cWdR614jr9Tn2Iodgx-ZcA4ifcC9fNj5kzyOmgi4PIOYTZaalcPJDOAHa4M_b6mvkbSBdu1Zm236xv9n0ClfhRwSCp1XEertfWjiRWaqjVMzLj_cZrHtUfrK3SKOop2-K-IcfwUtbA')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-surface-container-lowest/90 to-surface-container-lowest/40 pointer-events-none"></div>
+<!-- Left Details Column -->
+<div class="relative z-10 flex-1 flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<!-- Channel & Badges Row -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="px-2.5 py-0.5 rounded-full bg-error text-surface font-label-sm text-label-sm uppercase font-bold tracking-wider flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-surface animate-ping"></span> EN VIVO
+              </span>
+<span class="font-label-lg text-label-lg text-primary font-bold tracking-wide">
+                001 · ESPN 4K HDR
+              </span>
+<span class="text-outline text-label-sm">•</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm tracking-widest font-bold">
+                DEPORTES
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                4K UHD
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                HDR10+
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                DOLBY ATMOS
+              </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                AUDIO DUAL (ESP/ENG)
+              </span>
+</div>
+<!-- Title -->
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight mt-1">
+              UEFA Champions League: Cuartos de Final (En Vivo)
+            </h1>
+<!-- Time & Live Bar -->
+<div class="flex items-center gap-space-md mt-1">
+<div class="flex items-center gap-1.5 text-secondary font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>17:00 — 19:30</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">(45 min restantes)</span>
+</div>
+<div class="w-48 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="w-3/5 h-full bg-secondary-fixed rounded-full shadow-[0_0_8px_rgba(66,255,191,0.6)]"></div>
+</div>
+</div>
+<!-- Description -->
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl mt-2 leading-relaxed">
+              Transmisión en directo en máxima resolución 4K HDR con sonido envolvente Dolby Atmos 5.1 multicámara. Comentarios tácticos de expertos internacionales y análisis post-partido exclusivo con entrevistas en zona mixta desde el césped.
+            </p>
+</div>
+<!-- Quick Action Buttons for Remote/TV -->
+<div class="flex items-center gap-space-sm flex-wrap mt-3">
+<button class="px-space-lg py-2.5 rounded-xl font-label-lg text-label-lg bg-primary-container text-on-primary-container font-bold flex items-center gap-2 shadow-[0_0_22px_rgba(0,229,255,0.45)] hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+              Sintonizar Ahora (OK)
+            </button>
+<button class="px-space-md py-2.5 rounded-xl font-label-lg text-label-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-error text-[18px]">fiber_manual_record</span>
+              Programar Grabación
+            </button>
+<button class="px-space-md py-2.5 rounded-xl font-label-lg text-label-lg bg-surface-container hover:bg-surface-container-high text-secondary-fixed font-semibold flex items-center gap-2 transition-all shadow-[0_0_12px_rgba(66,255,191,0.15)]">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+              Recordatorio Activo
+            </button>
+<button class="w-10 h-10 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-all" title="Más Opciones">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Right Side Live Miniature PiP Frame -->
+<div class="relative z-10 w-full lg:w-80 h-44 lg:h-auto rounded-xl overflow-hidden bg-surface-container shadow-2xl flex-shrink-0 flex items-center justify-center">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="High-resolution live broadcast screenshot showing football match in full stadium view with live score overlay graphic at 1-1, vibrant electric stadium pitch grass, dramatic lights" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBBDRu23M3GS-8azhQhPaojypB681ad7ZpyF-cG1zfOZn8hK-hBvwg8MX34nlYs7oNRy5h7AZ7j1K3Yr6vS7oWXtDsLU6C_4H2K9GN8GXzdfz_tr3NnoZetmEh3OH_xeAS9f0o1W3fw4rLkFpWl4_d2yHFWwrS-Lzba79dY-rRcpy9RUbLGRCyKsyF_jElCB7lbkUT8Fczj8EqnMid-St2e2IqZtd7CL22xCAw9UN0')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent"></div>
+<div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2 py-0.5 rounded bg-surface-container-lowest/90 backdrop-blur-md">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">PICTURE-IN-PICTURE</span>
+</div>
+<div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-on-surface">
+<span class="font-label-sm text-label-sm text-on-surface bg-surface-container-lowest/80 px-2 py-0.5 rounded">R. MADRID 1 - 1 MAN. CITY</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold">Min 72'</span>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN HORIZONTAL TIMELINE EPG GRID -->
+<div class="px-margin mt-space-lg flex flex-col">
+<div class="bg-surface-container-lowest rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+<!-- GRID HORIZONTAL SCROLLER CONTAINER -->
+<div class="overflow-x-auto relative w-full" id="epgScrollContainer">
+<!-- TIME SLOT HEADER (STICKY TOP) -->
+<div class="flex items-center min-w-[1450px] bg-surface-container-low/95 backdrop-blur-md sticky top-0 z-30 shadow-md">
+<!-- Channel Column Header Spacer -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-40 bg-surface-container-low flex items-center justify-between shadow-md">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Canales • 7 Activos</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">tune</span> Filtro
+              </span>
+</div>
+<!-- Time Intervals Header Strip (16:30 to 20:30) -->
+<div class="flex-1 grid grid-cols-8 relative text-center py-2.5 font-label-lg text-label-lg tracking-wider">
+<!-- CURRENT TIME NEEDLE INDICATOR (17:45 exact position) -->
+<!-- 16:30=0%, 17:00=12.5%, 17:30=25%, 18:00=37.5%. 17:45 is exactly 31.25% -->
+<div class="absolute top-0 bottom-0 left-[31.25%] w-[2px] bg-primary-container z-40 shadow-[0_0_12px_rgba(0,229,255,0.9)] flex flex-col items-center pointer-events-none">
+<div class="bg-primary-container text-on-primary-container font-label-sm text-[10px] px-2 py-0.5 rounded-full font-bold shadow-[0_0_10px_rgba(0,229,255,0.8)] -translate-y-1">
+                  17:45 • AHORA
+                </div>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>16:30</span>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>17:00</span>
+</div>
+<div class="text-primary font-bold flex items-center justify-center gap-1 bg-surface-container-high/40 rounded-lg py-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+<span>17:30</span>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>18:00</span>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>18:30</span>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>19:00</span>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>19:30</span>
+</div>
+<div class="text-on-surface-variant flex items-center justify-center gap-1">
+<span>20:00</span>
+</div>
+</div>
+</div>
+<!-- GRID BODY ROWS -->
+<div class="min-w-[1450px] relative flex flex-col divide-y-0">
+<!-- CURRENT TIME VERTICAL LINE EXTENSION THROUGH CONTENT ROWS -->
+<div class="absolute top-0 bottom-0 left-[calc(16rem+((100%-16rem)*0.3125))] w-[2px] bg-primary-container/80 z-20 shadow-[0_0_10px_rgba(0,229,255,0.7)] pointer-events-none"></div>
+<!-- ROW 1: CH 001 - ESPN Ultra HD (Selected TV focus row) -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/20 flex items-center justify-center text-secondary-fixed font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">sports_soccer</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">ESPN Ultra HD</span>
+<span class="font-label-sm text-label-sm text-outline">CH 001 • 4K Sports</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[10px] font-bold">4K</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite</span>
+</div>
+</div>
+<!-- Channel 001 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Program past (16:30 - 17:00 = 1 slot) -->
+<div class="col-span-1 bg-surface-container/40 rounded-xl p-2.5 flex flex-col justify-between opacity-50 hover:opacity-100 transition-opacity">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[10px] text-outline">16:30 - 17:00</span>
+<span class="material-symbols-outlined text-outline text-[14px]">history</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface truncate">SportsCenter Previa</span>
+<span class="font-body-sm text-[11px] text-outline">FHD • Resumen</span>
+</div>
+<!-- Program LIVE & SELECTED (17:00 - 19:30 = 5 slots) -->
+<div class="col-span-5 bg-surface-container-high/90 rounded-xl p-3 flex flex-col justify-between relative overflow-hidden shadow-[0_0_24px_rgba(0,229,255,0.3)] ring-2 ring-primary-container transition-transform scale-[1.01]">
+<!-- Tint Background -->
+<div class="absolute inset-0 bg-secondary-container/10 pointer-events-none"></div>
+<!-- Progress bar underlay -->
+<div class="absolute bottom-0 left-0 h-1 bg-secondary-fixed w-[60%] shadow-[0_0_8px_rgba(66,255,191,0.8)]"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-error text-surface font-label-sm text-[10px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-surface animate-ping"></span> EN DIRECTO
+                      </span>
+<span class="font-label-sm text-label-sm text-secondary-fixed font-bold">17:00 - 19:30</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px]">4K HDR</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded-md bg-primary-container text-on-primary-container font-label-sm text-[10px] font-bold">EN FOCO</span>
+</div>
+</div>
+<div class="relative z-10 my-1">
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">UEFA Champions League: Cuartos de Final</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Real Madrid vs Manchester City - En directo desde el Santiago Bernabéu</p>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1 text-secondary-fixed">
+<span class="material-symbols-outlined text-[13px]">volume_up</span> Dolby Atmos 5.1 • Estadio en vivo
+                    </span>
+<span class="font-label-sm text-[11px] text-outline">D-Pad OK para pantalla completa</span>
+</div>
+</div>
+<!-- Program After (19:30 - 20:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">19:30 - 20:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors" title="Añadir recordatorio">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">SportsCenter Post-Partido</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Debate táctico y conferencias de prensa</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1 rounded bg-surface-container-lowest text-outline font-label-sm text-[10px]">4K</span>
+<span class="font-label-sm text-[10px] text-outline">60m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW 2: CH 002 - HBO Max Premiere -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary/15 flex items-center justify-center text-tertiary font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">movie</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">HBO Max Premiere</span>
+<span class="font-label-sm text-label-sm text-outline">CH 002 • Cine &amp; Series</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-tertiary font-label-sm text-[10px] font-bold">ATMOS</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite_border</span>
+</div>
+</div>
+<!-- Channel 002 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Dune Part Two (16:30 - 18:30 = 4 slots) -->
+<div class="col-span-4 bg-surface-container-high rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 bg-tertiary-container/10 pointer-events-none"></div>
+<!-- Progress bar underlay -->
+<div class="absolute bottom-0 left-0 h-1 bg-tertiary w-[75%]"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-tertiary font-label-sm text-[10px] font-bold">EN CURSO</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">16:30 - 18:30</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-lowest text-tertiary font-label-sm text-[10px]">4K DOLBY VISION</span>
+</div>
+<span class="material-symbols-outlined text-tertiary text-[18px]">verified</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-sm text-[16px] font-bold text-on-surface truncate">Dune: Parte Dos (2024)</h2>
+<span class="font-body-sm text-[12px] text-on-surface-variant block truncate">Ciencia Ficción • Paul Atreides continúa su viaje con los Fremen</span>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-outline">
+<span>Timothée Chalamet, Zendaya</span>
+<span class="text-tertiary font-bold">Resta: 45 min</span>
+</div>
+</div>
+<!-- House of the Dragon (18:30 - 19:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary font-bold">18:30 - 19:30</span>
+<!-- Active Reminder Bell -->
+<button class="w-6 h-6 rounded-md bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_0_8px_rgba(0,229,255,0.4)]" title="Recordatorio configurado">
+<span class="material-symbols-outlined text-[14px]">notifications_active</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">House of the Dragon T2 • Ep 4</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">¡Nuevo episodio! Estreno exclusivo</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-secondary font-label-sm text-[10px]">ESTRENO</span>
+<span class="font-label-sm text-[10px] text-outline">HDR10</span>
+</div>
+</div>
+<!-- Succession (19:30 - 20:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">19:30 - 20:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Succession: Final de Temporada</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Drama ganador de 6 premios Emmy</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1 rounded bg-surface-container-lowest text-outline font-label-sm text-[10px]">5.1</span>
+<span class="font-label-sm text-[10px] text-outline">Drama</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW 3: CH 003 - National Geographic -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-fixed font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">public</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">Nat Geo Wild HD</span>
+<span class="font-label-sm text-label-sm text-outline">CH 003 • Documentales</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary-fixed font-label-sm text-[10px] font-bold">FHD</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite_border</span>
+</div>
+</div>
+<!-- Channel 003 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Secrets of the Elephants (16:30 - 18:00 = 3 slots) -->
+<div class="col-span-3 bg-surface-container-high rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-container/10 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary-container w-[85%]"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-primary-fixed font-label-sm text-[10px] font-bold">EN VIVO</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">16:30 - 18:00</span>
+</div>
+<span class="material-symbols-outlined text-primary-fixed text-[18px]">nature</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-sm text-[16px] font-bold text-on-surface truncate">Secretos de los Océanos Profundos</h2>
+<span class="font-body-sm text-[12px] text-on-surface-variant block truncate">Expedición abisal en la Fosa de las Marianas con James Cameron</span>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-outline">
+<span>Narrado por Sigourney Weaver</span>
+<span class="text-primary-fixed font-bold">Termina en 15m</span>
+</div>
+</div>
+<!-- Savage Kingdom (18:00 - 19:30 = 3 slots) -->
+<div class="col-span-3 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">18:00 - 19:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Reino Salvaje: Depredadores del Kalahari</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Fotografía nocturna ultra sensible en 8K reducido</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px]">DOCU</span>
+<span class="font-label-sm text-[10px] text-outline">90m</span>
+</div>
+</div>
+<!-- Mars Colony 2050 (19:30 - 20:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">19:30 - 20:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Marte: La Próxima Frontera</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Ingeniería aeroespacial y colonias lunares</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1 rounded bg-surface-container-lowest text-outline font-label-sm text-[10px]">CIENCIA</span>
+<span class="font-label-sm text-[10px] text-outline">FHD</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW 4: CH 004 - CNN en Español -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-error/15 flex items-center justify-center text-error font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">newspaper</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">CNN en Español</span>
+<span class="font-label-sm text-label-sm text-outline">CH 004 • Noticias Global</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-error font-label-sm text-[10px] font-bold">24H</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite_border</span>
+</div>
+</div>
+<!-- Channel 004 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Conclusiones (16:30 - 17:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container/40 rounded-xl p-2.5 flex flex-col justify-between opacity-50">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-[10px] text-outline">16:30 - 17:30</span>
+<span class="material-symbols-outlined text-outline text-[14px]">done</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface truncate">Panorama Mundial</span>
+<span class="font-body-sm text-[11px] text-outline">Resumen de apertura de bolsas</span>
+</div>
+<!-- Conclusiones Live (17:30 - 18:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container-high rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 bg-error/10 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 h-1 bg-error w-[40%]"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-label-sm text-label-sm text-error font-bold">EN VIVO</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">17:30 - 18:30</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-sm text-[15px] font-bold text-on-surface truncate">Conclusiones con Fernando del Rincón</h2>
+<span class="font-body-sm text-[11px] text-on-surface-variant block truncate">Geopolítica y análisis del mercado tecnológico</span>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-outline">
+<span>En vivo desde Atlanta</span>
+<span class="text-error font-bold">Urgente</span>
+</div>
+</div>
+<!-- Redacción CNN (18:30 - 19:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">18:30 - 19:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Redacción CNN Deportes</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Resultados de Europa y previa de la NBA</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">Edición Estelar</span>
+</div>
+<!-- Oppenheimer Presenta (19:30 - 20:30 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">19:30 - 20:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Oppenheimer Presenta</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Entrevistas con líderes mundiales</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">Especial</span>
+</div>
+</div>
+</div>
+<!-- ROW 5: CH 005 - Warner TV Cinema -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary-fixed font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">theaters</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">Warner TV 4K</span>
+<span class="font-label-sm text-label-sm text-outline">CH 005 • Blockbusters</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-label-sm text-[10px] font-bold">4K</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite_border</span>
+</div>
+</div>
+<!-- Channel 005 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Batman The Dark Knight (16:30 - 19:00 = 5 slots) -->
+<div class="col-span-5 bg-surface-container-high rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 bg-tertiary-container/10 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary w-[55%]"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px] font-bold">EN EMISIÓN</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">16:30 - 19:00</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px]">IMAX ENHANCED</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">local_activity</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-sm text-[16px] font-bold text-on-surface truncate">The Dark Knight (El Caballero de la Noche)</h2>
+<span class="font-body-sm text-[12px] text-on-surface-variant block truncate">Christopher Nolan • Christian Bale, Heath Ledger</span>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-outline">
+<span>Audio Español Latino 5.1 / Subtítulos originales</span>
+<span class="text-primary font-bold">75 min restantes</span>
+</div>
+</div>
+<!-- Inception (19:00 - 20:30 = 3 slots) -->
+<div class="col-span-3 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">19:00 - 21:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Inception (El Origen)</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Leonardo DiCaprio • Mente, sueños y espionaje</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-tertiary font-label-sm text-[10px]">4K HDR</span>
+<span class="font-label-sm text-[10px] text-outline">148m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW 6: CH 006 - Red Bull TV Extreme -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/20 flex items-center justify-center text-secondary-fixed font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">downhill_skiing</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">Red Bull TV Ultra</span>
+<span class="font-label-sm text-label-sm text-outline">CH 006 • Acción &amp; Extremo</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-secondary-fixed font-label-sm text-[10px] font-bold">120FPS</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite_border</span>
+</div>
+</div>
+<!-- Channel 006 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Rampage 2024 Past (16:30 - 17:15 approx = 1 slot) -->
+<div class="col-span-1 bg-surface-container/40 rounded-xl p-2.5 flex flex-col justify-between opacity-50">
+<span class="font-label-sm text-[10px] text-outline">16:30 - 17:00</span>
+<span class="font-label-lg text-label-lg text-on-surface truncate">Ceremonia Previa</span>
+<span class="font-body-sm text-[11px] text-outline">Utah Desert</span>
+</div>
+<!-- Red Bull Rampage Utah LIVE (17:00 - 18:30 = 3 slots) -->
+<div class="col-span-3 bg-surface-container-high rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 bg-secondary-container/10 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 h-1 bg-secondary-fixed w-[50%]"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-error text-surface font-label-sm text-[10px] font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-surface animate-ping"></span> EN DIRECTO
+                      </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">17:00 - 18:30</span>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-secondary-fixed font-label-sm text-[10px]">ULTRA SLOW-MO</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-sm text-[15px] font-bold text-on-surface truncate">Red Bull Rampage: Finales en Vivo</h2>
+<span class="font-body-sm text-[11px] text-on-surface-variant block truncate">Freeride Mountain Biking • Acantilados de Virgin, Utah</span>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-outline">
+<span>Cámaras en primera persona (POV)</span>
+<span class="text-secondary-fixed font-bold">Ronda 2 de 3</span>
+</div>
+</div>
+<!-- Cliff Diving World Series (18:30 - 20:30 = 4 slots) -->
+<div class="col-span-4 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">18:30 - 20:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Cliff Diving Series: Polignano a Mare</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Saltos extremos de 27 metros sobre el mar Adriático en Italia</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px]">4K 60P</span>
+<span class="font-label-sm text-[10px] text-outline">120m</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ROW 7: CH 007 - Cartoon Network Plus -->
+<div class="flex items-center min-h-[5.5rem] hover:bg-surface-container/30 transition-colors group">
+<!-- Channel Tag (Sticky Left) -->
+<div class="w-64 min-w-[16rem] p-space-md sticky left-0 z-30 bg-surface-container-lowest group-hover:bg-surface-container-low transition-colors flex items-center justify-between shadow-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-outline/20 flex items-center justify-center text-on-surface font-bold shadow-inner">
+<span class="material-symbols-outlined text-[22px]">smart_toy</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-[15px] font-bold text-on-surface leading-tight">Cartoon Network Plus</span>
+<span class="font-label-sm text-label-sm text-outline">CH 007 • Kids &amp; Animación</span>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-high text-outline font-label-sm text-[10px] font-bold">HD</span>
+<span class="material-symbols-outlined text-outline text-[16px] hover:text-primary cursor-pointer">favorite_border</span>
+</div>
+</div>
+<!-- Channel 007 Program Blocks -->
+<div class="flex-1 grid grid-cols-8 gap-2 p-2">
+<!-- Adventure Time Past (16:30 - 17:00 = 1 slot) -->
+<div class="col-span-1 bg-surface-container/40 rounded-xl p-2.5 flex flex-col justify-between opacity-50">
+<span class="font-label-sm text-[10px] text-outline">16:30 - 17:00</span>
+<span class="font-label-lg text-label-lg text-on-surface truncate">Hora de Aventura</span>
+<span class="font-body-sm text-[11px] text-outline">T5 • Ep 12</span>
+</div>
+<!-- Regular Show (17:00 - 18:00 = 2 slots) -->
+<div class="col-span-2 bg-surface-container-high rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 h-1 bg-primary-fixed w-[75%]"></div>
+<div class="flex items-center justify-between relative z-10">
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px] font-bold">EN EMISIÓN</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">17:00 - 18:00</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-sm text-[15px] font-bold text-on-surface truncate">Un Show Más: Maratón</h2>
+<span class="font-body-sm text-[11px] text-on-surface-variant block truncate">Mordecai y Rigby • Temporada 4</span>
+</div>
+<div class="flex items-center justify-between relative z-10 text-[11px] text-outline">
+<span>Apto para todo público</span>
+<span class="text-primary font-bold">Resta 15 min</span>
+</div>
+</div>
+<!-- The Amazing World of Gumball (18:00 - 19:00 = 2 slots) -->
+<div class="col-span-2 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">18:00 - 19:00</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">El Increíble Mundo de Gumball</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Especial de media tarde con Darwin</span>
+</div>
+<span class="font-label-sm text-[10px] text-outline">Animación HD</span>
+</div>
+<!-- Steven Universe (19:00 - 20:30 = 3 slots) -->
+<div class="col-span-3 bg-surface-container rounded-xl p-2.5 flex flex-col justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline">19:00 - 20:30</span>
+<button class="w-6 h-6 rounded-md bg-surface-container-high hover:bg-primary hover:text-on-primary flex items-center justify-center text-outline transition-colors">
+<span class="material-symbols-outlined text-[14px]">notifications</span>
+</button>
+</div>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold block truncate">Steven Universe: La Película</span>
+<span class="font-body-sm text-[11px] text-outline truncate block">Musical animado nominado al Emmy</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest text-primary font-label-sm text-[10px]">ESPECIAL</span>
+<span class="font-label-sm text-[10px] text-outline">90m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- TV INTERACTIVE CONTROL BAR (BOTTOM HELPER) -->
+<div class="bg-surface-container-low px-space-md py-3 flex items-center justify-between gap-space-md flex-wrap">
+<div class="flex items-center gap-space-md flex-wrap">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">tv_options_edit_channels</span> Atajos Remoto
+            </span>
+<div class="flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1 rounded-lg">
+<span class="w-3 h-3 rounded-full bg-blue-500"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Botón Azul</span>
+<span class="font-body-sm text-body-sm text-outline">Cambiar Día</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1 rounded-lg">
+<span class="w-3 h-3 rounded-full bg-red-500"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Botón Rojo</span>
+<span class="font-body-sm text-body-sm text-outline">Recordatorio</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1 rounded-lg">
+<span class="w-3 h-3 rounded-full bg-amber-400"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Botón Amarillo</span>
+<span class="font-body-sm text-body-sm text-outline">Grabar Serie</span>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container-lowest px-3 py-1 rounded-lg">
+<span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Botón Verde</span>
+<span class="font-body-sm text-body-sm text-outline">Filtrar HD/4K</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-body-sm text-body-sm text-outline">Sincronización EPG vía satélite activa</span>
+<div class="flex items-center gap-1 text-secondary font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+<span>Online (100%)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main><footer class="fixed bottom-0 left-0 w-full z-40 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-2px_16px_rgba(0,0,0,0.5)]"><div class="h-16 w-full px-margin flex items-center justify-between"><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant flex items-center gap-space-xs"><span class="material-symbols-outlined text-primary text-[16px]">gamepad</span>Control Remoto</span><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="w-4 h-4 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-label-sm text-[10px]">▲</span><span class="font-label-sm text-label-sm text-on-surface">D-Pad</span><span class="font-body-sm text-body-sm text-on-surface-variant">Navegar</span></div><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="px-1.5 py-0.2 rounded bg-primary-container text-on-primary-container font-label-sm text-[10px] font-bold">OK</span><span class="font-body-sm text-body-sm text-on-surface">Sintonizar</span></div><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="w-3 h-3 rounded-full bg-error animate-pulse"></span><span class="font-label-sm text-label-sm text-error">REC</span><span class="font-body-sm text-body-sm text-on-surface-variant">Grabación</span></div><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="material-symbols-outlined text-tertiary-fixed text-[14px]">notification_add</span><span class="font-body-sm text-body-sm text-on-surface-variant">Recordatorio</span></div><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="material-symbols-outlined text-secondary text-[14px]">filter_list</span><span class="font-body-sm text-body-sm text-on-surface-variant">Filtro Géneros</span></div></div><div class="flex items-center gap-space-sm"><div class="flex items-center gap-space-xs bg-surface-container-low px-space-md py-1 rounded-full"><span class="material-symbols-outlined text-primary text-[14px]">hdr_auto</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase">4K UHD • HDR10+ • Atmos</span></div><span class="font-label-sm text-label-sm text-outline tracking-wider">v4.8.2 STB</span></div></div></footer></body></html>

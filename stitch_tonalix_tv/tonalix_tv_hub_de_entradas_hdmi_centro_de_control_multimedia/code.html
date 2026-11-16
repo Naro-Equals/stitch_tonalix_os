@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tonalix TV - Configuración</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            tonal: {
+              base: '#060B0E',
+              sidebar: '#0A1116',
+              surface: '#0F1A21',
+              card: '#14222B',
+              cardHover: '#1B2C37',
+              border: '#1E323F',
+              cyan: '#00D1E6',
+              cyanHover: '#33E0F1',
+              cyanDim: 'rgba(0, 209, 230, 0.12)',
+              slateText: '#94A3B8',
+              muted: '#64748B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 17, 22, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e323f;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00D1E6;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="bg-tonal-base text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-tonal-cyan selection:text-black">
+<!-- TOP HEADER / STATUS BAR -->
+<header class="h-14 border-b border-tonal-border/60 bg-tonal-sidebar/95 backdrop-blur px-5 flex items-center justify-between z-20 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<!-- TonalixTV Logo Mark -->
+<div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-600 to-tonal-cyan flex items-center justify-center shadow-lg shadow-cyan-950/40">
+<svg class="w-4 h-4 text-black fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div class="flex items-baseline font-bold tracking-tight text-lg">
+<span class="text-white">Tonalix</span><span class="text-tonal-cyan">TV</span>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Inicio</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Aplicaciones</a>
+<a class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors" href="#">Entradas</a>
+<a class="px-3 py-1.5 rounded-lg text-tonal-cyan bg-tonal-cyanDim font-semibold border border-tonal-cyan/30" href="#">Ajustes</a>
+</nav>
+</div>
+<!-- Quick Telemetry & Status Badges -->
+<div class="flex items-center gap-3">
+<!-- Live Metrics Pill -->
+<div class="hidden lg:flex items-center gap-3 px-3 py-1 rounded-full bg-tonal-surface border border-tonal-border text-xs font-mono text-tonal-slateText">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          CPU <span class="text-white font-semibold">6.2%</span>
+</span>
+<span class="text-slate-600">|</span>
+<span>Red <span class="text-white font-semibold">12ms</span></span>
+<span class="text-slate-600">|</span>
+<span>RAM <span class="text-tonal-cyan font-semibold">1.8 / 3 GB</span></span>
+</div>
+<!-- Quick Session Badge -->
+<div class="flex items-center gap-2 pl-2">
+<span class="text-xs bg-cyan-950/70 border border-tonal-cyan/40 text-tonal-cyan font-medium px-2.5 py-1 rounded-md flex items-center gap-1.5">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Sesión Blindada</span>
+</span>
+<div class="text-xs font-mono text-slate-400 font-bold bg-tonal-card px-2.5 py-1 rounded-md border border-tonal-border">
+          17:42
+        </div>
+</div>
+</div>
+</header>
+<!-- MAIN LAYOUT: SIDEBAR + CONTENT -->
+<div class="flex-1 flex overflow-hidden">
+<!-- LEFT NAVIGATION SIDEBAR -->
+<aside class="w-72 bg-tonal-sidebar border-r border-tonal-border/70 flex flex-col justify-between shrink-0 p-4">
+<div>
+<div class="px-3 pb-3 mb-2 border-b border-tonal-border/50 flex items-center justify-between">
+<span class="text-xs font-semibold text-tonal-muted tracking-wider uppercase">Configuración del Sistema</span>
+<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-tonal-border text-slate-300">v4.8 PRO</span>
+</div>
+<nav class="space-y-1">
+<!-- Item: Red e Internet -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Red e Internet</p>
+<p class="text-[11px] text-tonal-muted">Wi-Fi 6 Conectado (5GHz)</p>
+</div>
+</div>
+<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+</button>
+<!-- Item: Pantalla y Video (Active) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-tonal-cyan/10 border border-tonal-cyan/40 text-white font-medium shadow-md shadow-cyan-950/20 text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-cyan/20 text-tonal-cyan flex items-center justify-center">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-semibold text-tonal-cyan">Pantalla y Video</p>
+<p class="text-[11px] text-cyan-200/60">4K HDR10+ • 120Hz</p>
+</div>
+</div>
+<span class="text-tonal-cyan font-bold text-xs">●</span>
+</button>
+<!-- Item: Audio y Sonido -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Audio y Salida</p>
+<p class="text-[11px] text-tonal-muted">Dolby Atmos • HDMI eARC</p>
+</div>
+</div>
+</button>
+<!-- Item: Privacidad y Seguridad -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Privacidad y Seguridad</p>
+<p class="text-[11px] text-tonal-muted">Bloqueo de telemetría activo</p>
+</div>
+</div>
+<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-1.5 py-0.5 rounded">ON</span>
+</button>
+<!-- Item: Rendimiento y Caché -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Modo Rendimiento</p>
+<p class="text-[11px] text-tonal-muted">Optimización Ultra-Lite</p>
+</div>
+</div>
+</button>
+<!-- Item: Acerca del Dispositivo -->
+<button class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-tonal-card/80 transition-all text-left">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-tonal-card flex items-center justify-center text-slate-400 group-hover:text-tonal-cyan transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-sm font-medium">Acerca de</p>
+<p class="text-[11px] text-tonal-muted">Android TV 12 Custom ROM</p>
+</div>
+</div>
+</button>
+</nav>
+</div>
+<!-- Quick Remote Guide Info Footer inside sidebar -->
+<div class="p-3 rounded-xl bg-tonal-surface border border-tonal-border text-xs text-slate-400 space-y-2">
+<div class="flex items-center justify-between text-slate-300 font-medium">
+<span>Modo Mando TV</span>
+<span class="w-2 h-2 rounded-full bg-tonal-cyan"></span>
+</div>
+<p class="text-[11px] leading-relaxed text-tonal-muted">Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.</p>
+<div class="flex items-center justify-between pt-1 border-t border-tonal-border/50 text-[10px] font-mono text-slate-400">
+<span>Perfil Activo:</span>
+<span class="text-white font-semibold">Tonalix Master</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT CONTENT AREA: CONFIGURATION DETAILS -->
+<main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8 bg-gradient-to-b from-tonal-base to-tonal-surface"><div class="flex flex-col w-full space-y-8">
+<!-- Top Section / Status Banner -->
+<section class="relative overflow-hidden rounded-xl bg-surface-container-low p-6 md:p-8 shadow-xl">
+<div class="absolute -right-20 -top-20 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col xl:flex-row xl:items-end justify-between gap-6">
+<div class="space-y-2 max-w-3xl">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim animate-pulse"></span>
+<p class="font-label-sm text-label-sm tracking-widest text-primary uppercase">
+            GESTIÓN DE ENTRADAS FÍSICAS &amp; CEC AVANZADO • AUTO-LATENCY GAMING
+          </p>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+          Hub de Entradas HDMI &amp; Dispositivos Conectados
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Conmutación sin pérdidas a nivel de silicio HDMI 2.1 FRL6. Gestión remota inteligente mediante perfil D-Pad TV 10-Foot.
+        </p>
+</div>
+<!-- Quick TV Action Remotes -->
+<div class="flex flex-wrap items-center gap-3">
+<button class="group flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest transition-all duration-200" id="scan-ports-btn">
+<span class="w-3 h-3 rounded-full bg-primary-container shadow-[0_0_10px_rgba(0,229,255,0.8)]"></span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">[AZUL] Escanear Puertos HDMI</span>
+</button>
+<button class="group flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest transition-all duration-200">
+<span class="w-3 h-3 rounded-full bg-error shadow-[0_0_10px_rgba(255,180,171,0.5)]"></span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">[ROJO] Modo Standby Global</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-container text-on-primary-container font-semibold shadow-[0_0_18px_rgba(0,229,255,0.4)] hover:shadow-[0_0_24px_rgba(0,229,255,0.6)] transition-all">
+<span class="material-symbols-outlined text-lg">tune</span>
+<span class="font-label-lg text-label-lg">[M] Configuración CEC Link</span>
+</button>
+</div>
+</div>
+</section>
+<!-- HDMI Source Grid: Interactive 10-Foot D-Pad Cards -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">settings_input_hdmi</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Canales de Entrada Digital</h2>
+</div>
+<div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant">
+<span>PUERTOS ACTIVOS:</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary-fixed font-mono font-bold">4 / 4 SINCRONIZADOS</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+<!-- HDMI 1: eARC Soundbar -->
+<div class="group relative flex flex-col justify-between p-5 rounded-xl bg-surface-container-low transition-all duration-300 hover:bg-surface-container">
+<div class="space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<span class="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-mono font-bold text-label-sm">HDMI 1</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-container/20 text-primary-container">eARC / ARC</span>
+</div>
+<span class="flex items-center gap-1.5 font-label-sm text-label-sm text-secondary-fixed">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+              ACTIVO
+            </span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Sony HT-A7000 Soundbar</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Dolby Atmos TrueHD Passthrough</p>
+</div>
+<!-- Technical Specs Matrix -->
+<div class="p-3 rounded-lg bg-surface-container-lowest space-y-2 font-mono">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Ancho de Banda</span>
+<span class="text-on-surface font-bold">48 Gbps FRL6</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Canal Audio</span>
+<span class="text-primary-container">7.1.2 Spatial</span>
+</div>
+<div class="space-y-1 pt-1">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Volumen CEC</span>
+<span class="text-on-surface font-bold">42%</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 42%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Modo Passthrough</span>
+<span class="text-on-surface font-semibold">Master Audio Bitstream</span>
+</div>
+</div>
+<!-- HDMI 2: PlayStation 5 Pro (Focused / Active Selection) -->
+<div class="relative flex flex-col justify-between p-5 rounded-xl bg-surface-container shadow-[0_0_30px_rgba(0,229,255,0.25)] scale-[1.02] transform transition-all">
+<!-- Neon cyan subtle highlight halo -->
+<div class="absolute inset-x-0 -top-px h-1 bg-gradient-to-r from-transparent via-primary-container to-transparent"></div>
+<div class="space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-primary-container text-on-primary-container font-mono font-bold text-label-sm shadow-[0_0_10px_rgba(0,229,255,0.7)]">
+                HDMI 2 ● FOCO
+              </span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-secondary-fixed font-bold">VRR 120Hz</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-secondary-fixed/20 text-secondary-fixed font-semibold">
+              EN VIVO
+            </span>
+</div>
+<div>
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">PlayStation 5 Pro</h3>
+<span class="font-mono text-label-sm text-secondary-fixed font-bold">3.8 ms</span>
+</div>
+<p class="font-body-sm text-body-sm text-primary">Señal 4K HDR10+ ALLM Ultra-Latencia</p>
+</div>
+<!-- Video thumbnail preview -->
+<div class="relative h-28 w-full rounded-lg overflow-hidden bg-surface-container-lowest shadow-inner group">
+<img class="w-full h-full object-cover opacity-90" data-alt="High quality dynamic UI preview of PlayStation 5 game dashboard with neon cyber aesthetic, dark sleek backdrop, vibrant cyan game cover tiles, in-game raytracing visualizer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiJPI2vFuSCrjFczKAR-UmhOroMvnMzhiq2bwqJUvYC_bNHr1YG485MSKjsMWJBzZiaAVLbaBS5jmhwPVDClNH_CBuwqRaKrnOfgwar3u4eVR31y_kOoQEC2lxjcX41dDZeR35Cn7wfOgUH_Bv_D_dvbH0zwQkxXSCoov2fd1G_LEhX3F-I3CPd7Vq_Q30knmYRHcbwz42tw9tsyZ-RMMSbeH9bepe8hBR1Ya7VOw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="absolute bottom-2 left-2 flex items-center gap-1.5 bg-surface-container-lowest/80 backdrop-blur px-2 py-0.5 rounded text-[10px] font-mono text-on-surface">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+              3840x2160 @ 119.88 fps
+            </div>
+</div>
+<!-- Status badge metrics -->
+<div class="grid grid-cols-2 gap-2 text-center font-mono">
+<div class="p-2 rounded bg-surface-container-lowest">
+<p class="text-[10px] text-on-surface-variant uppercase">HDR Format</p>
+<p class="font-label-lg text-label-lg text-primary font-bold">HDR10+ Game</p>
+</div>
+<div class="p-2 rounded bg-surface-container-lowest">
+<p class="text-[10px] text-on-surface-variant uppercase">ALLM Status</p>
+<p class="font-label-lg text-label-lg text-secondary-fixed font-bold">Modo Juego</p>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full py-2.5 px-4 rounded-lg bg-primary-container hover:bg-primary-fixed text-on-primary-container font-headline-sm text-headline-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_16px_rgba(0,229,255,0.4)] transition-all">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+<span>[OK] Conmutar Entrada Inmediata</span>
+</button>
+</div>
+</div>
+<!-- HDMI 3: Nintendo Switch OLED -->
+<div class="group relative flex flex-col justify-between p-5 rounded-xl bg-surface-container-low transition-all duration-300 hover:bg-surface-container">
+<div class="space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<span class="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-mono font-bold text-label-sm">HDMI 3</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">CEC Sleep</span>
+</div>
+<span class="flex items-center gap-1.5 font-label-sm text-label-sm text-outline">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+              SUSPENDIDO
+            </span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Nintendo Switch OLED</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">1080p 60Hz RGB Rango Completo</p>
+</div>
+<!-- Spec Panel -->
+<div class="p-3 rounded-lg bg-surface-container-lowest space-y-2 font-mono">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Espacio de Color</span>
+<span class="text-on-surface">sRGB Extendido</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">HDCP Protocol</span>
+<span class="text-on-surface">1.4 Handshake OK</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Wake-on-CEC</span>
+<span class="text-secondary-fixed">Listo al pulsar HOME</span>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full py-2 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-base">power_settings_new</span>
+<span>Despertar Consola</span>
+</button>
+</div>
+</div>
+<!-- HDMI 4 / USB-C Hub: Mac Mini M2 -->
+<div class="group relative flex flex-col justify-between p-5 rounded-xl bg-surface-container-low transition-all duration-300 hover:bg-surface-container">
+<div class="space-y-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<span class="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-mono font-bold text-label-sm">HDMI 4</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-container/10 text-primary">USB-C ALT</span>
+</div>
+<span class="flex items-center gap-1.5 font-label-sm text-label-sm text-secondary-fixed">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+              SEÑAL ACTIVA
+            </span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Mac Mini M2 / Workstation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">4K 60Hz 10-Bit YCbCr 4:4:4</p>
+</div>
+<!-- Spec Panel -->
+<div class="p-3 rounded-lg bg-surface-container-lowest space-y-2 font-mono">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Perfil Pantalla</span>
+<span class="text-on-surface">Modo Cineasta / Rec.709</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Gama Dinámica</span>
+<span class="text-on-surface">SDR Calibrado D65</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Escalado GPU</span>
+<span class="text-primary-container">Pixel Match 1:1</span>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full py-2 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-base">desktop_windows</span>
+<span>Alternar a Workstation</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Picture-in-Picture (PiP) & Signal Telemetry Bento -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+<!-- PiP / Multi-View Live Monitor Panel -->
+<div class="lg:col-span-7 flex flex-col justify-between p-6 rounded-xl bg-surface-container-low shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">picture_in_picture_alt</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">PiP &amp; Multi-View Monitor</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Supervisión en directo de entrada secundaria mientras navegas</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded bg-secondary-fixed/15 text-secondary-fixed font-mono text-label-sm font-bold flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed"></span>
+            PICTURE-IN-PICTURE ON
+          </span>
+</div>
+<!-- Simulated Dual Source View -->
+<div class="relative w-full h-56 rounded-xl overflow-hidden bg-surface-container-lowest">
+<img class="w-full h-full object-cover" data-alt="High tech cinematic dark living room view displaying seamless 4K monitor screen with ultra-fine color fidelity and futuristic cyan ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIZC3PEsV8jE5wcydZlnDIR_508Cg4rJUcwa-0W9n0nAfMVQl-rT4-z5e3DWW95LgUW37FYHw82dOYlVOe-UAiYJ5HlhgIs3y5hIoWuoHdUxLol_ROX5NBZJACx-dvggQcpI4WDmM7FUMl153EEj2scs5xHjQIU99Qff1XsMS5R72TBrjliok4T-XW9JqR7kVGz07cIi_IFeKZrj1wxEk0tyUPJcoCmknTbPwuXnw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-transparent"></div>
+<!-- Secondary Inset Stream (PiP Window) -->
+<div class="absolute top-3 right-3 w-44 h-28 rounded-lg overflow-hidden bg-surface-container shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Security camera live feed overlooking modern smart tech studio room with sharp night vision clarity and minimal cyan status indicators" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_A-pMptaf00UiQJ2LwKIrajFMzd9IbEe9CkIuER51KaYWFG6x3SOGejvr9PpMh4169RVYDy_nac-RTLgWaaSfdFY9rSezXwwhfmfLL_znJWOYlu24MT2WjAOVtkp2B68tdcvcBnwRR85LppvwG0SGJ63D7fZVmuVR5g8-41R3A0600heDIuzm0rnEIo15VNTiipD0Fn5GyurFCDonGoTHz4mDmfJekwIo7w2kENk"/>
+<div class="absolute bottom-1 left-1 bg-surface-container-lowest/80 px-1.5 py-0.5 rounded text-[9px] font-mono text-secondary-fixed">
+              CAM-01 • SEGURIDAD
+            </div>
+</div>
+<!-- Bottom Telemetry bar inside view -->
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between font-mono text-label-sm text-on-surface bg-surface-container-lowest/85 backdrop-blur px-3 py-2 rounded-lg">
+<div class="flex items-center gap-4">
+<span>PRINCIPAL: <strong class="text-primary-container">HDMI 2 (PS5 Pro)</strong></span>
+<span>SECUNDARIO: <strong class="text-secondary-fixed">CAM-01 RTSP</strong></span>
+</div>
+<div class="flex items-center gap-2 text-outline">
+<span>Posición: <span class="text-on-surface">Sup-Der</span></span>
+<span>•</span>
+<span>Audio: <span class="text-primary-container">Primario</span></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Controls row -->
+<div class="mt-4 pt-4 flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm">
+            Alternar Audio PiP
+          </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-sm text-label-sm">
+            Pantalla Dividida (50/50)
+          </button>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">Presiona [AMARILLO] para permutar ventana</span>
+</div>
+</div>
+<!-- Live HDMI 2.1 Silicon Telemetry Engine -->
+<div class="lg:col-span-5 flex flex-col justify-between p-6 rounded-xl bg-surface-container-low shadow-lg">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary-fixed">speed</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Diagnóstico HDMI 2.1</h3>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary-container font-mono text-label-sm">
+            FRL6 LINK OK
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Análisis de enlace físico del controlador Tonalix Micro-PHY en tiempo real.
+        </p>
+<!-- Dynamic Signal Graph / Bandwidth Gauge SVG -->
+<div class="p-4 rounded-xl bg-surface-container-lowest space-y-3">
+<div class="flex items-center justify-between font-mono text-label-sm">
+<span class="text-on-surface-variant">Tasa de Transferencia FRL6</span>
+<span class="text-secondary-fixed font-bold">42.6 / 48.0 Gbps</span>
+</div>
+<!-- Inline SVG telemetry wave chart -->
+<div class="h-16 w-full flex items-end">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 300 60">
+<path class="text-primary-container/10" d="M0,45 Q20,40 40,48 T80,35 T120,42 T160,25 T200,30 T240,18 T280,22 L300,15 L300,60 L0,60 Z" fill="currentColor"></path>
+<path class="text-primary-container" d="M0,45 Q20,40 40,48 T80,35 T120,42 T160,25 T200,30 T240,18 T280,22 L300,15" fill="none" stroke="currentColor" stroke-width="2.5"></path>
+<!-- Target peak line -->
+<line class="text-outline-variant" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1" x1="0" x2="300" y1="12" y2="12"></line>
+</svg>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-2 font-mono text-label-sm">
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px]">CRIPTOGRAFÍA</span>
+<span class="text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary-fixed">verified_user</span>
+                HDCP 2.3 Certificado
+              </span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px]">SUBMUESTREO CROMÁTICO</span>
+<span class="text-primary-container font-semibold">Chroma 4:4:4 Nativo</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px]">PERFIL EDID</span>
+<span class="text-on-surface font-semibold">Custom OLED-Master V2</span>
+</div>
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px]">TASA DE ERROR BER</span>
+<span class="text-secondary-fixed font-semibold">&lt; 10^-12 (Perfect)</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-4 flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-outline">Latencia de entrada medida: <strong>3.8 ms</strong></span>
+<button class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1">
+<span>Ver log detallado</span>
+<span class="material-symbols-outlined text-xs">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Quick HDMI CEC & Unified Control Configuration -->
+<section class="space-y-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">sync_alt</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">Configuración HDMI-CEC &amp; Enlace Inteligente</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<!-- Feature 1: One-Touch Play -->
+<div class="p-5 rounded-xl bg-surface-container-low flex flex-col justify-between space-y-4">
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">One-Touch Play</span>
+<!-- Toggle switch state active -->
+<button class="w-12 h-6 rounded-full bg-primary-container p-0.5 flex items-center justify-end shadow-[0_0_10px_rgba(0,229,255,0.4)] transition-colors">
+<span class="w-5 h-5 rounded-full bg-surface-container-lowest"></span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Encender la TV y cambiar de canal automáticamente al presionar el botón de encendido en el mando de la consola.
+          </p>
+</div>
+<div class="pt-2 flex items-center gap-2 text-label-sm font-mono text-secondary-fixed">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>Sincronización PS5 y Switch ACTIVA</span>
+</div>
+</div>
+<!-- Feature 2: System Audio Control -->
+<div class="p-5 rounded-xl bg-surface-container-low flex flex-col justify-between space-y-4">
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">System Audio Control</span>
+<button class="w-12 h-6 rounded-full bg-primary-container p-0.5 flex items-center justify-end shadow-[0_0_10px_rgba(0,229,255,0.4)] transition-colors">
+<span class="w-5 h-5 rounded-full bg-surface-container-lowest"></span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Control de volumen de barra de sonido o receptor AV directamente con las teclas de volumen del mando Tonalix TV.
+          </p>
+</div>
+<div class="pt-2 flex items-center gap-2 text-label-sm font-mono text-primary">
+<span class="material-symbols-outlined text-sm">speaker_group</span>
+<span>Enlazado a Sony HT-A7000</span>
+</div>
+</div>
+<!-- Feature 3: Auto Standby -->
+<div class="p-5 rounded-xl bg-surface-container-low flex flex-col justify-between space-y-4">
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Auto Standby Eco</span>
+<button class="w-12 h-6 rounded-full bg-primary-container p-0.5 flex items-center justify-end shadow-[0_0_10px_rgba(0,229,255,0.4)] transition-colors">
+<span class="w-5 h-5 rounded-full bg-surface-container-lowest"></span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Apagar de manera segura o suspender periféricos conectados si no reciben señal activa tras 15 minutos de inactividad.
+          </p>
+</div>
+<div class="pt-2 flex items-center gap-2 text-label-sm font-mono text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">eco</span>
+<span>Ahorro energético optimizado</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Action Banner / D-Pad Shortcut Bar -->
+<section class="p-4 rounded-xl bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-label-sm text-on-surface-variant">
+<div class="flex flex-wrap items-center gap-4 sm:gap-6">
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary-container font-bold">[OK]</span>
+<span>Conmutar Entrada</span>
+</span>
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-bold">[M]</span>
+<span>Ajustes de Puerto &amp; EDID</span>
+</span>
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary font-bold">[AZUL]</span>
+<span>Escanear Dispositivos</span>
+</span>
+<span class="flex items-center gap-1.5 text-on-surface">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-error font-bold">[ROJO]</span>
+<span>Forzar Standby CEC</span>
+</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm text-secondary-fixed">tv_remote</span>
+<span>10-Foot Leanback Interface</span>
+</div>
+</section>
+</div>
+<script>
+  // Simple micro-interaction for HDMI Scanning simulation
+  const scanBtn = document.getElementById('scan-ports-btn');
+  if (scanBtn) {
+    scanBtn.addEventListener('click', () => {
+      const originalText = scanBtn.innerHTML;
+      scanBtn.innerHTML = `
+        <span class="w-3 h-3 rounded-full bg-secondary-fixed animate-ping"></span>
+        <span class="font-label-lg text-label-lg text-on-surface font-semibold">Sondeando bus I2C DDC...</span>
+      `;
+      scanBtn.classList.add('opacity-80');
+      setTimeout(() => {
+        scanBtn.innerHTML = originalText;
+        scanBtn.classList.remove('opacity-80');
+      }, 1600);
+    });
+  }
+</script></main>
+</div>
+<!-- TV FOOTER NAVIGATION CHEAT SHEET (Standard Tonalix Remote Guide) -->
+<footer class="h-10 bg-tonal-base border-t border-tonal-border/60 px-6 flex items-center justify-between text-xs text-slate-400 shrink-0 font-mono">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">▲▼◀▶</span>
+<span>Navegar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">OK</span>
+<span>Seleccionar / Alternar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Atrás</span>
+<span>Regresar</span>
+</span>
+<span class="flex items-center gap-1.5">
+<span class="px-1.5 py-0.5 rounded bg-tonal-card border border-tonal-border text-slate-300 text-[10px]">Menú</span>
+<span>Opciones avanzadas</span>
+</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span class="text-tonal-cyan">Android TV 11/12</span>
+<span class="text-slate-600">•</span>
+<span class="text-emerald-400">DNS Anti-Ad: Conectado</span>
+</div>
+</footer>
+</body></html>

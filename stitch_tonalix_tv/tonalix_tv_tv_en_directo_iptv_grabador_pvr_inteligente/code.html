@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-surface":"#dde3ec","inverse-surface":"#dde3ec","secondary-container":"#09e7a9","tertiary-fixed":"#cfe5ff","surface-container-lowest":"#090f15","secondary-fixed":"#42ffbf","on-tertiary":"#1d3246","primary-fixed-dim":"#00daf3","inverse-on-surface":"#2b3138","primary-container":"#00e5ff","on-secondary-container":"#006346","on-primary-fixed-variant":"#004f58","on-secondary-fixed-variant":"#005139","on-tertiary-container":"#465b71","on-surface-variant":"#bac9cc","on-error-container":"#ffdad6","outline-variant":"#3b494c","tertiary-fixed-dim":"#b3c9e2","on-primary-fixed":"#001f24","outline":"#849396","surface-bright":"#343a41","inverse-primary":"#006875","surface":"#0e141a","on-secondary":"#003826","on-tertiary-fixed-variant":"#34495e","surface-container":"#1a2027","tertiary":"#e2eeff","error-container":"#93000a","surface-container-highest":"#2f353c","primary-fixed":"#9cf0ff","primary":"#c3f5ff","surface-tint":"#00daf3","on-tertiary-fixed":"#051d30","surface-container-high":"#252b31","surface-variant":"#2f353c","on-secondary-fixed":"#002115","on-error":"#690005","surface-container-low":"#161c22","secondary-fixed-dim":"#00e1a4","secondary":"#83ffcc","on-background":"#dde3ec","tertiary-container":"#bdd3ed","background":"#0e141a","on-primary-container":"#00626e","surface-dim":"#0e141a","on-primary":"#00363d","error":"#ffb4ab"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"gutter-mobile":"0.75rem","space-sm":"0.5rem","gutter":"1.5rem","space-xs":"0.25rem","space-lg":"1.5rem","space-xl":"2.5rem","margin-mobile":"1.25rem","margin":"3rem","space-md":"1rem"},fontFamily:{"body-sm":["Manrope"],"body-lg":["Manrope"],"display-hero":["Space Grotesk"],"headline-sm":["Space Grotesk"],"label-lg":["Space Grotesk"],"display-hero-mobile":["Space Grotesk"],"label-sm":["Space Grotesk"],"body-md":["Manrope"],"headline-lg":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"],"headline-md":["Space Grotesk"]},fontSize:{"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.01em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"display-hero":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"26px","letterSpacing":"0em","fontWeight":"500"}],"label-lg":["13px",{"lineHeight":"16px","letterSpacing":"0.04em","fontWeight":"600"}],"display-hero-mobile":["32px",{"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.08em","fontWeight":"700"}],"body-md":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"headline-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface text-on-surface select-none overflow-x-hidden min-h-screen"><header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/85 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.6)]"><div class="h-20 w-full px-margin flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-primary shadow-[0_0_16px_rgba(0,229,255,0.25)]"><span class="material-symbols-outlined text-[24px]">tv_options_edit_channels</span></div><div class="flex flex-col"><div class="font-headline-sm text-headline-sm tracking-tight text-on-surface flex items-center gap-1.5">TONALIX<span class="text-primary font-bold">OS</span></div><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">10-Foot Launcher</span></div></div><nav class="hidden xl:flex items-center gap-space-xs p-1 bg-surface-container-low rounded-xl" data-active-classes="bg-primary-container text-on-primary-container shadow-[0_0_20px_rgba(0,229,255,0.4)] font-label-lg text-label-lg rounded-xl"><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface transition-all font-label-lg text-label-lg uppercase tracking-wider rounded-lg" data-path="inicio" href="#">Inicio</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface transition-all font-label-lg text-label-lg uppercase tracking-wider rounded-lg" data-path="aplicaciones" href="#">Aplicaciones</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface transition-all font-label-lg text-label-lg uppercase tracking-wider rounded-lg" data-path="juegos-y-emuladores" href="#">Juegos &amp; Emuladores</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface transition-all font-label-lg text-label-lg uppercase tracking-wider rounded-lg" data-path="almacenamiento-y-ram" href="#">Almacenamiento &amp; RAM</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface transition-all font-label-lg text-label-lg uppercase tracking-wider rounded-lg" data-path="entradas" href="#">Entradas</a><a class="px-space-md py-space-sm text-on-surface-variant hover:text-on-surface transition-all font-label-lg text-label-lg uppercase tracking-wider rounded-lg" data-path="ajustes" href="#">Ajustes</a></nav></div><div class="flex items-center gap-space-md"><div class="hidden lg:flex items-center gap-space-md px-space-md py-1.5 rounded-full bg-surface-container-low shadow-[inset_0_1px_4px_rgba(0,0,0,0.5)] font-label-sm text-label-sm text-on-surface-variant"><div class="flex items-center gap-1"><span class="material-symbols-outlined text-primary text-[15px]">memory</span><span class="text-outline">CPU:</span><span class="text-on-surface font-semibold">28%</span></div><span class="w-1 h-1 rounded-full bg-outline-variant"></span><div class="flex items-center gap-1"><span class="material-symbols-outlined text-secondary text-[15px]">developer_board</span><span class="text-outline">RAM:</span><span class="text-on-surface font-semibold">3.8/8GB</span></div><span class="w-1 h-1 rounded-full bg-outline-variant"></span><div class="flex items-center gap-1"><span class="material-symbols-outlined text-primary-fixed-dim text-[15px]">device_thermostat</span><span class="text-on-surface font-semibold">44°C</span></div><span class="w-1 h-1 rounded-full bg-outline-variant"></span><div class="flex items-center gap-1"><span class="material-symbols-outlined text-secondary-fixed text-[15px]">wifi</span><span class="text-secondary font-semibold">WiFi 6</span></div><span class="w-1 h-1 rounded-full bg-outline-variant"></span><div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-high text-secondary-fixed"><span class="material-symbols-outlined text-[13px]">verified_user</span><span class="uppercase tracking-wider">Blindada</span></div><span class="w-1 h-1 rounded-full bg-outline-variant"></span><div class="flex items-center gap-1 font-headline-sm text-headline-sm text-primary font-bold pl-1">21:42</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.4)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 pb-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Ambience Layer -->
+<div class="relative w-full overflow-hidden px-margin py-space-lg flex flex-col gap-space-lg">
+<!-- Ambient Glow Drops -->
+<div class="absolute -top-40 right-1/4 w-96 h-96 bg-primary-container/10 rounded-full blur-[128px] pointer-events-none"></div>
+<div class="absolute top-1/2 left-0 w-80 h-80 bg-secondary/10 rounded-full blur-[140px] pointer-events-none"></div>
+<!-- 1. SUB-CABECERA Y TELEMETRÍA IPTV -->
+<div class="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-space-md p-space-md bg-surface-container-low rounded-xl shadow-xl">
+<!-- Titles & State -->
+<div class="flex flex-col gap-1 min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>Stream M3U Plus / Xtream Codes Activo</span>
+</div>
+<span class="text-outline font-label-sm text-label-sm">|</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">H.265 Hardware Deco VPU</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight flex items-center gap-space-xs">
+          Centro de TV en Directo <span class="text-primary-container">&amp; PVR Inteligente</span>
+</h1>
+</div>
+<!-- Profile Selector & Quick Remotes -->
+<div class="flex items-center gap-space-sm flex-wrap w-full xl:w-auto">
+<!-- Profile Pills -->
+<div class="flex items-center bg-surface-container-lowest p-1 rounded-lg">
+<button class="px-space-md py-1 rounded bg-primary-container text-on-primary-container font-label-lg text-label-lg shadow-[0_0_12px_rgba(0,229,255,0.35)] transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">podcasts</span>
+<span>Lista Fibra 1Gbps (2,450 CH)</span>
+</button>
+<button class="px-space-md py-1 rounded text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">pixel_6a_7</span>
+<span>DTT TDT Local</span>
+</button>
+<button class="px-space-md py-1 rounded text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">hard_drive</span>
+<span>SSD Grabador</span>
+</button>
+</div>
+<!-- Quick Colored Action Badges (10-Foot standard) -->
+<div class="flex items-center gap-space-xs">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest transition-all text-on-surface font-label-sm text-label-sm shadow-sm group">
+<span class="px-1.5 py-0.2 rounded bg-primary-container text-on-primary-container font-bold">AZUL</span>
+<span>Sync EPG</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest transition-all text-on-surface font-label-sm text-label-sm shadow-sm group">
+<span class="px-1.5 py-0.2 rounded bg-error-container text-error font-bold">ROJO</span>
+<span>Grabar Ya</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Telemetry Ticker Strip -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<div class="bg-surface-container-lowest px-space-md py-2 rounded-lg flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">speed</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Buffer Engine</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-secondary font-headline-sm text-headline-sm font-semibold">Zero Stutter</span>
+<span class="font-body-sm text-body-sm text-outline">(Ultra-Low Jitter)</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-space-md py-2 rounded-lg flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">high_density</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Tasa de Bits</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-on-surface font-headline-sm text-headline-sm font-semibold">18.4 Mbps</span>
+<span class="font-body-sm text-body-sm text-primary">H.265 / HEVC</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-space-md py-2 rounded-lg flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[18px]">sync_saved_locally</span>
+<span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">Latencia Entrada</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-secondary-fixed font-headline-sm text-headline-sm font-semibold">0.8 seg</span>
+<span class="font-body-sm text-body-sm text-outline">(Bypass OTT)</span>
+</div>
+</div>
+</div>
+<!-- 2 & 3. MAIN LIVE PIP VIEWER + MULTI-VIEW SPLIT SECTION -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
+<!-- Live Video Hero (8 cols) -->
+<div class="lg:col-span-8 flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden shadow-2xl relative group">
+<!-- Main Video Screen Simulation -->
+<div class="relative w-full h-[420px] lg:h-[460px] bg-surface-dim overflow-hidden flex items-end">
+<!-- Background TV Broadcast Footage Image -->
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Formula 1 car driving at ultra high speed along the harbor chicane in Monaco Grand Prix during golden hour, sharp cinematic motion blur, deep cyan and orange lighting accents, photorealistic broadcast camera capture with asphalt reflections and race barriers." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCITxKAkb9QAjPG1xhJ5Q3stC0tb3b7yavRJeU2L4qiqrQNiCD7Fx-IoMSZVnlvWco1L3hd-4wpkrk8DbVm9nfScnFyTnnUxRKYDWwsxe1dyhvODWpn3Uy6HBALs-mStvwr36QiA_PaukFZ_3faOIG9Aw_E4nHDNGRATETHZE7vJXtMRTpc0h3cqpfZgLO1niW1TVkm7mBPjrmw4Vz2MuhFe_wBLr_aR8ZSUFWBXFQ')"></div>
+<!-- Gradient Scrims for OSD Legibility -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/30 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest/70 via-transparent to-transparent"></div>
+<!-- Top-Left Channel Identity Badge -->
+<div class="absolute top-space-md left-space-md flex items-center gap-space-sm z-20">
+<div class="bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-lg">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-ping"></span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">014</span>
+<span class="font-headline-sm text-headline-sm text-primary-container font-semibold tracking-wide">DAZN F1 4K HDR</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-high/80 backdrop-blur-md px-2.5 py-1 rounded text-secondary font-label-sm text-label-sm uppercase font-bold tracking-wider">
+<span>4K UHD</span>
+<span>•</span>
+<span>50FPS</span>
+<span>•</span>
+<span>HDR10+</span>
+<span>•</span>
+<span>ATMOS 5.1</span>
+</div>
+</div>
+<!-- Top-Right Timeshift & Recording Status -->
+<div class="absolute top-space-md right-space-md flex items-center gap-2 z-20">
+<div class="flex items-center gap-1.5 bg-error/20 text-error px-2.5 py-1 rounded-full backdrop-blur-md font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">fiber_smart_record</span>
+<span>PVR RAM BUFFER ON</span>
+</div>
+</div>
+<!-- On-Screen Display (OSD) Overlay Bottom -->
+<div class="relative w-full p-space-md flex flex-col gap-space-sm z-20">
+<!-- Event Title & Metadata -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-xs">
+<div class="flex flex-col">
+<span class="text-secondary font-label-sm text-label-sm tracking-wider uppercase">Fórmula 1 Temporada Oficial</span>
+<h2 class="text-headline-md font-headline-md text-on-surface font-bold tracking-tight">
+                  Gran Premio de Mónaco - Clasificación Q3 en Vivo
+                </h2>
+</div>
+<div class="text-right flex flex-col items-start md:items-end">
+<span class="text-primary-container font-headline-sm text-headline-sm font-bold">LIVE (+00:00)</span>
+<span class="text-outline font-label-sm text-label-sm">Buffer Disponible: -02:30:00 (RAM/NVMe 8GB)</span>
+</div>
+</div>
+<!-- Timeshift Scrubber Bar -->
+<div class="w-full flex flex-col gap-1">
+<div class="w-full bg-surface-container-highest/60 h-2 rounded-full overflow-hidden relative cursor-pointer">
+<!-- Buffered segment -->
+<div class="absolute top-0 bottom-0 left-1/4 right-0 bg-primary-container/30"></div>
+<!-- Played segment -->
+<div class="absolute top-0 bottom-0 left-1/4 right-0 bg-gradient-to-r from-secondary to-primary-container"></div>
+<!-- Playhead Indicator -->
+<div class="absolute top-0 bottom-0 right-0 w-2.5 bg-on-primary-container rounded-full shadow-[0_0_8px_rgba(0,229,255,1)]"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>-02:30:00 (Inicio Sesión)</span>
+<span class="text-primary-container font-bold">TIEMPO REAL (F1 LIVE)</span>
+</div>
+</div>
+<!-- Control Buttons OSD Row -->
+<div class="flex items-center justify-between pt-1 flex-wrap gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface hover:text-primary transition-all flex items-center gap-1 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[18px]">replay_30</span>
+<span>-30s</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface hover:text-primary transition-all flex items-center gap-1 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[18px]">pause</span>
+<span>Pausar</span>
+</button>
+<button class="px-3 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold shadow-[0_0_16px_rgba(0,229,255,0.4)] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span>Directo</span>
+</button>
+<button class="p-2 rounded-lg bg-error-container/80 text-error hover:bg-error-container transition-all flex items-center gap-1 text-label-sm font-label-sm font-semibold">
+<span class="material-symbols-outlined text-[18px]">radio_button_checked</span>
+<span>Grabar Tramo</span>
+</button>
+</div>
+<!-- Track Options -->
+<div class="flex items-center gap-space-xs">
+<div class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-secondary text-[16px]">volume_up</span>
+<span class="text-outline">Pista:</span>
+<span class="text-on-surface font-medium">Comentaristas (5.1)</span>
+</div>
+<div class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">subtitles</span>
+<span class="text-outline">Sub:</span>
+<span class="text-on-surface font-medium">ES (Teletexto)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Multi-View Quad Split & Pipeline (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<!-- Multi-View Master Card -->
+<div class="bg-surface-container-low p-space-md rounded-xl shadow-xl flex flex-col justify-between flex-1">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Modo Multi-View Quad</span>
+<span class="font-label-sm text-label-sm text-outline">4 Streams Paralelos por GPU</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-bold">
+              [AMARILLO]
+            </span>
+</div>
+<!-- Quad Stream Mini Preview Grid -->
+<div class="grid grid-cols-2 gap-space-xs my-space-xs">
+<!-- Screen 1 (Active Audio Primary) -->
+<div class="relative h-24 rounded-lg overflow-hidden bg-surface-container-lowest shadow-md">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Formula 1 car onboard cockpit view speeding down high tech race track with glowing digital steering wheel display, dark neon atmosphere with light trails." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1bukrzZNE4_Pa_WMhCKUkd71UjTSmLf0t1ZvDSxeuYjSZ_Mx6pARKW6N55EwG2UWoKgKU31HfhabPA7TWhJgel-tZKKzKxG2kSmk3BipwZQUTfAa2s2pAoy7s2pQoOy3gJbe3Ope1OXLZzn0SQJFgWMHTSDMakKKNU8RMbipfPFOIGpWbVy3HOmsiBwB9HMbGwcrGeRttSinbfP1gJOomrjVk-ESOT_yus4aeEM4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-transparent"></div>
+<div class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[11px]">volume_up</span>
+<span>F1 4K</span>
+</div>
+<div class="absolute bottom-1 left-1.5 text-on-surface font-label-sm text-label-sm font-medium">CH 014 (Audio Master)</div>
+</div>
+<!-- Screen 2 -->
+<div class="relative h-24 rounded-lg overflow-hidden bg-surface-container-lowest shadow-md opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Exciting football match moment under bright stadium spotlights, night arena flooded with emerald green grass pitch and packed cheering crowds." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD5HuW94W6AFwmbYNlsQoVW3yRbTYd5aNuDOGktlWo3NzYVxXjD2P5rfeQD77C2nBdFAUnMaTaP1wwo0ZujdvH3pi0zv1mchQXPpXsSBHnmf6JlJB32_mwDsh3czq18tT6swSbkO-J9pmnI06o1x4j45Pz_uOLDuo7iMyPOZMqpi1CoENnGJQYkCzQL4yM0mxc6lEYuVsmmaFUMGCvZFd0aYYRX-c7f_ij1dEtxLv4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-transparent"></div>
+<div class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span>Movistar UCL</span>
+</div>
+<div class="absolute bottom-1 left-1.5 text-on-surface-variant font-label-sm text-label-sm truncate">CH 021 • UCL Semis</div>
+</div>
+<!-- Screen 3 -->
+<div class="relative h-24 rounded-lg overflow-hidden bg-surface-container-lowest shadow-md opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Basketball player soaring in mid air to slam dunk in a modern indoor sports arena, dramatic backlighting, neon scoreboard reflections." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDl3TGHkkh1-e4miehj1UvMZYKhv9hvpvSe1QDQ07DnTgUi31LRcV9eV6g9bZxlpjseVW1kRwxkuP09mv5QSNzWQm0Zm3nnrFY95HUwWDkZCVd4eLq1hvvXx3Ulpo0xR40pRtaqm9-bAvNgRP31RVLrO7Gzai0vGQs2is3Sv8lfnGo_8mFL8QMgxZ3tedBy9j1dAqrcxzHP1TBsaNcE04VABbd5hztBmwE2BU3FO78')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-transparent"></div>
+<div class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span>ESPN Basket</span>
+</div>
+<div class="absolute bottom-1 left-1.5 text-on-surface-variant font-label-sm text-label-sm truncate">CH 038 • NBA Finals</div>
+</div>
+<!-- Screen 4 -->
+<div class="relative h-24 rounded-lg overflow-hidden bg-surface-container-lowest shadow-md opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="High tech tennis match live broadcast, blue hardcourt tennis court with motion tracking tennis ball and neon line judge indicators." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDjTzyl-Dyc6lxDs_96lxPpiZUhsKhOScn3ZvMF1w4n0lku8FD_Q9sLJamav1dITyXCu9ioAGju7p11EivTazSQh4Fj3Fh3tedHD7yKTo82gX7ULT3xc_jou4pm3BwKIPZUuAEkSHF6xiJIJ5NnpnH4S5UgORyO30z2kF_u-W0jwHqZlA93qTrP-fDwWEypk-OVf3XzO_S0W-cRkoNE1uGd-I7xLaTpP3KKNzcXYys')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 via-transparent to-transparent"></div>
+<div class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span>Eurosport 1</span>
+</div>
+<div class="absolute bottom-1 left-1.5 text-on-surface-variant font-label-sm text-label-sm truncate">CH 055 • Roland Garros</div>
+</div>
+</div>
+<!-- Quad Toggle CTA & NPU Hardware Note -->
+<div class="pt-2 flex flex-col gap-2">
+<button class="w-full py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary font-headline-sm text-headline-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">aspect_ratio</span>
+<span>Expandir a Malla 4x4 Completa</span>
+</button>
+<div class="flex items-center justify-between text-outline font-label-sm text-label-sm px-1">
+<span>Decodificación: 4x VPU Pipelines</span>
+<span class="text-secondary font-medium">0% Frame Drops</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. GESTOR DE GRABACIONES PVR PROGRAMADAS & ALMACENAMIENTO -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[24px]">album</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">
+            PVR &amp; Grabaciones Inteligentes
+          </h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-outline font-label-sm text-label-sm">
+            NVMe SSD Libre: 1.4 TB / 2.0 TB
+          </span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 rounded bg-surface-container-high text-on-surface hover:text-primary font-label-sm text-label-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span>Programador Cron</span>
+</button>
+<button class="px-3 py-1 rounded bg-surface-container-high text-on-surface hover:text-primary font-label-sm text-label-sm flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">folder</span>
+<span>Explorador PVR</span>
+</button>
+</div>
+</div>
+<!-- Recording Cards Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Item 1: Champions League -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col">
+<span class="text-secondary font-label-sm text-label-sm uppercase font-semibold">Grabado Hoy • 4K HDR10+</span>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-bold mt-1 line-clamp-1">
+                Champions League: Real Madrid vs Man City
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Partido completo con prórroga y tanda de penaltis.
+              </p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[24px]">check_circle</span>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-outline">
+<div class="flex items-center gap-1 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[15px] text-secondary">storage</span>
+<span>12.4 GB • SSD NVMe Ext.</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-secondary-fixed">AdSkip AI</span>
+<span class="text-primary hover:underline">Reproducir</span>
+</div>
+</div>
+</div>
+<!-- Item 2: Dune Part 2 -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col">
+<span class="text-primary font-label-sm text-label-sm uppercase font-semibold">Cine IPTV • 1080p Atmos</span>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-bold mt-1 line-clamp-1">
+                Película: Dune Parte 2 (Canal Cine Estrenos)
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Audio dual Castellano/Inglés con subtítulos integrados.
+              </p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[24px]">cloud_done</span>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-outline">
+<div class="flex items-center gap-1 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[15px] text-primary">cloud</span>
+<span>8.2 GB • WebDAV Cloud</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">Sin Anuncios</span>
+<span class="text-primary hover:underline">Reproducir</span>
+</div>
+</div>
+</div>
+<!-- Item 3: Programado Resumen Motor GP -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between shadow-lg relative overflow-hidden group hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-start justify-between gap-space-xs">
+<div class="flex flex-col">
+<span class="text-error font-label-sm text-label-sm uppercase font-semibold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+                Programado para las 23:00 (Hoy)
+              </span>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-bold mt-1 line-clamp-1">
+                Resumen Motor GP: Carrera &amp; Análisis Técnico
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Auto-corte de patrocinios y pausas publicitarias (AI Engine).
+              </p>
+</div>
+<span class="material-symbols-outlined text-outline text-[24px]">alarm_on</span>
+</div>
+<div class="mt-space-md pt-space-xs flex items-center justify-between font-label-sm text-label-sm text-outline">
+<div class="flex items-center gap-1 text-on-surface font-medium">
+<span class="material-symbols-outlined text-[15px] text-outline">pending_actions</span>
+<span>Est. ~4.5 GB • En Cola</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary">Auto-Sleep On</span>
+<span class="text-error hover:underline">Cancelar</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. GUÍA RÁPIDA DE CANALES FAVORITOS (MINI-EPG) -->
+<div class="flex flex-col gap-space-sm mb-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-[22px]">format_list_bulleted</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">
+            Canales Favoritos &amp; EPG En Vivo
+          </h3>
+<span class="font-body-sm text-body-sm text-outline">Navegación horizontal D-Pad rápida</span>
+</div>
+<div class="flex items-center gap-2 text-primary font-label-sm text-label-sm">
+<span>Abrir Guía TV Completa (EPG Grid)</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+<!-- Quick Channel Row -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-space-md">
+<!-- Channel 1: Eurosport 4K -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl flex flex-col gap-2 hover:bg-surface-container-low transition-all cursor-pointer shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">015</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">4K</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">Eurosport 4K</span>
+<span class="font-body-sm text-body-sm text-outline truncate">Roland Garros: Final Dobles</span>
+</div>
+<!-- Progress bar -->
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-secondary h-full rounded-full" style="width: 65%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>21:00</span>
+<span>65%</span>
+<span>22:30</span>
+</div>
+</div>
+<!-- Channel 2: Movistar Deportes (Focused state sample) -->
+<div class="bg-surface-container p-space-sm rounded-xl flex flex-col gap-2 shadow-[0_0_20px_rgba(0,229,255,0.25)] ring-1 ring-primary-container transition-all cursor-pointer group">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary-container font-bold">016</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold">ACTIVO</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold text-primary">Movistar Deportes</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Liga Endesa ACB: Playoffs</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-primary-container h-full rounded-full" style="width: 82%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>20:45</span>
+<span class="text-primary-container font-bold">82%</span>
+<span>22:15</span>
+</div>
+</div>
+<!-- Channel 3: BBC Earth UHD -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl flex flex-col gap-2 hover:bg-surface-container-low transition-all cursor-pointer shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">029</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-tertiary-fixed font-label-sm text-label-sm font-semibold">UHD</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">BBC Earth UHD</span>
+<span class="font-body-sm text-body-sm text-outline truncate">Frozen Planet II: Ep 4</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-tertiary-container h-full rounded-full" style="width: 40%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>21:30</span>
+<span>40%</span>
+<span>22:20</span>
+</div>
+</div>
+<!-- Channel 4: ESPN Premium -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl flex flex-col gap-2 hover:bg-surface-container-low transition-all cursor-pointer shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">034</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">FHD</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">ESPN Premium</span>
+<span class="font-body-sm text-body-sm text-outline truncate">SportsCenter Nocturno</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-secondary h-full rounded-full" style="width: 15%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>21:45</span>
+<span>15%</span>
+<span>23:00</span>
+</div>
+</div>
+<!-- Channel 5: Sky Sports Main Event -->
+<div class="bg-surface-container-lowest p-space-sm rounded-xl flex flex-col gap-2 hover:bg-surface-container-low transition-all cursor-pointer shadow-md group">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">041</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-label-sm text-label-sm font-semibold">4K HDR</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold group-hover:text-primary transition-colors">Sky Sports ME</span>
+<span class="font-body-sm text-body-sm text-outline truncate">Premier League Highlights</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden mt-1">
+<div class="bg-secondary-fixed-dim h-full rounded-full" style="width: 90%;"></div>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>21:00</span>
+<span>90%</span>
+<span>22:00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. INFORMACIÓN TÉCNICA DEL MOTOR DE REPRODUCCIÓN (FOOTER PRE-SHELL) -->
+<div class="flex flex-col sm:flex-row items-center justify-between py-2 px-space-md bg-surface-container-lowest rounded-lg text-outline font-label-sm text-label-sm shadow-inner gap-2">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="text-on-surface font-semibold">Tonalix TV OS v4.8 PRO</span>
+<span>•</span>
+<span>Decodificador Hardware: Exoplayer v2.19 (Media3 Native)</span>
+<span>•</span>
+<span class="text-secondary font-medium">Render Surface: Vulkan 1.3 Direct</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-on-surface-variant">Sin Telemetría OEM • DNS Cifrado DoH Activo</span>
+</div>
+</div>
+</div>
+</div></main><footer class="fixed bottom-0 left-0 right-0 z-50 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.6)]"><div class="h-14 w-full px-margin flex items-center justify-between text-on-surface-variant font-label-lg text-label-lg"><div class="flex items-center gap-space-lg flex-wrap"><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary font-bold font-headline-sm text-label-sm shadow-[0_0_8px_rgba(0,229,255,0.2)]">OK</span><span class="text-on-surface">Seleccionar</span></div><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded bg-surface-container-highest text-tertiary-fixed font-bold font-headline-sm text-label-sm">M</span><span class="text-on-surface">Opciones</span></div><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded bg-error-container text-error font-bold font-headline-sm text-label-sm shadow-[0_0_8px_rgba(255,180,171,0.2)]">ROJO</span><span class="text-on-surface">Matar Apps</span></div><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-bold font-headline-sm text-label-sm shadow-[0_0_8px_rgba(0,229,255,0.3)]">AZUL</span><span class="text-on-surface">Limpiar Caché</span></div><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded bg-surface-container-highest text-outline font-bold font-headline-sm text-label-sm">ATRÁS</span><span class="text-on-surface">Volver</span></div></div><div class="hidden md:flex items-center gap-2 text-outline font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-primary">gamepad</span><span>D-Pad Controller Active</span></div></div></footer></body></html>

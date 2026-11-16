@@ -1,0 +1,1464 @@
+package com.tonalix.tvlauncher.ui.settings.network
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// ============================================================================
+// TONALIX TV - PALETA DE COLORES (Obsidian & Cyan Neon)
+// ============================================================================
+object TonalixColors {
+    val Background = Color(0xFF090F15)
+    val Surface = Color(0xFF0E141A)
+    val SurfaceCard = Color(0xFF131A22)
+    val SurfaceCardHover = Color(0xFF1B2430)
+    val SurfaceBorder = Color(0xFF222D39)
+    val PrimaryCyan = Color(0xFF00E5FF)
+    val PrimaryCyanGlow = Color(0x3300E5FF)
+    val AccentEmerald = Color(0xFF00F2C3)
+    val AccentEmeraldBg = Color(0x1F00F2C3)
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFF8E9BAE)
+    val TextMuted = Color(0xFF556577)
+    val WarningAmber = Color(0xFFFFB300)
+    val DangerRed = Color(0xFFFF5252)
+}
+
+enum class SettingsCategory(val title: String, val subtitle: String, val icon: ImageVector) {
+    NETWORK("Red e Internet", "Wi-Fi 6 Conectado (5GHz)", Icons.Default.Wifi),
+    DISPLAY("Pantalla y Video", "4K HDR10+ • 120Hz", Icons.Default.Tv),
+    AUDIO("Audio y Salida", "Dolby Atmos • HDMI eARC", Icons.Default.VolumeUp),
+    PRIVACY("Privacidad y Seguridad", "Bloqueo telemetría activo [ON]", Icons.Default.Security),
+    PERFORMANCE("Modo Rendimiento", "Optimización Ultra-Lite", Icons.Default.FlashOn),
+    ABOUT("Acerca de", "Android TV 12 Custom ROM", Icons.Default.Info)
+}
+
+enum class WifiFilterTab(val label: String) {
+    ALL("Todas (14)"),
+    HIGH_SPEED_5G("5 GHz Alta Vel (8)"),
+    LONG_RANGE_2G("2.4 GHz Largo (6)"),
+    OPEN("Abiertas (0)")
+}
+
+data class WifiNetworkItemData(
+    val ssid: String,
+    val security: String,
+    val band: String,
+    val channel: String,
+    val signalDbm: String,
+    val estimatedSpeed: String,
+    val wifiGen: String,
+    val isSecured: Boolean = true,
+    val isConnected: Boolean = false,
+    val isPortal: Boolean = false
+)
+
+data class SavedNetworkPriority(
+    val priority: String,
+    val name: String,
+    val detail: String,
+    val tag: String,
+    val isCurrent: Boolean = false
+)
+
+/**
+ * Pantalla de Configuración de Wi-Fi y Redes para Tonalix TV OS.
+ * Optimizada para interacción D-Pad 10-foot UI en Smart TV / Android TV Boxes.
+ */
+@Composable
+fun TonalixWifiScreen(
+    onNavigateBack: () -> Unit = {},
+    onScanNetworks: () -> Unit = {},
+    onAddHiddenNetwork: () -> Unit = {},
+    onRunPingDnsTest: () -> Unit = {},
+    onConfigureIpProxy: () -> Unit = {},
+    onViewIpv6Details: () -> Unit = {},
+    onDisconnectWifi: () -> Unit = {},
+    onForgetNetwork: () -> Unit = {},
+    onConnectNetwork: (WifiNetworkItemData) -> Unit = {},
+    onEditManualParameters: () -> Unit = {},
+    onRunFullDiagnosticTest: () -> Unit = {}
+) {
+    var selectedCategory by remember { mutableStateOf(SettingsCategory.NETWORK) }
+    var selectedTab by remember { mutableStateOf(WifiFilterTab.ALL) }
+    var isScanning by remember { mutableStateOf(false) }
+
+    // Redes Wi-Fi detectadas del entorno
+    val wifiNetworks = remember {
+        listOf(
+            WifiNetworkItemData(
+                ssid = "Aura_Home_Studio_5G",
+                security = "WPA2/WPA3 Personal",
+                band = "5 GHz",
+                channel = "CH 48",
+                signalDbm = "-54 dBm",
+                estimatedSpeed = "Est. 866 Mbps",
+                wifiGen = "Wi-Fi 6"
+            ),
+            WifiNetworkItemData(
+                ssid = "FibraOptica_Tonalix_Gaming",
+                security = "WPA3 Enterprise",
+                band = "6 GHz",
+                channel = "CH 69",
+                signalDbm = "-59 dBm",
+                estimatedSpeed = "Est. 1.2 Gbps",
+                wifiGen = "Wi-Fi 6E"
+            ),
+            WifiNetworkItemData(
+                ssid = "Laboratorio_IoT_Ext",
+                security = "WPA2-PSK",
+                band = "2.4 GHz",
+                channel = "CH 11",
+                signalDbm = "-68 dBm",
+                estimatedSpeed = "Est. 144 Mbps",
+                wifiGen = "Wi-Fi 4"
+            ),
+            WifiNetworkItemData(
+                ssid = "SmartTV_Guest_Portal",
+                security = "Aislada VLAN 20",
+                band = "2.4 GHz",
+                channel = "CH 6",
+                signalDbm = "-72 dBm",
+                estimatedSpeed = "Portal Cautivo",
+                wifiGen = "Wi-Fi 5",
+                isPortal = true
+            ),
+            WifiNetworkItemData(
+                ssid = "Vodafone-Fibra-9B41",
+                security = "WPA2",
+                band = "5 GHz",
+                channel = "CH 100",
+                signalDbm = "-81 dBm",
+                estimatedSpeed = "Est. 300 Mbps",
+                wifiGen = "Wi-Fi 5"
+            )
+        )
+    }
+
+    val savedNetworks = remember {
+        listOf(
+            SavedNetworkPriority("Prioridad 1", "Casa Principal", "CyberNet-Mesh_...", "AUTO", isCurrent = true),
+            SavedNetworkPriority("Prioridad 2", "Oficina / Estudio", "Aura_Home_Studi...", "MANUAL"),
+            SavedNetworkPriority("Prioridad 3", "Hotspot Móvil 5G", "Tonalix-Ultra-Cell", "PORTAL")
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TonalixColors.Background)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Barra superior de navegación y estado en vivo
+            TonalixTopBar()
+
+            // Contenedor principal: Sidebar Izquierda + Contenido Central + Sidebar Derecha (IP/DNS/Diagnóstico)
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                // 1. Sidebar de Categorías
+                TonalixSettingsSidebar(
+                    selectedCategory = selectedCategory,
+                    onSelectCategory = { selectedCategory = it }
+                )
+
+                // Separador vertical sutil
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 2. Contenido Central (Wi-Fi y Redes)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 26.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        // Encabezado y acciones de escaneo
+                        item {
+                            WifiHeaderSection(
+                                isScanning = isScanning,
+                                onScanNetworks = {
+                                    isScanning = true
+                                    onScanNetworks()
+                                },
+                                onAddHiddenNetwork = onAddHiddenNetwork,
+                                onRunPingDnsTest = onRunPingDnsTest
+                            )
+                        }
+
+                        // Tarjeta Enlace Primario Activo (Mesh 5G)
+                        item {
+                            ActivePrimaryLinkCard(
+                                onConfigureIpProxy = onConfigureIpProxy,
+                                onViewIpv6Details = onViewIpv6Details,
+                                onDisconnectWifi = onDisconnectWifi,
+                                onForgetNetwork = onForgetNetwork
+                            )
+                        }
+
+                        // Tarjetas de Funciones de Conectividad (Itinerancia Mesh, Baja Latencia, Canales DFS)
+                        item {
+                            AdvancedWifiFeaturesRow()
+                        }
+
+                        // Tabs de Filtrado de Redes
+                        item {
+                            WifiFilterTabsBar(
+                                selectedTab = selectedTab,
+                                onSelectTab = { selectedTab = it }
+                            )
+                        }
+
+                        // Lista de redes disponibles
+                        items(wifiNetworks) { network ->
+                            AvailableWifiNetworkRow(
+                                network = network,
+                                onConnect = { onConnectNetwork(network) }
+                            )
+                        }
+
+                        // Redes Guardadas y Prioridades
+                        item {
+                            SavedNetworksPrioritySection(savedNetworks = savedNetworks)
+                        }
+                    }
+                }
+
+                // Separador vertical
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 3. Panel Lateral Derecho (Parámetros IP/DNS y Diagnóstico en Tiempo Real)
+                TonalixNetworkDiagnosticsSidebar(
+                    onEditManualParameters = onEditManualParameters,
+                    onRunFullDiagnosticTest = onRunFullDiagnosticTest
+                )
+            }
+
+            // Barra inferior con guía de navegación D-PAD y estado del sistema
+            TonalixBottomBar()
+        }
+    }
+}
+
+// ============================================================================
+// BARRA SUPERIOR (HEADER GLOBAL)
+// ============================================================================
+@Composable
+private fun TonalixTopBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(TonalixColors.PrimaryCyan),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tv,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "Tonalix",
+                color = TonalixColors.TextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+            Text(
+                text = "TV",
+                color = TonalixColors.PrimaryCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp
+            )
+
+            Spacer(modifier = Modifier.width(36.dp))
+
+            listOf("Inicio", "Aplicaciones", "Entradas", "Ajustes").forEach { tab ->
+                val isSelected = tab == "Ajustes"
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent,
+                            RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = tab,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SystemTelemetryBadge(label = "CPU", value = "6.2%", color = TonalixColors.AccentEmerald)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "Red", value = "12ms", color = TonalixColors.TextSecondary)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "RAM", value = "1.8 / 3 GB", color = TonalixColors.PrimaryCyan)
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF003842))
+                    .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(13.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Sesión Blindada",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "17:42",
+                color = TonalixColors.TextPrimary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+@Composable
+private fun SystemTelemetryBadge(label: String, value: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 11.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// SIDEBAR IZQUIERDO DE CONFIGURACIÓN
+// ============================================================================
+@Composable
+private fun TonalixSettingsSidebar(
+    selectedCategory: SettingsCategory,
+    onSelectCategory: (SettingsCategory) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(260.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.padding(bottom = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONFIGURACIÓN DEL SISTEMA",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "v4.8 PRO",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            SettingsCategory.values().forEach { category ->
+                val isSelected = category == selectedCategory
+                SidebarCategoryItem(
+                    category = category,
+                    isSelected = isSelected,
+                    onClick = { onSelectCategory(category) }
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
+        }
+
+        // Card Modo Mando TV
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(TonalixColors.PrimaryCyan)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Modo Mando TV",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row {
+                    Text(text = "Perfil Activo: ", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                    Text(
+                        text = "Tonalix Master",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SidebarCategoryItem(
+    category: SettingsCategory,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val bgColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyanGlow
+            isFocused -> TonalixColors.SurfaceCardHover
+            else -> Color.Transparent
+        }, label = "bg"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyan
+            isFocused -> TonalixColors.TextSecondary
+            else -> Color.Transparent
+        }, label = "border"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = category.icon,
+            contentDescription = null,
+            tint = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = category.title,
+                color = if (isSelected) TonalixColors.TextPrimary else TonalixColors.TextSecondary,
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+            Text(
+                text = category.subtitle,
+                color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.PrimaryCyan)
+            )
+        }
+    }
+}
+
+// ============================================================================
+// ENCABEZADO DE WI-FI & ACCIONES RÁPIDAS
+// ============================================================================
+@Composable
+private fun WifiHeaderSection(
+    isScanning: Boolean,
+    onScanNetworks: () -> Unit,
+    onAddHiddenNetwork: () -> Unit,
+    onRunPingDnsTest: () -> Unit
+) {
+    Column {
+        // Breadcrumb
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "AJUSTES", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "RED E INTERNET", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "CONEXIÓN ULTRA-LEAN", color = TonalixColors.PrimaryCyan, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Configuración de Red y Wi-Fi",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Gestión de interfaces inalámbricas, itinerancia Mesh 802.11ax y telemetría de capa física.",
+                    color = TonalixColors.TextSecondary,
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Escanear Redes
+                OutlinedButton(
+                    onClick = onScanNetworks,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = if (isScanning) "Escaneando..." else "Escanear Redes", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "R1", color = TonalixColors.TextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+                }
+
+                // Red Oculta
+                OutlinedButton(
+                    onClick = onAddHiddenNetwork,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = TonalixColors.TextSecondary, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Red Oculta", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+
+                // Test Ping & DNS
+                OutlinedButton(
+                    onClick = onRunPingDnsTest,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.FlashOn, contentDescription = null, tint = TonalixColors.AccentEmerald, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Test Ping & DNS", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// ENLACE PRIMARIO ACTIVO (WI-FI 6 MESH CONNECTED CARD)
+// ============================================================================
+@Composable
+private fun ActivePrimaryLinkCard(
+    onConfigureIpProxy: () -> Unit,
+    onViewIpv6Details: () -> Unit,
+    onDisconnectWifi: () -> Unit,
+    onForgetNetwork: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(18.dp)
+    ) {
+        Column {
+            // Header del Enlace
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "ENLACE PRIMARIO ACTIVO",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "CANAL 36 (80 MHz)",
+                        color = TonalixColors.TextSecondary,
+                        fontSize = 9.sp,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .background(Color(0xFF090F15), RoundedCornerShape(4.dp))
+                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "WPA3-SAE",
+                        color = TonalixColors.AccentEmerald,
+                        fontSize = 9.sp,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(4.dp))
+                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                    )
+                }
+
+                // Potencia RSSI
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "4/4",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = "-48 dBm",
+                            color = TonalixColors.AccentEmerald,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Text(
+                            text = "POTENCIA EXCELENTE",
+                            color = TonalixColors.AccentEmerald,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Nombre de Red y Metadatos de Enlace
+            Text(
+                text = "CyberNet-Mesh_5G",
+                color = TonalixColors.TextPrimary,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "Wi-Fi 6 (802.11ax OFDMA) • BSSID: c4:ad:34:91:ff:8a • Nodo: Sala Principal (Living Mesh-01)",
+                color = TonalixColors.TextMuted,
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Grid de 4 Métricas de Capa Física
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                MetricColumn(title = "VELOCIDAD ENLACE (PHY)", value = "1,201 Mbps", subtitle = "Tx/Rx 2x2 MIMO")
+                MetricColumn(title = "LATENCIA A GATEWAY", value = "1.8 ms", subtitle = "Jitter: ±0.2ms")
+                MetricColumn(title = "FRECUENCIA CENTRAL", value = "5.180 GHz", subtitle = "Ancho: 80 MHz")
+                MetricColumn(title = "PÉRDIDA DE PAQUETES", value = "0.0 %", subtitle = "Buffers Despejados", valueColor = TonalixColors.AccentEmerald)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Acciones del Enlace Activo
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(
+                        text = "Configurar IP / Proxy",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.clickable(onClick = onConfigureIpProxy)
+                    )
+                    Text(
+                        text = "Ver Detalles IPv6",
+                        color = TonalixColors.TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.clickable(onClick = onViewIpv6Details)
+                    )
+                }
+
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(
+                        text = "Desconectar",
+                        color = TonalixColors.TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.clickable(onClick = onDisconnectWifi)
+                    )
+                    Text(
+                        text = "Olvidar Red",
+                        color = TonalixColors.DangerRed,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.clickable(onClick = onForgetNetwork)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MetricColumn(
+    title: String,
+    value: String,
+    subtitle: String,
+    valueColor: Color = TonalixColors.TextPrimary
+) {
+    Column {
+        Text(text = title, color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.4.sp)
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(text = value, color = valueColor, fontSize = 14.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(text = subtitle, color = TonalixColors.TextMuted, fontSize = 10.sp)
+    }
+}
+
+// ============================================================================
+// FUNCIONES AVANZADAS WI-FI (CARDS 3 COLUMNAS)
+// ============================================================================
+@Composable
+private fun AdvancedWifiFeaturesRow() {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Wi-Fi Habilitado",
+                color = TonalixColors.TextPrimary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Módulo inalámbrico Broadcom BCM43752 activo en banda dual.",
+                color = TonalixColors.TextMuted,
+                fontSize = 11.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            AdvancedFeatureCard(
+                title = "Itinerancia Mesh",
+                tag = "802.11k/v/r",
+                desc = "Conmutación fluida entre nodos sin buffering en 4K.",
+                state = "HABILITADO",
+                stateColor = TonalixColors.AccentEmerald,
+                modifier = Modifier.weight(1f)
+            )
+            AdvancedFeatureCard(
+                title = "Baja Latencia Gaming",
+                tag = "QoS UDP",
+                desc = "Prioriza flujos de Cloud Gaming y decodificación AV1.",
+                state = "ACTIVO",
+                stateColor = TonalixColors.PrimaryCyan,
+                modifier = Modifier.weight(1f)
+            )
+            AdvancedFeatureCard(
+                title = "Canales DFS 5GHz",
+                tag = "CH 52-144",
+                desc = "Acceso a espectros limpios sin congestión de vecinos.",
+                state = "STANDBY",
+                stateColor = TonalixColors.TextMuted,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun AdvancedFeatureCard(
+    title: String,
+    tag: String,
+    desc: String,
+    state: String,
+    stateColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+            .padding(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = title, color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = tag,
+                    color = TonalixColors.TextMuted,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(Color(0xFF090F15), RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = desc, color = TonalixColors.TextSecondary, fontSize = 10.sp, lineHeight = 13.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = state,
+                color = stateColor,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+// ============================================================================
+// BARRA DE FILTROS DE REDES WI-FI
+// ============================================================================
+@Composable
+private fun WifiFilterTabsBar(
+    selectedTab: WifiFilterTab,
+    onSelectTab: (WifiFilterTab) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            WifiFilterTab.values().forEach { tab ->
+                val isSelected = tab == selectedTab
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent)
+                        .clickable { onSelectTab(tab) }
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = tab.label,
+                        color = if (isSelected) Color.Black else TonalixColors.TextSecondary,
+                        fontSize = 11.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        Text(
+            text = "Última captura: hace 4s",
+            color = TonalixColors.TextMuted,
+            fontSize = 10.sp,
+            fontFamily = FontFamily.Monospace
+        )
+    }
+}
+
+// ============================================================================
+// FILA DE RED WI-FI DISPONIBLE (CONEXIÓN Y DETALLES)
+// ============================================================================
+@Composable
+private fun AvailableWifiNetworkRow(
+    network: WifiNetworkItemData,
+    onConnect: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val borderColor = if (isFocused) TonalixColors.PrimaryCyan else TonalixColors.SurfaceBorder
+    val bgColor = if (isFocused) TonalixColors.SurfaceCardHover else TonalixColors.SurfaceCard
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onConnect)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Lado izquierdo: SSID e información de frecuencia
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Wifi,
+                contentDescription = null,
+                tint = TonalixColors.TextSecondary,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = network.ssid,
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    if (network.isSecured) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = TonalixColors.TextMuted,
+                            modifier = Modifier.size(12.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = network.wifiGen,
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 8.sp,
+                        fontFamily = FontFamily.Monospace,
+                        modifier = Modifier
+                            .background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(3.dp))
+                            .padding(horizontal = 4.dp, vertical = 1.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "${network.band} (${network.channel})", color = TonalixColors.TextMuted, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                    Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                    Text(text = network.signalDbm, color = TonalixColors.TextSecondary, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                    Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                    Text(text = network.security, color = TonalixColors.TextMuted, fontSize = 10.sp)
+                    Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                    Text(text = network.estimatedSpeed, color = TonalixColors.TextSecondary, fontSize = 10.sp)
+                }
+            }
+        }
+
+        // Botón Conectar
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color(0xFF003844))
+                .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(6.dp))
+                .clickable(onClick = onConnect)
+                .padding(horizontal = 14.dp, vertical = 6.dp)
+        ) {
+            Text(
+                text = "Conectar",
+                color = TonalixColors.PrimaryCyan,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+// ============================================================================
+// SECCIÓN DE REDES GUARDADAS Y PRIORIDADES
+// ============================================================================
+@Composable
+private fun SavedNetworksPrioritySection(
+    savedNetworks: List<SavedNetworkPriority>
+) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.BookmarkBorder,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(15.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Redes Guardadas y Prioridades",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Text(
+                text = "3 Perfiles Almacenados",
+                color = TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            savedNetworks.forEach { item ->
+                SavedNetworkCard(item = item, modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun SavedNetworkCard(
+    item: SavedNetworkPriority,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+            .padding(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = item.priority, color = TonalixColors.TextMuted, fontSize = 10.sp)
+                Text(
+                    text = item.tag,
+                    color = TonalixColors.TextSecondary,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(Color(0xFF090F15), RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = item.name, color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(text = item.detail, color = TonalixColors.TextMuted, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (item.isCurrent) {
+                    Text(text = "En uso", color = TonalixColors.AccentEmerald, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                } else {
+                    Text(text = "Conectar", color = TonalixColors.PrimaryCyan, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+                }
+                Text(text = "Borrar", color = TonalixColors.TextMuted, fontSize = 10.sp)
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PANEL LATERAL DERECHO: PARÁMETROS IP/DNS Y DIAGNÓSTICO EN TIEMPO REAL
+// ============================================================================
+@Composable
+private fun TonalixNetworkDiagnosticsSidebar(
+    onEditManualParameters: () -> Unit,
+    onRunFullDiagnosticTest: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(290.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(18.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Título Parámetros IP & DNS
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.SettingsEthernet, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = "Parámetros IP & DNS", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            }
+            Text(text = "VLAN 10", color = TonalixColors.TextMuted, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+        }
+
+        // Selector DHCP / IP Estática
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(6.dp))
+                .background(Color(0xFF090F15))
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                .padding(3.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(TonalixColors.PrimaryCyan)
+                    .padding(vertical = 5.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "DHCP Dinámico", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 5.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "IP Estática", color = TonalixColors.TextSecondary, fontSize = 10.sp)
+            }
+        }
+
+        // Info de Conexión IP
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            InfoParamRow(label = "Dirección IPv4:", value = "192.168.1.145 / 24")
+            InfoParamRow(label = "Puerta de Enlace:", value = "192.168.1.1")
+            InfoParamRow(label = "Servidor DNS 1:", value = "1.1.1.1 (Cloudflare DoH)", valueColor = TonalixColors.PrimaryCyan)
+            InfoParamRow(label = "Servidor DNS 2:", value = "1.0.0.1 (Respaldo)")
+            InfoParamRow(label = "Dirección MAC:", value = "e4:5f:01:8b:2c:10")
+            InfoParamRow(label = "MTU:", value = "1500 (Sin Fragmentación)")
+            InfoParamRow(label = "IPv6 Global Unicast:", value = "2001:0db8:85a3::8a2e", badge = "Habilitado")
+        }
+
+        // Botón Editar Parámetros Manuales
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(6.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                .clickable(onClick = onEditManualParameters)
+                .padding(vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "Editar Parámetros Manuales", color = TonalixColors.TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+        }
+
+        Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+
+        // Diagnóstico de Rendimiento en Tiempo Real
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.Speed, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Diagnóstico de Rendimiento", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                }
+                Text(text = "En Línea", color = TonalixColors.AccentEmerald, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Estabilidad de Enlace:", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                Text(text = "99.8% (Óptimo)", color = TonalixColors.AccentEmerald, fontSize = 12.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Gráfico de Onda Simulado
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(30.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(Color(0xFF090F15))
+                    .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "∿∿∿ Latencia Estable 1.8ms ∿∿∿", color = TonalixColors.PrimaryCyan, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Velocidades de Descarga y Subida
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text(text = "DESCARGA", color = TonalixColors.TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "940 Mbps", color = TonalixColors.PrimaryCyan, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(text = "SUBIDA", color = TonalixColors.TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "620 Mbps", color = TonalixColors.AccentEmerald, fontSize = 13.sp, fontWeight = FontWeight.Bold, fontFamily = FontFamily.Monospace)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Botón Ejecutar Test Completo
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(Color(0xFF003844))
+                    .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(6.dp))
+                    .clickable(onClick = onRunFullDiagnosticTest)
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Ejecutar Test Completo", color = TonalixColors.PrimaryCyan, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun InfoParamRow(
+    label: String,
+    value: String,
+    badge: String? = null,
+    valueColor: Color = TonalixColors.TextPrimary
+) {
+    Column {
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 10.sp)
+        Spacer(modifier = Modifier.height(1.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = value,
+                color = valueColor,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = FontFamily.Monospace,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            if (badge != null) {
+                Text(
+                    text = badge,
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 1.dp)
+                )
+            }
+        }
+    }
+}
+
+// ============================================================================
+// BARRA INFERIOR (10-FOOT UI D-PAD NAVIGATION HINTS)
+// ============================================================================
+@Composable
+private fun TonalixBottomBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            // D-Pad hints
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.Navigation, contentDescription = null, tint = TonalixColors.TextMuted, modifier = Modifier.size(13.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Navegar", color = TonalixColors.TextSecondary, fontSize = 11.sp)
+            }
+
+            Spacer(modifier = Modifier.width(18.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "OK",
+                    color = Color.Black,
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.PrimaryCyan, RoundedCornerShape(3.dp))
+                        .padding(horizontal = 5.dp, vertical = 1.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = "Seleccionar / Alternar", color = TonalixColors.TextSecondary, fontSize = 11.sp)
+            }
+
+            Spacer(modifier = Modifier.width(18.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Atrás", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Regresar", color = TonalixColors.TextSecondary, fontSize = 11.sp)
+            }
+
+            Spacer(modifier = Modifier.width(18.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Menú", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Opciones avanzadas", color = TonalixColors.TextSecondary, fontSize = 11.sp)
+            }
+        }
+
+        // Estado y seguridad
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Android TV 11/12", color = TonalixColors.TextMuted, fontSize = 11.sp, fontFamily = FontFamily.Monospace)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "•", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.AccentEmerald)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "DNS Anti-Ad: Conectado", color = TonalixColors.AccentEmerald, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+        }
+    }
+}

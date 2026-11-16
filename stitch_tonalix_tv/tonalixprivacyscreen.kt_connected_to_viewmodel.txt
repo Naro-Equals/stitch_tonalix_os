@@ -1,0 +1,1395 @@
+package com.tonalix.tvlauncher.ui.settings.privacy
+
+import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.collectLatest
+
+// ============================================================================
+// TONALIX TV - PALETA DE COLORES (Obsidian & Cyan Neon)
+// ============================================================================
+object TonalixColors {
+    val Background = Color(0xFF090F15)
+    val Surface = Color(0xFF0E141A)
+    val SurfaceCard = Color(0xFF131A22)
+    val SurfaceCardHover = Color(0xFF1B2430)
+    val SurfaceBorder = Color(0xFF222D39)
+    val PrimaryCyan = Color(0xFF00E5FF)
+    val PrimaryCyanGlow = Color(0x3300E5FF)
+    val AccentEmerald = Color(0xFF00F2C3)
+    val AccentEmeraldBg = Color(0x1F00F2C3)
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFF8E9BAE)
+    val TextMuted = Color(0xFF556577)
+    val WarningAmber = Color(0xFFFFB300)
+    val DangerRed = Color(0xFFFF5252)
+}
+
+enum class SettingsCategory(val title: String, val subtitle: String, val icon: ImageVector) {
+    NETWORK("Red e Internet", "Wi-Fi 6 Conectado (5GHz)", Icons.Default.Wifi),
+    DISPLAY("Pantalla y Video", "4K HDR10+ • 120Hz", Icons.Default.Tv),
+    AUDIO("Audio y Salida", "Dolby Atmos • HDMI eARC", Icons.Default.VolumeUp),
+    PRIVACY("Privacidad y Seguridad", "Bloqueo telemetría activo [ON]", Icons.Default.Security),
+    PERFORMANCE("Modo Rendimiento", "Optimización Ultra-Lite", Icons.Default.FlashOn),
+    ABOUT("Acerca de", "Android TV 12 Custom ROM", Icons.Default.Info)
+}
+
+// ============================================================================
+// TONALIX PRIVACY SCREEN (STATEFUL ROUTE CONECTADA AL VIEWMODEL)
+// ============================================================================
+/**
+ * Punto de entrada oficial de Privacidad y Seguridad con inyección de ViewModel y
+ * recolección con ciclo de vida consciente para Android TV / Compose TV.
+ */
+@Composable
+fun TonalixPrivacyRoute(
+    viewModel: TonalixPrivacyViewModel = viewModel(),
+    onNavigateBack: () -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // Consumo de eventos puntuales (Side Effects / Haptic Feedback / Toasts)
+    LaunchedEffect(viewModel) {
+        viewModel.uiEffect.collectLatest { effect ->
+            when (effect) {
+                is PrivacyUiEffect.ShowToast -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+                is PrivacyUiEffect.PlaySound -> {
+                    // Integración con SoundPool / View.playSoundEffect del control remoto
+                }
+                is PrivacyUiEffect.NavigateBack -> {
+                    onNavigateBack()
+                }
+            }
+        }
+    }
+
+    TonalixPrivacyScreen(
+        uiState = uiState,
+        onAction = viewModel::onAction,
+        onNavigateBack = onNavigateBack
+    )
+}
+
+// ============================================================================
+// TONALIX PRIVACY SCREEN (STATELESS UI)
+// ============================================================================
+/**
+ * Vista pura y desacoplada (Stateless) para pruebas unitarias y previews en Android Studio.
+ */
+@Composable
+fun TonalixPrivacyScreen(
+    uiState: PrivacyUiState,
+    onAction: (PrivacyUserAction) -> Unit,
+    onNavigateBack: () -> Unit = {}
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(TonalixColors.Background)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Barra superior fija con estado del sistema y telemetría de seguridad
+            TonalixTopBar(telemetry = uiState.telemetry)
+
+            // Cuerpo principal: Sidebar Izquierdo + Contenido Central + Sidebar Derecho (Telemetría de Red y DNS)
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                // 1. Sidebar de navegación lateral
+                TonalixSettingsSidebar(
+                    selectedCategory = SettingsCategory.PRIVACY,
+                    onSelectCategory = { /* Navegación entre categorías */ }
+                )
+
+                // Separador vertical sutil
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 2. Contenido Central (Ajustes de Privacidad, DNS Seguro y Filtro Anti-Ads)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 26.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    ) {
+                        // Encabezado y acciones principales (Purgar Caché DNS y Aplicar)
+                        item {
+                            PrivacyHeaderSection(
+                                isApplying = uiState.isApplyingSettings,
+                                onFlushCache = { onAction(PrivacyUserAction.FlushDnsCache) },
+                                onApplySettings = { onAction(PrivacyUserAction.ApplyPrivacySettings) }
+                            )
+                        }
+
+                        // Banner de Telemetría Activa de Bloqueo y Estado del Cortafuegos
+                        item {
+                            SecurityDetectionBanner(telemetry = uiState.telemetry, totalBlocked = uiState.totalBlockedQueries)
+                        }
+
+                        // Tarjeta 1: Servidores DNS Seguros Cifrados (DoH / DoT)
+                        item {
+                            DnsProvidersSection(
+                                selectedProvider = uiState.selectedDnsProvider,
+                                onSelectProvider = { onAction(PrivacyUserAction.SelectDnsProvider(it)) }
+                            )
+                        }
+
+                        // Tarjeta 2: Escudo Anti-Publicidad Global & Anti-Rastreadores OEM
+                        item {
+                            AdBlockAndTelemetryShieldCard(
+                                adBlockGlobal = uiState.adBlockGlobalEnabled,
+                                onToggleAdBlock = { onAction(PrivacyUserAction.ToggleAdBlockGlobal(it)) },
+                                telemetryOem = uiState.telemetryBlockOemEnabled,
+                                onToggleTelemetryOem = { onAction(PrivacyUserAction.ToggleTelemetryBlockOem(it)) },
+                                smartTubeShield = uiState.smartTubeAdFreeShield,
+                                onToggleSmartTube = { onAction(PrivacyUserAction.ToggleSmartTubeShield(it)) },
+                                selectedLevel = uiState.selectedBlockingLevel,
+                                onSelectLevel = { onAction(PrivacyUserAction.SelectBlockingLevel(it)) },
+                                onUpdateRules = { onAction(PrivacyUserAction.UpdateBlocklists) },
+                                isUpdatingRules = uiState.isUpdatingBlocklists,
+                                activeRulesCount = uiState.telemetry.activeRulesCount
+                            )
+                        }
+
+                        // Tarjeta 3: Sesión Blindada, Anonimización y Fugas DNS
+                        item {
+                            ArmoredSessionAndLeaksCard(
+                                isolateSession = uiState.isolateArmoredSession,
+                                onToggleIsolate = { onAction(PrivacyUserAction.ToggleArmoredSession(it)) },
+                                preventLeak = uiState.preventDnsLeak,
+                                onTogglePreventLeak = { onAction(PrivacyUserAction.TogglePreventDnsLeak(it)) },
+                                anonymizeMac = uiState.anonymizeMacAddress,
+                                onToggleAnonymizeMac = { onAction(PrivacyUserAction.ToggleMacAnonymization(it)) },
+                                selectedEncryption = uiState.selectedEncryption,
+                                onSelectEncryption = { onAction(PrivacyUserAction.SelectEncryption(it)) }
+                            )
+                        }
+                    }
+                }
+
+                // Separador vertical
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp)
+                        .background(TonalixColors.SurfaceBorder)
+                )
+
+                // 3. Panel Lateral Derecho (Diagnóstico en Vivo, Ping DNS, Test de Fugas)
+                TonalixPrivacyDiagnosticsSidebar(
+                    telemetry = uiState.telemetry,
+                    isTestingLeak = uiState.isTestingDnsLeak,
+                    onRunLeakTest = { onAction(PrivacyUserAction.RunDnsLeakTest) },
+                    onResetDefaults = { onAction(PrivacyUserAction.ResetPrivacyDefaults) }
+                )
+            }
+
+            // Barra inferior con guía de botones de control remoto D-PAD
+            TonalixBottomBar()
+        }
+    }
+}
+
+// ============================================================================
+// BARRA SUPERIOR (HEADER GLOBAL)
+// ============================================================================
+@Composable
+private fun TonalixTopBar(telemetry: PrivacyTelemetry) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(TonalixColors.PrimaryCyan),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Tv,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "Tonalix",
+                color = TonalixColors.TextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp,
+                fontFamily = FontFamily.SansSerif
+            )
+            Text(
+                text = "TV",
+                color = TonalixColors.PrimaryCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 17.sp
+            )
+
+            Spacer(modifier = Modifier.width(36.dp))
+
+            listOf("Inicio", "Aplicaciones", "Entradas", "Ajustes").forEach { tab ->
+                val isSelected = tab == "Ajustes"
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent,
+                            RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = tab,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+                    )
+                }
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SystemTelemetryBadge(label = "DNS Ping", value = "${telemetry.pingDnsMs}ms", color = TonalixColors.AccentEmerald)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "Ads Hoy", value = "${telemetry.blockedAdsToday}", color = TonalixColors.PrimaryCyan)
+            Spacer(modifier = Modifier.width(12.dp))
+            SystemTelemetryBadge(label = "Filtro RAM", value = "${telemetry.memoryUsageFilterMb} MB", color = TonalixColors.TextSecondary)
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFF003842))
+                    .border(1.dp, TonalixColors.PrimaryCyan, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = TonalixColors.PrimaryCyan,
+                    modifier = Modifier.size(13.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Sesión Blindada",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Text(
+                text = "17:42",
+                color = TonalixColors.TextPrimary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+@Composable
+private fun SystemTelemetryBadge(label: String, value: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = label, color = TonalixColors.TextMuted, fontSize = 11.sp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value, color = color, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// SIDEBAR IZQUIERDO DE CONFIGURACIÓN
+// ============================================================================
+@Composable
+private fun TonalixSettingsSidebar(
+    selectedCategory: SettingsCategory,
+    onSelectCategory: (SettingsCategory) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(260.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.padding(bottom = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "CONFIGURACIÓN DEL SISTEMA",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.5.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "v4.8 PRO",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            SettingsCategory.values().forEach { category ->
+                val isSelected = category == selectedCategory
+                SidebarCategoryItem(
+                    category = category,
+                    isSelected = isSelected,
+                    onClick = { onSelectCategory(category) }
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
+        }
+
+        // Tarjeta Modo Mando TV
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(TonalixColors.SurfaceCard)
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+        ) {
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(TonalixColors.PrimaryCyan)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Modo Mando TV",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Usa el D-Pad del control remoto para navegar y el botón central OK para alternar opciones.",
+                    color = TonalixColors.TextMuted,
+                    fontSize = 10.sp,
+                    lineHeight = 13.sp
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row {
+                    Text(text = "Perfil Activo: ", color = TonalixColors.TextMuted, fontSize = 9.sp)
+                    Text(
+                        text = "Tonalix Master",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SidebarCategoryItem(
+    category: SettingsCategory,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val bgColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyanGlow
+            isFocused -> TonalixColors.SurfaceCardHover
+            else -> Color.Transparent
+        }, label = "bg"
+    )
+
+    val borderColor by animateColorAsState(
+        targetValue = when {
+            isSelected -> TonalixColors.PrimaryCyan
+            isFocused -> TonalixColors.TextSecondary
+            else -> Color.Transparent
+        }, label = "border"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = category.icon,
+            contentDescription = null,
+            tint = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextSecondary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = category.title,
+                color = if (isSelected) TonalixColors.TextPrimary else TonalixColors.TextSecondary,
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
+            )
+            Text(
+                text = category.subtitle,
+                color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                fontSize = 10.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(TonalixColors.PrimaryCyan)
+            )
+        }
+    }
+}
+
+// ============================================================================
+// ENCABEZADO DE PANTALLA Y ACCIONES RÁPIDAS
+// ============================================================================
+@Composable
+private fun PrivacyHeaderSection(
+    isApplying: Boolean,
+    onFlushCache: () -> Unit,
+    onApplySettings: () -> Unit
+) {
+    Column {
+        // Breadcrumb
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "AJUSTES", color = TonalixColors.TextMuted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Text(text = " / ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Text(text = "PRIVACIDAD Y SEGURIDAD", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "ESCUDO ANTITRACK ACTIVO",
+                color = TonalixColors.AccentEmerald,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                modifier = Modifier
+                    .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Protección de Privacidad, DNS Cifrado y Escudo Anti-Anuncios",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Shield,
+                        contentDescription = null,
+                        tint = TonalixColors.PrimaryCyan,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Filtrado DNS: ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                    Text(
+                        text = "DNS over TLS (DoT) + Cortafuegos Kernel Netfilter",
+                        color = TonalixColors.PrimaryCyan,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = " • ", color = TonalixColors.TextMuted, fontSize = 11.sp)
+                    Text(text = "Zero-Logs", color = TonalixColors.AccentEmerald, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                // Purgar Caché DNS
+                OutlinedButton(
+                    onClick = onFlushCache,
+                    colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.CleaningServices, contentDescription = null, tint = TonalixColors.TextSecondary, modifier = Modifier.size(15.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = "Purgar Caché DNS", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+
+                // Aplicar Ajustes
+                Button(
+                    onClick = onApplySettings,
+                    enabled = !isApplying,
+                    colors = ButtonDefaults.buttonColors(containerColor = TonalixColors.PrimaryCyan),
+                    shape = RoundedCornerShape(8.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    if (isApplying) {
+                        CircularProgressIndicator(modifier = Modifier.size(14.dp), color = Color.Black, strokeWidth = 2.dp)
+                    } else {
+                        Icon(imageVector = Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(15.dp))
+                    }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (isApplying) "Aplicando..." else "Aplicar Ajustes",
+                        color = Color.Black,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// BANNER DETECCIÓN AUTOMÁTICA DE HARDWARE & FILTRADO
+// ============================================================================
+@Composable
+private fun SecurityDetectionBanner(telemetry: PrivacyTelemetry, totalBlocked: Long) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(14.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "ESTADO DEL CORTAFUEGOS & MOTOR DE PRIVACIDAD KERNEL",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp
+                    )
+                }
+                Text(
+                    text = telemetry.dnsStatus,
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier
+                        .background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SecurityMetricPill(title = "TOTAL CONSULTAS BLOQUEADAS", value = "$totalBlocked", detail = "En esta sesión", modifier = Modifier.weight(1f))
+                SecurityMetricPill(title = "ANUNCIOS NEUTRALIZADOS", value = "${telemetry.blockedAdsToday}", detail = "YouTube / Apps TV", modifier = Modifier.weight(1f))
+                SecurityMetricPill(title = "TRACKERS OEM FRENADOS", value = "${telemetry.blockedTrackersCount}", detail = "Amazon & Google TV", modifier = Modifier.weight(1f))
+                SecurityMetricPill(title = "REGLAS ACTIVAS", value = "${telemetry.activeRulesCount}", detail = "AdGuard + uBlock", modifier = Modifier.weight(1f))
+                SecurityMetricPill(title = "LATENCIA RESOLVER", value = "${telemetry.pingDnsMs} ms", detail = "Ultra-Fast Anycast", modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun SecurityMetricPill(title: String, value: String, detail: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(0xFF0A0F14))
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+            .padding(8.dp)
+    ) {
+        Column {
+            Text(text = title, color = TonalixColors.TextMuted, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(text = value, color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Spacer(modifier = Modifier.height(1.dp))
+            Text(text = detail, color = TonalixColors.PrimaryCyan, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 1: SERVIDORES DNS SEGUROS CIFRADOS (DoH / DoT)
+// ============================================================================
+@Composable
+private fun DnsProvidersSection(
+    selectedProvider: DnsProvider,
+    onSelectProvider: (DnsProvider) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Servidor DNS Privado y Cifrado",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Resolución sin fugas a través de TLS / HTTPS",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "D-PAD NAVEGABLE",
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Selector 2x2 de Proveedores DNS
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                DnsProviderCard(
+                    provider = DnsProvider.ADGUARD_FILTER,
+                    isSelected = selectedProvider == DnsProvider.ADGUARD_FILTER,
+                    onClick = { onSelectProvider(DnsProvider.ADGUARD_FILTER) },
+                    modifier = Modifier.weight(1f)
+                )
+                DnsProviderCard(
+                    provider = DnsProvider.CLOUDFLARE_ZERO,
+                    isSelected = selectedProvider == DnsProvider.CLOUDFLARE_ZERO,
+                    onClick = { onSelectProvider(DnsProvider.CLOUDFLARE_ZERO) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                DnsProviderCard(
+                    provider = DnsProvider.PI_HOLE_LOCAL,
+                    isSelected = selectedProvider == DnsProvider.PI_HOLE_LOCAL,
+                    onClick = { onSelectProvider(DnsProvider.PI_HOLE_LOCAL) },
+                    modifier = Modifier.weight(1f)
+                )
+                DnsProviderCard(
+                    provider = DnsProvider.NEXTDNS_CUSTOM,
+                    isSelected = selectedProvider == DnsProvider.NEXTDNS_CUSTOM,
+                    onClick = { onSelectProvider(DnsProvider.NEXTDNS_CUSTOM) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DnsProviderCard(
+    provider: DnsProvider,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val borderColor = when {
+        isSelected -> TonalixColors.PrimaryCyan
+        isFocused -> TonalixColors.TextSecondary
+        else -> TonalixColors.SurfaceBorder
+    }
+
+    val bgColor = when {
+        isSelected -> Color(0xFF00222B)
+        isFocused -> TonalixColors.SurfaceCardHover
+        else -> Color(0xFF0A0F14)
+    }
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(8.dp))
+            .focusable(interactionSource = interactionSource)
+            .clickable(onClick = onClick)
+            .padding(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = provider.title,
+                        color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextPrimary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (isSelected) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = TonalixColors.PrimaryCyan,
+                            modifier = Modifier.size(13.dp)
+                        )
+                    }
+                }
+                Text(
+                    text = provider.tag,
+                    color = if (isSelected) TonalixColors.PrimaryCyan else TonalixColors.TextMuted,
+                    fontSize = 8.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .background(if (isSelected) TonalixColors.PrimaryCyanGlow else Color(0xFF0E141A), RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "${provider.ipPrimary} • ${provider.ipSecondary} (${provider.protocol})",
+                color = TonalixColors.TextSecondary,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 2: ESCUDO ANTI-PUBLICIDAD & TELEMETRÍA OEM
+// ============================================================================
+@Composable
+private fun AdBlockAndTelemetryShieldCard(
+    adBlockGlobal: Boolean,
+    onToggleAdBlock: (Boolean) -> Unit,
+    telemetryOem: Boolean,
+    onToggleTelemetryOem: (Boolean) -> Unit,
+    smartTubeShield: Boolean,
+    onToggleSmartTube: (Boolean) -> Unit,
+    selectedLevel: TelemetryBlockingLevel,
+    onSelectLevel: (TelemetryBlockingLevel) -> Unit,
+    onUpdateRules: () -> Unit,
+    isUpdatingRules: Boolean,
+    activeRulesCount: Int
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Escudo de Filtrado Global y Bloqueo de Rastreadores",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Elimina telemetría silenciosa de fabricantes de TV",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = "REGLAS: $activeRulesCount",
+                    color = TonalixColors.AccentEmerald,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Toggle 1: Escudo AdBlock Global
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Escudo AdBlock Global en Todo el Sistema", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Nivel DNS",
+                            color = TonalixColors.PrimaryCyan,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.background(TonalixColors.PrimaryCyanGlow, RoundedCornerShape(3.dp)).padding(horizontal = 4.dp, vertical = 1.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Bloquea banners publicitarios y redirecciones maliciosas antes de que consuman ancho de banda.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = adBlockGlobal,
+                    onCheckedChange = onToggleAdBlock,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Toggle 2: Bloqueo de Telemetría OEM (Fire OS / Google TV)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Bloqueo Estricto de Telemetría OEM (Amazon, Google, Xiaomi)", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Kernel Firewall",
+                            color = TonalixColors.TextMuted,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.background(Color(0xFF0A0F14), RoundedCornerShape(3.dp)).padding(horizontal = 4.dp, vertical = 1.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Impide el envío encubierto de tus hábitos de reproducción, clics y búsquedas hacia servidores remotos.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = telemetryOem,
+                    onCheckedChange = onToggleTelemetryOem,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Toggle 3: Integración SmartTube SponsorBlock
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Blindaje para SmartTube & Video Streaming", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Auto-Skip",
+                            color = TonalixColors.AccentEmerald,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace,
+                            modifier = Modifier.background(TonalixColors.AccentEmeraldBg, RoundedCornerShape(3.dp)).padding(horizontal = 4.dp, vertical = 1.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Acelera la omisión de patrocinios integrados, intros y banners emergentes en streaming.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = smartTubeShield,
+                    onCheckedChange = onToggleSmartTube,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Selector de Nivel de Bloqueo y Botón Actualizar Reglas
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Nivel de Rigor de Filtrado", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = selectedLevel.description, color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color(0xFF0A0F14))
+                            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(6.dp))
+                            .padding(3.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        TelemetryBlockingLevel.values().forEach { level ->
+                            val isSelected = level == selectedLevel
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(if (isSelected) TonalixColors.PrimaryCyan else Color.Transparent)
+                                    .clickable { onSelectLevel(level) }
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = level.label,
+                                    color = if (isSelected) Color.Black else TonalixColors.TextSecondary,
+                                    fontSize = 10.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+                        }
+                    }
+
+                    OutlinedButton(
+                        onClick = onUpdateRules,
+                        enabled = !isUpdatingRules,
+                        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color(0xFF0A0F14)),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+                        shape = RoundedCornerShape(6.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        if (isUpdatingRules) {
+                            CircularProgressIndicator(modifier = Modifier.size(12.dp), color = TonalixColors.PrimaryCyan, strokeWidth = 2.dp)
+                        } else {
+                            Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = TonalixColors.PrimaryCyan, modifier = Modifier.size(13.dp))
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = if (isUpdatingRules) "Descargando..." else "Actualizar Listas", color = TonalixColors.TextPrimary, fontSize = 10.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ============================================================================
+// TARJETA 3: SESIÓN BLINDADA, ANONIMIZACIÓN & PREVENCIÓN DE FUGAS
+// ============================================================================
+@Composable
+private fun ArmoredSessionAndLeaksCard(
+    isolateSession: Boolean,
+    onToggleIsolate: (Boolean) -> Unit,
+    preventLeak: Boolean,
+    onTogglePreventLeak: (Boolean) -> Unit,
+    anonymizeMac: Boolean,
+    onToggleAnonymizeMac: (Boolean) -> Unit,
+    selectedEncryption: EncryptionLevel,
+    onSelectEncryption: (EncryptionLevel) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(TonalixColors.SurfaceCard)
+            .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(10.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.PrimaryCyan))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Sesión Blindada & Criptografía de Memoria",
+                        color = TonalixColors.TextPrimary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Aislamiento de credenciales IPTV, Plex y Emby en RAM efímera",
+                        color = TonalixColors.TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
+                Text(
+                    text = selectedEncryption.label,
+                    color = TonalixColors.PrimaryCyan,
+                    fontSize = 9.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Toggle 1: Aislamiento de Sesión Blindada
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Aislamiento de Sesión Blindada (Sandbox Seguro)", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Cifra tokens de autenticación y claves M3U/Xtream en un enclave seguro inaccesible para otras apps de TV.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = isolateSession,
+                    onCheckedChange = onToggleIsolate,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Toggle 2: Prevención Estricta de Fugas DNS
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Prevención Estricta de Fugas DNS (DNS Leak Protection)", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Fuerza el desvío de todo el tráfico UDP/53 a través del túnel seguro sin permitir resolución paralela por el ISP.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = preventLeak,
+                    onCheckedChange = onTogglePreventLeak,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = TonalixColors.SurfaceBorder, thickness = 1.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Toggle 3: Anonimización de Dirección MAC en Wi-Fi
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = "Anonimización de Dirección MAC en Wi-Fi", color = TonalixColors.TextPrimary, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Genera identificadores de hardware efímeros al conectarse a redes inalámbricas públicas o compartidas.", color = TonalixColors.TextMuted, fontSize = 10.sp)
+                }
+                Switch(
+                    checked = anonymizeMac,
+                    onCheckedChange = onToggleAnonymizeMac,
+                    colors = SwitchDefaults.colors(checkedThumbColor = Color.Black, checkedTrackColor = TonalixColors.PrimaryCyan)
+                )
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PANEL DERECHO DE DIAGNÓSTICO EN VIVO & TEST DE FUGAS
+// ============================================================================
+@Composable
+private fun TonalixPrivacyDiagnosticsSidebar(
+    telemetry: PrivacyTelemetry,
+    isTestingLeak: Boolean,
+    onRunLeakTest: () -> Unit,
+    onResetDefaults: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(300.dp)
+            .fillMaxHeight()
+            .background(TonalixColors.Surface)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.AccentEmerald))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "DIAGNÓSTICO EN VIVO",
+                    color = TonalixColors.TextPrimary,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "DoT OK", color = TonalixColors.AccentEmerald, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Tarjeta Estado de Fugas DNS
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(TonalixColors.SurfaceCard)
+                    .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                    .padding(12.dp)
+            ) {
+                Column {
+                    Text(text = "AUDITORÍA DE FUGAS DNS", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = telemetry.dnsLeakStatus, color = TonalixColors.AccentEmerald, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Ping Anycast: ${telemetry.pingDnsMs}ms • Cifrado TLS 1.3", color = TonalixColors.TextSecondary, fontSize = 9.sp, fontFamily = FontFamily.Monospace)
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Button(
+                        onClick = onRunLeakTest,
+                        enabled = !isTestingLeak,
+                        colors = ButtonDefaults.buttonColors(containerColor = TonalixColors.PrimaryCyan),
+                        shape = RoundedCornerShape(6.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(vertical = 8.dp)
+                    ) {
+                        if (isTestingLeak) {
+                            CircularProgressIndicator(modifier = Modifier.size(12.dp), color = Color.Black, strokeWidth = 2.dp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(text = "Auditando Fugas...", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        } else {
+                            Icon(imageVector = Icons.Default.Security, contentDescription = null, tint = Color.Black, modifier = Modifier.size(13.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(text = "Ejecutar Test de Fugas", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Último Dominio Bloqueado
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color(0xFF0A0F14))
+                    .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                    .padding(12.dp)
+            ) {
+                Column {
+                    Text(text = "ÚLTIMO INTENTO DE TELEMETRÍA", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = telemetry.lastBlockedDomain, color = TonalixColors.WarningAmber, fontSize = 10.sp, fontFamily = FontFamily.Monospace, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(text = "Descartado por regla IPTables #304", color = TonalixColors.TextMuted, fontSize = 8.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Ficha Técnica de Cifrado
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(TonalixColors.SurfaceCard)
+                    .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(8.dp))
+                    .padding(12.dp)
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(text = "ENCLAVE DE SEGURIDAD", color = TonalixColors.TextMuted, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    DiagnosticKeyValue(key = "Módulo:", value = "Netfilter Kernel Core")
+                    DiagnosticKeyValue(key = "Acelerador:", value = "ARM Cryptography Extensions")
+                    DiagnosticKeyValue(key = "Cifrado:", value = "AES-256 GCM")
+                    DiagnosticKeyValue(key = "Estado:", value = "Blindado (Zero-Trace)")
+                }
+            }
+        }
+
+        // Botón Restablecer Valores
+        OutlinedButton(
+            onClick = onResetDefaults,
+            colors = ButtonDefaults.outlinedButtonColors(containerColor = TonalixColors.SurfaceCard),
+            border = androidx.compose.foundation.BorderStroke(1.dp, TonalixColors.SurfaceBorder),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 10.dp)
+        ) {
+            Icon(imageVector = Icons.Default.RestartAlt, contentDescription = null, tint = TonalixColors.TextSecondary, modifier = Modifier.size(14.dp))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(text = "Restablecer Privacidad", color = TonalixColors.TextPrimary, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+private fun DiagnosticKeyValue(key: String, value: String) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = key, color = TonalixColors.TextSecondary, fontSize = 9.sp)
+        Text(text = value, color = TonalixColors.TextPrimary, fontSize = 9.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
+    }
+}
+
+// ============================================================================
+// BARRA INFERIOR (GUÍA DE BOTONES D-PAD)
+// ============================================================================
+@Composable
+private fun TonalixBottomBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .background(TonalixColors.Surface)
+            .border(width = 1.dp, color = TonalixColors.SurfaceBorder)
+            .padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            RemoteKeyGuide(key = "▲▼ Navegar", label = "D-Pad")
+            RemoteKeyGuide(key = "OK Seleccionar / Alternar", label = "Enter")
+            RemoteKeyGuide(key = "Atrás Regresar", label = "Back")
+            RemoteKeyGuide(key = "Menú Opciones avanzadas", label = "Menu")
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(TonalixColors.AccentEmerald))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(text = "Android TV 11/12", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "•", color = TonalixColors.TextMuted, fontSize = 11.sp)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "DNS Anti-Ad: Conectado", color = TonalixColors.AccentEmerald, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+private fun RemoteKeyGuide(key: String, label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color(0xFF090F15))
+                .border(1.dp, TonalixColors.SurfaceBorder, RoundedCornerShape(4.dp))
+                .padding(horizontal = 6.dp, vertical = 2.dp)
+        ) {
+            Text(text = key, color = TonalixColors.TextPrimary, fontSize = 10.sp, fontWeight = FontWeight.Medium)
+        }
+    }
+}

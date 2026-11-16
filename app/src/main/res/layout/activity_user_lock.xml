@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#050609"
+    android:padding="36dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!-- Perfiles -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sesiones blindadas independientes"
+                android:textColor="@color/accent_color"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="¿Quién está viendo Tonalix TV?"
+                android:textColor="@color/text_primary"
+                android:textSize="28sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="18dp"
+                android:text="Cada usuario mantiene apps, colores y ajustes aislados."
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/layoutUserList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="PIN de prueba: Inicio Principal 1234 · Sesión Privada 5678"
+                android:textColor="#73FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- PIN pad -->
+        <LinearLayout
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_dialog_translucent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Desbloquear sesión"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvSelectedUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                tools:text="Inicio Principal" />
+
+            <LinearLayout
+                android:id="@+id/layoutPinDots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dot0"
+                    style="@style/PinDot" />
+
+                <TextView
+                    android:id="@+id/dot1"
+                    style="@style/PinDot" />
+
+                <TextView
+                    android:id="@+id/dot2"
+                    style="@style/PinDot" />
+
+                <TextView
+                    android:id="@+id/dot3"
+                    style="@style/PinDot" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPinError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/status_danger"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="PIN incorrecto"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvNoPinHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Este perfil no requiere PIN"
+                android:textColor="@color/status_ok"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <GridLayout
+                android:id="@+id/layoutPinPad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:columnCount="3">
+
+                <Button android:id="@+id/btnPin1" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="1" />
+                <Button android:id="@+id/btnPin2" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="2" />
+                <Button android:id="@+id/btnPin3" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="3" />
+                <Button android:id="@+id/btnPin4" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="4" />
+                <Button android:id="@+id/btnPin5" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="5" />
+                <Button android:id="@+id/btnPin6" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="6" />
+                <Button android:id="@+id/btnPin7" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="7" />
+                <Button android:id="@+id/btnPin8" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="8" />
+                <Button android:id="@+id/btnPin9" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="9" />
+                <Button android:id="@+id/btnPinClear" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="Borrar" android:textSize="12sp" />
+                <Button android:id="@+id/btnPin0" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="0" />
+                <Button android:id="@+id/btnPinBack" android:layout_width="0dp" android:layout_height="48dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:focusable="true" android:text="←" />
+            </GridLayout>
+
+            <Button
+                android:id="@+id/btnEnterNoPin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:focusable="true"
+                android:text="Entrar sin PIN"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

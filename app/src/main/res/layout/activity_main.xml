@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_dark_gradient">
+
+    <!-- 0. LIVE MOTION VIDEO BACKGROUND -->
+    <VideoView
+        android:id="@+id/videoBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 1. FULLSCREEN CUSTOM / USER WALLPAPER -->
+    <ImageView
+        android:id="@+id/ivCustomBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <!-- 2. PROCEDURAL AMBIENT NEBULA ORBS (Ultra-light organic cyber aura) -->
+    <com.tonalix.tvlauncher.AmbientNebulaView
+        android:id="@+id/ambientNebulaView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 3. FULLSCREEN DYNAMIC MUSIC BACKDROP -->
+    <ImageView
+        android:id="@+id/ivMusicBackdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <!-- 4. AMBIENT CINEMATIC SCRIM / VIGNETTE OVERLAY -->
+    <View
+        android:id="@+id/viewBackdropScrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@drawable/bg_ambient_vignette"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 5. SAFE INSET CONTENT CONTAINER FOR TV OVERSCAN -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutMainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="48dp"
+        android:paddingTop="36dp"
+        android:paddingRight="48dp"
+        android:paddingBottom="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <!-- TOP LEFT: Clock, Date & Weather Header -->
+        <LinearLayout
+            android:id="@+id/layoutTopLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvClock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/text_primary"
+                android:textSize="54sp"
+                android:textStyle="bold"
+                tools:text="14:30" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                tools:text="Lunes, 24 de Febrero" />
+
+            <!-- Weather Widget Row -->
+            <LinearLayout
+                android:id="@+id/layoutWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_capsule_translucent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp">
+
+                <ImageView
+                    android:id="@+id/ivWeatherIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_weather"
+                    app:tint="@color/accent_color"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/tvWeatherInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    tools:text="Madrid • 22°C Soleado" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TOP RIGHT: Media Capsule + Quick Panel Buttons -->
+        <LinearLayout
+            android:id="@+id/layoutTopRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- Dynamic Media Capsule -->
+            <LinearLayout
+                android:id="@+id/layoutMediaCapsule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/bg_capsule_translucent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="6dp"
+                android:visibility="visible"
+                tools:ignore="VisualLintBounds">
+
+                <ImageView
+                    android:id="@+id/ivAlbumArt"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_capsule_translucent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_music"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvMediaTitle"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/media_idle"
+                        android:textColor="@color/text_primary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvMediaArtist"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        tools:text="Audio Player" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Quick Panel Buttons -->
+            <ImageButton
+                android:id="@+id/btnQuickSearch"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_cyber_search"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickTurbo"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_turbo_boost"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_cleaning"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickWifi"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_wifi"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_wifi"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickBluetooth"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_bt"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_bluetooth"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickGameMode"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_game_mode"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_gamepad"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickComfortDistance"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_comfort_distance"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_distance"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickHealth"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_health"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_health"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickSecurity"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_security"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_security"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnQuickProjector"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/btn_projector"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_projector"
+                android:visibility="gone"
+                app:tint="@color/text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnInstaller"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/app_installer"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_apps"
+                app:tint="@color/accent_color" />
+
+            <Button
+                android:id="@+id/btnActiveUser"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_capsule_translucent"
+                android:focusable="true"
+                android:minWidth="0dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:text="Inicio Principal"
+                android:textAllCaps="false"
+                android:textColor="@color/accent_color"
+                android:textSize="12sp" />
+
+            <ImageButton
+                android:id="@+id/btnLauncherSettings"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_quick_button_selector"
+                android:contentDescription="@string/launcher_settings"
+                android:focusable="true"
+                android:padding="10dp"
+                android:src="@drawable/ic_settings"
+                app:tint="@color/text_primary" />
+        </LinearLayout>
+
+        <!-- CENTER / MIDDLE: Device Status & Cyber Telemetry HUD -->
+        <LinearLayout
+            android:id="@+id/layoutDeviceTelemetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical|end"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutTopRight">
+
+            <TextView
+                android:id="@+id/tvDeviceBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_capsule_translucent"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="16dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="6dp"
+                android:textColor="@color/accent_color"
+                android:textSize="12sp"
+                tools:text="Fire TV Stick 4K Max • FireOS 7 • RAM 2.0GB (Modo HD)" />
+
+            <!-- Real-time HUD Telemetry Badge (CPU/RAM/Engine) -->
+            <TextView
+                android:id="@+id/tvCyberTelemetry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_capsule_translucent"
+                android:fontFamily="monospace"
+                android:paddingStart="12dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="3dp"
+                android:text="@string/cyber_hud_fps"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- DYNAMIC MINI PLAYER & VIDEO/POP-UP CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardMiniPlayer"
+            android:layout_width="380dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/card_background_translucent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutDeviceTelemetry">
+
+            <LinearLayout
+                android:layout_width="385dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <!-- Album Art Frame with Glow -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    app:cardBackgroundColor="@color/bg_dark_end"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivMiniArt"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_music"
+                        tools:ignore="ContentDescription" />
+                </androidx.cardview.widget.CardView>
+
+                <!-- Track Info & Controls -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <!-- Title & Live Visualizer -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvMiniTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:ellipsize="marquee"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:singleLine="true"
+                            android:text="@string/media_idle"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <com.tonalix.tvlauncher.AudioVisualizerView
+                            android:id="@+id/miniAudioVisualizer"
+                            android:layout_width="22dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvMiniArtist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/media_default_artist"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                    <!-- D-Pad Controls -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/btnMiniPrev"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/bg_media_control_btn"
+                            android:contentDescription="@string/btn_prev"
+                            android:focusable="true"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_skip_previous"
+                            app:tint="@color/text_primary" />
+
+                        <ImageButton
+                            android:id="@+id/btnMiniPlayPause"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_media_control_btn"
+                            android:contentDescription="@string/btn_play_pause"
+                            android:focusable="true"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_play"
+                            app:tint="@color/accent_color"
+                            tools:ignore="TouchTargetSizeCheck" />
+
+                        <ImageButton
+                            android:id="@+id/btnMiniNext"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@drawable/bg_media_control_btn"
+                            android:contentDescription="@string/btn_next"
+                            android:focusable="true"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_skip_next"
+                            app:tint="@color/text_primary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- GOOGLE TV STYLE FEATURED RECOMMENDATION / MEDIA BANNER -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardGoogleTvFeatured"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/card_background_translucent"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:layout_constraintBottom_toTopOf="@id/layoutDockContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp">
+
+                <ImageView
+                    android:id="@+id/ivFeaturedIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_capsule_translucent"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_spotify"
+                    app:tint="@color/accent_color"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvFeaturedTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Google TV • Spotify y YouTube Destacados"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvFeaturedSubtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Centro Multimedia Inteligente • Toca para reproducir"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_capsule_translucent"
+                    android:paddingStart="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="6dp"
+                    android:text="▶ Abrir"
+                    android:textColor="@color/accent_color"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- BOTTOM CENTER: Floating Translucent Dock -->
+        <LinearLayout
+            android:id="@+id/layoutDockContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_dock_translucent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDockApps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_dock_app" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

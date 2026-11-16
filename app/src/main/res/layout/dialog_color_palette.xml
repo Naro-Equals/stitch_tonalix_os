@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="560dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_translucent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="28dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_palette"
+            app:tint="@color/accent_color"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Elige tu Paleta de Acento Favorita"
+            android:textColor="@color/accent_color"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Personaliza el resplandor de enfoque, bordes de selección y detalles del Launcher."
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <!-- Color Grid Row 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnThemeCyan"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_selector"
+            android:focusable="true"
+            android:text="Cyan Neon"
+            android:textColor="@color/theme_cyan"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnThemePurple"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_selector"
+            android:focusable="true"
+            android:text="Cyber Purple"
+            android:textColor="@color/theme_purple"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnThemeEmerald"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_selector"
+            android:focusable="true"
+            android:text="Esmeralda"
+            android:textColor="@color/theme_emerald"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Color Grid Row 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnThemeSunset"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_selector"
+            android:focusable="true"
+            android:text="Sunset Orange"
+            android:textColor="@color/theme_sunset"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnThemeCrimson"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_selector"
+            android:focusable="true"
+            android:text="Crimson Red"
+            android:textColor="@color/theme_crimson"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnThemeGold"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_selector"
+            android:focusable="true"
+            android:text="Electric Gold"
+            android:textColor="@color/theme_gold"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnPaletteClose"
+        android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_quick_button_selector"
+        android:focusable="true"
+        android:text="@string/btn_close"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp" />
+
+</LinearLayout>

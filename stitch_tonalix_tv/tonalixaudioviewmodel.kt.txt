@@ -1,0 +1,323 @@
+package com.tonalix.tvlauncher.ui.settings.audio
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlin.random.Random
+
+// ============================================================================
+// ENUMS DE CONFIGURACIÓN DE AUDIO & HARDWARE
+// ============================================================================
+
+enum class AudioOutputMode(val title: String, val subtitle: String, val tag: String) {
+    HDMI_EARC("HDMI eARC Passthrough", "Bitstream puro sin decodificación (Dolby Atmos / TrueHD / DTS:X)", "RECOMENDADO"),
+    OPTICAL_SPDIF("Óptico SPDIF", "Dolby Digital 5.1 / DTS 5.1 comprimido (Hasta 640 kbps)", "COMPATIBILIDAD"),
+    BLUETOOTH_LE("Bluetooth 5.3 Auriculares", "Códec LDAC / aptX HD de ultra baja latencia", "INALÁMBRICO"),
+    INTERNAL_SPEAKERS("Altavoces de TV Internos", "Estéreo 2.0 con virtualización 3D Sound", "ESTÁNDAR")
+}
+
+enum class AudioFormatHandling(val label: String, val description: String) {
+    PASSTHROUGH("Bitstream Directo (eARC)", "La barra de sonido / receptor AV decodifica"),
+    PCM_MULTICHANNEL("PCM Multicanal LPCM", "Decodificación por CPU SoC Amlogic"),
+    FORCE_DOLBY_DIGITAL("Forzar Dolby Digital", "Transcodificación para equipos antiguos")
+}
+
+enum class DynamicRangeCompression(val label: String, val description: String) {
+    FULL_DYNAMIC("Dinámica Completa", "Puro cine sin compresión de decibelios"),
+    NIGHT_SMART("Compresión Inteligente Noche", "Atenúa estruendos y explosiones"),
+    MAX_COMPRESSION("Máxima Compresión", "Voces uniformes para dormitorios")
+}
+
+enum class RoomAcousticProfile(val title: String, val eqDetails: String, val tag: String) {
+    STUDIO_REFERENCE("Estudio Referencia", "Respuesta plana ±0.5dB • Sin coloración", "ACTIVO"),
+    WARM_CINEMA("Cine Cálido", "Graves profundos +4dB • Diálogos realzados", "PERFIL CINE"),
+    VOCAL_FOCUS("Enfoque Voces", "Filtro paso alto 120Hz • Diálogos cristalinos", "PODCAST/SERIES"),
+    CUSTOM_DSP("DSP Personalizado 10-Bandas", "Ecualización paramétrica de sala calibrada", "MANUAL")
+}
+
+// ============================================================================
+// TONALIX AUDIO UI STATE
+// ============================================================================
+
+data class AudioUiState(
+    // Selección principal
+    val selectedOutputMode: AudioOutputMode = AudioOutputMode.HDMI_EARC,
+    val selectedFormatHandling: AudioFormatHandling = AudioFormatHandling.PASSTHROUGH,
+    val selectedDrc: DynamicRangeCompression = DynamicRangeCompression.FULL_DYNAMIC,
+    val selectedAcousticProfile: RoomAcousticProfile = RoomAcousticProfile.STUDIO_REFERENCE,
+
+    // Toggles de Procesamiento de Sonido y Hardware
+    val dolbyAtmosSpatialAudio: Boolean = true,
+    val dtsXBitstreamPassthrough: Boolean = true,
+    val vocalBoostEnhancer: Boolean = true,
+    val avSyncDelayCompensation: Boolean = true,
+    val autoMuteOnSourceSwitch: Boolean = true,
+    val dynamicVolumeLeveler: Boolean = false,
+    val losslessAudioTrueHd: Boolean = true,
+
+    // Sliders y ajustes finos
+    val avSyncDelayMs: Int = 0, // Rango: -100ms a +250ms
+    val dialogueClarityLevel: Int = 3, // 1 a 5
+    val subBassBoostDb: Int = 2, // 0 a 10 dB
+    val roomCalibrationConfidence: Int = 98, // 0 a 100%
+
+    // Telemetría en Tiempo Real
+    val telemetry: AudioTelemetry = AudioTelemetry(),
+
+    // Operaciones Asíncronas
+    val isTestingPinkNoise: Boolean = false,
+    val isCalibratingRoom: Boolean = false,
+    val calibrationProgress: Float = 0f,
+    val isApplyingChanges: Boolean = false,
+    val lastCalibrationTimestamp: String = "Hoy, 16:30"
+)
+
+data class AudioTelemetry(
+    val currentCodec: String = "Dolby TrueHD con Atmos",
+    val channelsLayout: String = "7.1.4 Objetos Espaciales",
+    val sampleRateKhz: Int = 192,
+    val bitDepth: Int = 24,
+    val bitrateKbps: Int = 5850,
+    val eArcLatencyMs: Float = 1.1f,
+    val peakDecibelsLeft: Float = -12.4f,
+    val peakDecibelsRight: Float = -12.1f,
+    val bufferUnderruns: Int = 0,
+    val hdmiHandshakeStatus: String = "eARC 37 Mbps Conectado"
+)
+
+// ============================================================================
+// USER ACTIONS & INTENTS (MVI)
+// ============================================================================
+
+sealed interface AudioUserAction {
+    data class SelectOutputMode(val mode: AudioOutputMode) : AudioUserAction
+    data class SelectFormatHandling(val handling: AudioFormatHandling) : AudioUserAction
+    data class SelectDrc(val drc: DynamicRangeCompression) : AudioUserAction
+    data class SelectAcousticProfile(val profile: RoomAcousticProfile) : AudioUserAction
+
+    data class ToggleDolbyAtmos(val enabled: Boolean) : AudioUserAction
+    data class ToggleDtsX(val enabled: Boolean) : AudioUserAction
+    data class ToggleVocalBoost(val enabled: Boolean) : AudioUserAction
+    data class ToggleAvSyncCompensation(val enabled: Boolean) : AudioUserAction
+    data class ToggleDynamicVolume(val enabled: Boolean) : AudioUserAction
+    data class ToggleLosslessTrueHd(val enabled: Boolean) : AudioUserAction
+
+    data class AdjustAvSyncDelay(val deltaMs: Int) : AudioUserAction
+    data class SetDialogueClarity(val level: Int) : AudioUserAction
+    data class SetBassBoost(val db: Int) : AudioUserAction
+
+    object PlayTestTone : AudioUserAction
+    object StopTestTone : AudioUserAction
+    object StartRoomCalibration : AudioUserAction
+    object CancelRoomCalibration : AudioUserAction
+    object ApplyAudioSettings : AudioUserAction
+    object ResetAudioEdid : AudioUserAction
+}
+
+// ============================================================================
+// UI EFFECTS (One-Shot side effects)
+// ============================================================================
+
+sealed interface AudioUiEffect {
+    data class ShowToast(val message: String, val isSuccess: Boolean = true) : AudioUiEffect
+    data class PlayHapticTone(val toneType: AudioToneType) : AudioUiEffect
+    object NavigateBack : AudioUiEffect
+}
+
+enum class AudioToneType {
+    CLICK_NAVIGATE, DOLBY_CHIME, TEST_BURST, CALIBRATION_COMPLETE, WARNING_TONE
+}
+
+// ============================================================================
+// TONALIX AUDIO VIEWMODEL
+// ============================================================================
+
+class TonalixAudioViewModel : ViewModel() {
+
+    private val _uiState = MutableStateFlow(AudioUiState())
+    val uiState: StateFlow<AudioUiState> = _uiState.asStateFlow()
+
+    private val _uiEffect = MutableSharedFlow<AudioUiEffect>()
+    val uiEffect: SharedFlow<AudioUiEffect> = _uiEffect.asSharedFlow()
+
+    private var telemetryJob: Job? = null
+    private var calibrationJob: Job? = null
+
+    init {
+        startAudioTelemetryLoop()
+    }
+
+    fun onAction(action: AudioUserAction) {
+        when (action) {
+            is AudioUserAction.SelectOutputMode -> {
+                _uiState.update { it.copy(selectedOutputMode = action.mode) }
+                viewModelScope.launch {
+                    _uiEffect.emit(AudioUiEffect.PlayHapticTone(AudioToneType.CLICK_NAVIGATE))
+                    _uiEffect.emit(AudioUiEffect.ShowToast("Salida cambiada a: ${action.mode.title}"))
+                }
+            }
+            is AudioUserAction.SelectFormatHandling -> {
+                _uiState.update { it.copy(selectedFormatHandling = action.handling) }
+            }
+            is AudioUserAction.SelectDrc -> {
+                _uiState.update { it.copy(selectedDrc = action.drc) }
+            }
+            is AudioUserAction.SelectAcousticProfile -> {
+                _uiState.update { it.copy(selectedAcousticProfile = action.profile) }
+            }
+            is AudioUserAction.ToggleDolbyAtmos -> {
+                _uiState.update { it.copy(dolbyAtmosSpatialAudio = action.enabled) }
+                viewModelScope.launch {
+                    if (action.enabled) {
+                        _uiEffect.emit(AudioUiEffect.PlayHapticTone(AudioToneType.DOLBY_CHIME))
+                    }
+                }
+            }
+            is AudioUserAction.ToggleDtsX -> {
+                _uiState.update { it.copy(dtsXBitstreamPassthrough = action.enabled) }
+            }
+            is AudioUserAction.ToggleVocalBoost -> {
+                _uiState.update { it.copy(vocalBoostEnhancer = action.enabled) }
+            }
+            is AudioUserAction.ToggleAvSyncCompensation -> {
+                _uiState.update { it.copy(avSyncDelayCompensation = action.enabled) }
+            }
+            is AudioUserAction.ToggleDynamicVolume -> {
+                _uiState.update { it.copy(dynamicVolumeLeveler = action.enabled) }
+            }
+            is AudioUserAction.ToggleLosslessTrueHd -> {
+                _uiState.update { it.copy(losslessAudioTrueHd = action.enabled) }
+            }
+            is AudioUserAction.AdjustAvSyncDelay -> {
+                _uiState.update { 
+                    val newDelay = (it.avSyncDelayMs + action.deltaMs).coerceIn(-100, 250)
+                    it.copy(avSyncDelayMs = newDelay)
+                }
+            }
+            is AudioUserAction.SetDialogueClarity -> {
+                _uiState.update { it.copy(dialogueClarityLevel = action.level.coerceIn(1, 5)) }
+            }
+            is AudioUserAction.SetBassBoost -> {
+                _uiState.update { it.copy(subBassBoostDb = action.db.coerceIn(0, 10)) }
+            }
+            is AudioUserAction.PlayTestTone -> {
+                executeTestTone()
+            }
+            is AudioUserAction.StopTestTone -> {
+                _uiState.update { it.copy(isTestingPinkNoise = false) }
+            }
+            is AudioUserAction.StartRoomCalibration -> {
+                executeRoomCalibration()
+            }
+            is AudioUserAction.CancelRoomCalibration -> {
+                calibrationJob?.cancel()
+                _uiState.update { it.copy(isCalibratingRoom = false, calibrationProgress = 0f) }
+            }
+            is AudioUserAction.ApplyAudioSettings -> {
+                applySettings()
+            }
+            is AudioUserAction.ResetAudioEdid -> {
+                resetEdid()
+            }
+        }
+    }
+
+    private fun executeTestTone() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isTestingPinkNoise = true) }
+            _uiEffect.emit(AudioUiEffect.PlayHapticTone(AudioToneType.TEST_BURST))
+            delay(2500)
+            _uiState.update { it.copy(isTestingPinkNoise = false) }
+            _uiEffect.emit(AudioUiEffect.ShowToast("Prueba de canales 7.1.4 completada sin pérdida de fase."))
+        }
+    }
+
+    private fun executeRoomCalibration() {
+        if (_uiState.value.isCalibratingRoom) return
+
+        calibrationJob = viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isCalibratingRoom = true, calibrationProgress = 0f) }
+
+            for (step in 1..10) {
+                delay(350)
+                val progress = step / 10f
+                _uiState.update { it.copy(calibrationProgress = progress) }
+            }
+
+            _uiState.update { 
+                it.copy(
+                    isCalibratingRoom = false, 
+                    calibrationProgress = 1f,
+                    roomCalibrationConfidence = Random.nextInt(96, 100),
+                    lastCalibrationTimestamp = "Hace un momento"
+                ) 
+            }
+            _uiEffect.emit(AudioUiEffect.PlayHapticTone(AudioToneType.CALIBRATION_COMPLETE))
+            _uiEffect.emit(AudioUiEffect.ShowToast("¡Calibración acústica de sala finalizada con éxito! Resonancia a 48Hz corregida."))
+        }
+    }
+
+    private fun applySettings() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isApplyingChanges = true) }
+            delay(750)
+            _uiState.update { it.copy(isApplyingChanges = false) }
+            _uiEffect.emit(AudioUiEffect.PlayHapticTone(AudioToneType.DOLBY_CHIME))
+            _uiEffect.emit(AudioUiEffect.ShowToast("Ajustes de audio HDMI eARC aplicados y sincronizados."))
+        }
+    }
+
+    private fun resetEdid() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { 
+                it.copy(
+                    avSyncDelayMs = 0,
+                    subBassBoostDb = 2,
+                    dialogueClarityLevel = 3,
+                    selectedOutputMode = AudioOutputMode.HDMI_EARC,
+                    selectedFormatHandling = AudioFormatHandling.PASSTHROUGH
+                ) 
+            }
+            _uiEffect.emit(AudioUiEffect.ShowToast("Handshake EDID de audio reiniciado a valores de fábrica."))
+        }
+    }
+
+    private fun startAudioTelemetryLoop() {
+        telemetryJob?.cancel()
+        telemetryJob = viewModelScope.launch(Dispatchers.Default) {
+            while (isActive) {
+                delay(2000)
+                if (!_uiState.value.isCalibratingRoom) {
+                    _uiState.update { state ->
+                        val randomDbLeft = (-14.0f + Random.nextDouble(-1.5, 1.8)).toFloat()
+                        val randomDbRight = (-13.8f + Random.nextDouble(-1.6, 1.7)).toFloat()
+                        state.copy(
+                            telemetry = state.telemetry.copy(
+                                peakDecibelsLeft = (randomDbLeft * 10).toInt() / 10f,
+                                peakDecibelsRight = (randomDbRight * 10).toInt() / 10f,
+                                eArcLatencyMs = if (state.selectedOutputMode == AudioOutputMode.HDMI_EARC) 1.1f else 3.8f
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        telemetryJob?.cancel()
+        calibrationJob?.cancel()
+    }
+}

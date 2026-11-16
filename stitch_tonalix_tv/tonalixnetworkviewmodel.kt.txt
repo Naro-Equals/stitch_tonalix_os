@@ -1,0 +1,413 @@
+package com.tonalix.tvlauncher.ui.settings.network
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlin.random.Random
+
+// ============================================================================
+// MODELOS DE DATOS & ENUMS DE RED
+// ============================================================================
+
+enum class NetworkSecurityType(val label: String) {
+    WPA3_SAE("WPA3 Personal (SAE)"),
+    WPA2_PSK("WPA2 Personal (AES)"),
+    WPA3_ENTERPRISE("WPA3 Enterprise (802.1X)"),
+    OPEN("Red Abierta (Sin Cifrado)")
+}
+
+enum class WifiBand(val label: String, val frequency: String) {
+    BAND_6GHZ("6 GHz", "Wi-Fi 6E (Canal 69)"),
+    BAND_5GHZ("5 GHz", "Wi-Fi 6 Ultra (Canal 36 - 80MHz)"),
+    BAND_24GHZ("2.4 GHz", "Largo Alcance (Canal 6)")
+}
+
+enum class IpAssignmentMode(val label: String) {
+    DHCP("DHCP Dinámico"),
+    STATIC("IP Estática")
+}
+
+data class WifiAccessPoint(
+    val ssid: String,
+    val bssid: String,
+    val signalDbm: Int,
+    val security: NetworkSecurityType,
+    val band: WifiBand,
+    val isConnected: Boolean = false,
+    val isSaved: Boolean = false,
+    val isLocked: Boolean = true,
+    val speedMbps: Int = 1201,
+    val priorityRank: Int = 1
+)
+
+data class NetworkTelemetry(
+    val linkSpeedMbps: Int = 1201,
+    val signalDbm: Int = -48,
+    val signalQuality: String = "Excelente (98%)",
+    val gatewayLatencyMs: Float = 1.8f,
+    val jitterMs: Float = 0.2f,
+    val packetLossPercent: Float = 0.0f,
+    val primaryDnsPingMs: Float = 4.2f,
+    val downloadSpeedMbps: Int = 940,
+    val uploadSpeedMbps: Int = 620,
+    val connectionHealth: String = "99.8% (Óptimo)",
+    val frequencyCenterGhz: String = "5.180 GHz",
+    val channelWidthMhz: Int = 80,
+    val mimoMode: String = "Tx/Rx 2x2 MU-MIMO",
+    val activeMeshNode: String = "Living Mesh-01",
+    val activeDnsFilter: String = "Cloudflare Zero-Log + Anti-Ad"
+)
+
+data class IpConfiguration(
+    val assignmentMode: IpAssignmentMode = IpAssignmentMode.DHCP,
+    val ipv4Address: String = "192.168.1.145",
+    val subnetPrefix: Int = 24,
+    val gateway: String = "192.168.1.1",
+    val dnsPrimary: String = "1.1.1.1 (Cloudflare DoH)",
+    val dnsSecondary: String = "1.0.0.1 (Respaldo)",
+    val macAddress: String = "e4:5f:01:8b:2c:10",
+    val mtu: Int = 1500,
+    val ipv6Global: String = "2001:0db8:85a3::8a2e:0370:7334",
+    val vlanId: Int = 10
+)
+
+// ============================================================================
+// TONALIX NETWORK UI STATE
+// ============================================================================
+
+data class NetworkUiState(
+    // Toggles de Módulo de Red
+    val wifiHardwareEnabled: Boolean = true,
+    val meshFastRoaming80211kvr: Boolean = true,
+    val lowLatencyGamingQos: Boolean = true,
+    val dfsChannels5GhzAllowed: Boolean = true,
+    val randomizeMacOnProbe: Boolean = true,
+    val autoConnectStrongestNode: Boolean = true,
+
+    // Redes detectadas y seleccionada
+    val activeConnectedNetwork: WifiAccessPoint? = WifiAccessPoint(
+        ssid = "CyberNet-Mesh_5G",
+        bssid = "c4:ad:34:91:ff:8a",
+        signalDbm = -48,
+        security = NetworkSecurityType.WPA3_SAE,
+        band = WifiBand.BAND_5GHZ,
+        isConnected = true,
+        isSaved = true,
+        isLocked = true,
+        speedMbps = 1201,
+        priorityRank = 1
+    ),
+    val nearbyNetworks: List<WifiAccessPoint> = listOf(
+        WifiAccessPoint("FibraOptica_Tonalix_Gaming", "b2:11:45:90:1a:02", -59, NetworkSecurityType.WPA3_ENTERPRISE, WifiBand.BAND_6GHZ, speedMbps = 1200, isSaved = true, priorityRank = 2),
+        WifiAccessPoint("Aura_Home_Studio_5G", "d0:21:f9:8b:aa:74", -54, NetworkSecurityType.WPA2_PSK, WifiBand.BAND_5GHZ, speedMbps = 866, isSaved = true, priorityRank = 3),
+        WifiAccessPoint("SmartTV_Guest_Portal", "e8:9d:87:66:33:11", -72, NetworkSecurityType.OPEN, WifiBand.BAND_24GHZ, speedMbps = 144, isSaved = false, isLocked = false),
+        WifiAccessPoint("Vodafone-Fibra-9B41", "a1:3c:5e:71:09:88", -81, NetworkSecurityType.WPA2_PSK, WifiBand.BAND_5GHZ, speedMbps = 433, isSaved = false),
+        WifiAccessPoint("Laboratorio_IoT_Ext", "f4:0e:22:90:bc:33", -68, NetworkSecurityType.WPA2_PSK, WifiBand.BAND_24GHZ, speedMbps = 144, isSaved = false)
+    ),
+    val selectedFilterTab: Int = 0, // 0: Todas, 1: 5GHz/6GHz Alta Vel, 2: 2.4GHz, 3: Abiertas
+
+    // Configuración IP y Enrutamiento
+    val ipConfig: IpConfiguration = IpConfiguration(),
+
+    // Telemetría en Vivo
+    val telemetry: NetworkTelemetry = NetworkTelemetry(),
+
+    // Operaciones Asíncronas
+    val isScanningNetworks: Boolean = false,
+    val isConnectingNetwork: Boolean = false,
+    val connectingSsid: String? = null,
+    val isRunningSpeedPingTest: Boolean = false,
+    val speedTestProgress: Float = 0f,
+    val lastScanTimestamp: String = "Hace 4s"
+)
+
+// ============================================================================
+// TONALIX NETWORK USER ACTIONS (MVI)
+// ============================================================================
+
+sealed interface NetworkUserAction {
+    data class ToggleWifiHardware(val enabled: Boolean) : NetworkUserAction
+    data class ToggleMeshRoaming(val enabled: Boolean) : NetworkUserAction
+    data class ToggleLowLatencyQos(val enabled: Boolean) : NetworkUserAction
+    data class ToggleDfsChannels(val enabled: Boolean) : NetworkUserAction
+    data class ToggleMacRandomization(val enabled: Boolean) : NetworkUserAction
+
+    data class SelectFilterTab(val tabIndex: Int) : NetworkUserAction
+    data class ConnectToNetwork(val accessPoint: WifiAccessPoint) : NetworkUserAction
+    data class DisconnectNetwork(val ssid: String) : NetworkUserAction
+    data class ForgetNetwork(val ssid: String) : NetworkUserAction
+    data class SetIpAssignmentMode(val mode: IpAssignmentMode) : NetworkUserAction
+
+    object ScanNetworks : NetworkUserAction
+    object RunSpeedAndPingTest : NetworkUserAction
+    object FlushDnsAndResetRouting : NetworkUserAction
+    object ResetNetworkDefaults : NetworkUserAction
+}
+
+// ============================================================================
+// UI EFFECTS (One-Shot side effects)
+// ============================================================================
+
+sealed interface NetworkUiEffect {
+    data class ShowToast(val message: String, val isSuccess: Boolean = true) : NetworkUiEffect
+    data class PlaySound(val soundType: NetworkSoundType) : NetworkUiEffect
+    object NavigateBack : NetworkUiEffect
+}
+
+enum class NetworkSoundType {
+    CLICK_NAVIGATE, CONNECT_SUCCESS, SCAN_COMPLETE, TEST_COMPLETE, DISCONNECT_ALERT
+}
+
+// ============================================================================
+// TONALIX NETWORK VIEWMODEL
+// ============================================================================
+
+class TonalixNetworkViewModel : ViewModel() {
+
+    private val _uiState = MutableStateFlow(NetworkUiState())
+    val uiState: StateFlow<NetworkUiState> = _uiState.asStateFlow()
+
+    private val _uiEffect = MutableSharedFlow<NetworkUiEffect>()
+    val uiEffect: SharedFlow<NetworkUiEffect> = _uiEffect.asSharedFlow()
+
+    private var telemetryJob: Job? = null
+    private var testJob: Job? = null
+
+    init {
+        startNetworkTelemetryLoop()
+    }
+
+    fun onAction(action: NetworkUserAction) {
+        when (action) {
+            is NetworkUserAction.ToggleWifiHardware -> {
+                _uiState.update { it.copy(wifiHardwareEnabled = action.enabled) }
+                viewModelScope.launch {
+                    val msg = if (action.enabled) "Wi-Fi 6 BCM43752 Habilitado" else "Adaptador Wi-Fi apagado"
+                    _uiEffect.emit(NetworkUiEffect.ShowToast(msg))
+                }
+            }
+            is NetworkUserAction.ToggleMeshRoaming -> {
+                _uiState.update { it.copy(meshFastRoaming80211kvr = action.enabled) }
+            }
+            is NetworkUserAction.ToggleLowLatencyQos -> {
+                _uiState.update { it.copy(lowLatencyGamingQos = action.enabled) }
+                viewModelScope.launch {
+                    val msg = if (action.enabled) "QoS Gaming & Cloud Streaming ACTIVO" else "QoS Gaming en modo estándar"
+                    _uiEffect.emit(NetworkUiEffect.ShowToast(msg))
+                }
+            }
+            is NetworkUserAction.ToggleDfsChannels -> {
+                _uiState.update { it.copy(dfsChannels5GhzAllowed = action.enabled) }
+            }
+            is NetworkUserAction.ToggleMacRandomization -> {
+                _uiState.update { it.copy(randomizeMacOnProbe = action.enabled) }
+            }
+            is NetworkUserAction.SelectFilterTab -> {
+                _uiState.update { it.copy(selectedFilterTab = action.tabIndex) }
+                viewModelScope.launch {
+                    _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.CLICK_NAVIGATE))
+                }
+            }
+            is NetworkUserAction.ConnectToNetwork -> {
+                executeConnectNetwork(action.accessPoint)
+            }
+            is NetworkUserAction.DisconnectNetwork -> {
+                executeDisconnect(action.ssid)
+            }
+            is NetworkUserAction.ForgetNetwork -> {
+                executeForget(action.ssid)
+            }
+            is NetworkUserAction.SetIpAssignmentMode -> {
+                _uiState.update { it.copy(ipConfig = it.ipConfig.copy(assignmentMode = action.mode)) }
+                viewModelScope.launch {
+                    _uiEffect.emit(NetworkUiEffect.ShowToast("Asignación IP: ${action.mode.label}"))
+                }
+            }
+            is NetworkUserAction.ScanNetworks -> {
+                executeScanNetworks()
+            }
+            is NetworkUserAction.RunSpeedAndPingTest -> {
+                executeSpeedTest()
+            }
+            is NetworkUserAction.FlushDnsAndResetRouting -> {
+                executeFlushRouting()
+            }
+            is NetworkUserAction.ResetNetworkDefaults -> {
+                resetDefaults()
+            }
+        }
+    }
+
+    private fun executeConnectNetwork(ap: WifiAccessPoint) {
+        if (_uiState.value.isConnectingNetwork) return
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isConnectingNetwork = true, connectingSsid = ap.ssid) }
+            _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.CLICK_NAVIGATE))
+            delay(1200)
+
+            _uiState.update { current ->
+                val previousActive = current.activeConnectedNetwork?.copy(isConnected = false)
+                val newActive = ap.copy(isConnected = true, isSaved = true)
+                val updatedNearby = current.nearbyNetworks
+                    .filter { it.ssid != ap.ssid }
+                    .toMutableList()
+                if (previousActive != null) updatedNearby.add(previousActive)
+
+                current.copy(
+                    isConnectingNetwork = false,
+                    connectingSsid = null,
+                    activeConnectedNetwork = newActive,
+                    nearbyNetworks = updatedNearby,
+                    telemetry = current.telemetry.copy(
+                        linkSpeedMbps = ap.speedMbps,
+                        signalDbm = ap.signalDbm,
+                        frequencyCenterGhz = if (ap.band == WifiBand.BAND_6GHZ) "6.050 GHz" else "5.180 GHz"
+                    )
+                )
+            }
+            _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.CONNECT_SUCCESS))
+            _uiEffect.emit(NetworkUiEffect.ShowToast("¡Conectado con éxito a ${ap.ssid}! Handshake WPA3 completado."))
+        }
+    }
+
+    private fun executeDisconnect(ssid: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { current ->
+                val disconnectedAp = current.activeConnectedNetwork?.copy(isConnected = false)
+                val newNearby = current.nearbyNetworks.toMutableList()
+                if (disconnectedAp != null) newNearby.add(0, disconnectedAp)
+
+                current.copy(
+                    activeConnectedNetwork = null,
+                    nearbyNetworks = newNearby,
+                    telemetry = current.telemetry.copy(linkSpeedMbps = 0, signalDbm = -100, packetLossPercent = 100f)
+                )
+            }
+            _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.DISCONNECT_ALERT))
+            _uiEffect.emit(NetworkUiEffect.ShowToast("Desconectado de $ssid."))
+        }
+    }
+
+    private fun executeForget(ssid: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { current ->
+                val newNearby = current.nearbyNetworks.filter { it.ssid != ssid }
+                val newActive = if (current.activeConnectedNetwork?.ssid == ssid) null else current.activeConnectedNetwork
+                current.copy(activeConnectedNetwork = newActive, nearbyNetworks = newNearby)
+            }
+            _uiEffect.emit(NetworkUiEffect.ShowToast("Red $ssid olvidada de perfiles de enlace."))
+        }
+    }
+
+    private fun executeScanNetworks() {
+        if (_uiState.value.isScanningNetworks) return
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isScanningNetworks = true) }
+            delay(1400)
+            _uiState.update {
+                it.copy(
+                    isScanningNetworks = false,
+                    lastScanTimestamp = "Hace un momento"
+                )
+            }
+            _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.SCAN_COMPLETE))
+            _uiEffect.emit(NetworkUiEffect.ShowToast("Escaneo Wi-Fi completado: 14 puntos de acceso en rango."))
+        }
+    }
+
+    private fun executeSpeedTest() {
+        if (_uiState.value.isRunningSpeedPingTest) return
+        testJob = viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update { it.copy(isRunningSpeedPingTest = true, speedTestProgress = 0f) }
+
+            for (i in 1..10) {
+                delay(300)
+                _uiState.update { it.copy(speedTestProgress = i / 10f) }
+            }
+
+            val newDown = Random.nextInt(920, 965)
+            val newUp = Random.nextInt(610, 640)
+            val newPing = (1.5f + Random.nextDouble(0.1, 0.4)).toFloat()
+
+            _uiState.update { current ->
+                current.copy(
+                    isRunningSpeedPingTest = false,
+                    speedTestProgress = 1f,
+                    telemetry = current.telemetry.copy(
+                        downloadSpeedMbps = newDown,
+                        uploadSpeedMbps = newUp,
+                        gatewayLatencyMs = (newPing * 10).toInt() / 10f,
+                        primaryDnsPingMs = (3.8f + Random.nextDouble(0.1, 0.6)).toFloat()
+                    )
+                )
+            }
+            _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.TEST_COMPLETE))
+            _uiEffect.emit(NetworkUiEffect.ShowToast("Test finalizado: Descarga ${newDown} Mbps | Subida ${newUp} Mbps | Latencia ${newPing} ms."))
+        }
+    }
+
+    private fun executeFlushRouting() {
+        viewModelScope.launch(Dispatchers.Default) {
+            delay(600)
+            _uiEffect.emit(NetworkUiEffect.PlaySound(NetworkSoundType.CONNECT_SUCCESS))
+            _uiEffect.emit(NetworkUiEffect.ShowToast("Tablas de enrutamiento y caché ARP del kernel reiniciadas."))
+        }
+    }
+
+    private fun resetDefaults() {
+        viewModelScope.launch(Dispatchers.Default) {
+            _uiState.update {
+                it.copy(
+                    meshFastRoaming80211kvr = true,
+                    lowLatencyGamingQos = true,
+                    dfsChannels5GhzAllowed = true,
+                    randomizeMacOnProbe = true,
+                    ipConfig = IpConfiguration(assignmentMode = IpAssignmentMode.DHCP)
+                )
+            }
+            _uiEffect.emit(NetworkUiEffect.ShowToast("Parámetros de red restablecidos a fábrica."))
+        }
+    }
+
+    private fun startNetworkTelemetryLoop() {
+        telemetryJob?.cancel()
+        telemetryJob = viewModelScope.launch(Dispatchers.Default) {
+            while (isActive) {
+                delay(2500)
+                if (!_uiState.value.isRunningSpeedPingTest && _uiState.value.activeConnectedNetwork != null) {
+                    _uiState.update { state ->
+                        val jitterPing = (-0.2 + Random.nextDouble(0.0, 0.4)).toFloat()
+                        val newLatency = (1.8f + jitterPing).coerceIn(1.2f, 3.2f)
+                        val jitterDbm = Random.nextInt(-1, 2)
+                        val newDbm = (state.telemetry.signalDbm + jitterDbm).coerceIn(-52, -45)
+
+                        state.copy(
+                            telemetry = state.telemetry.copy(
+                                gatewayLatencyMs = (newLatency * 10).toInt() / 10f,
+                                signalDbm = newDbm,
+                                primaryDnsPingMs = (4.0f + jitterPing * 1.5f).coerceAtLeast(2.5f)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        telemetryJob?.cancel()
+        testJob?.cancel()
+    }
+}
